@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "62fcebf9-df38-4d53-9b0c-1cfd47ace98a",
+		"name": "Project-Management",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36680118",
+		"_collection_link": "https://tech-nexus.postman.co/workspace/tech-nexus-Workspace~fbebb58c-814a-4fc8-bbb0-9f551b52f8b6/collection/36680118-62fcebf9-df38-4d53-9b0c-1cfd47ace98a?action=share&source=collection_link&creator=36680118"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User (all type of user)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJzaW1vbmVAdGhlbXZ2LmNvLnVrIiwicm9sZSI6InN1cGVyQWRtaW4iLCJpYXQiOjE3NTM5NzAzMjAsImV4cCI6MTc1NDgzNDMyMH0.Q3N57KNOrnSPVhQJRF2SR952L-Ky-H3OqJspNVxrWuI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"name\": \"Ahmad Musa\",\n  \"contactNo\": \"01712345678\",\n  \"email\": \"ahmad2@example.com\",\n  \"password\": \"123456\",\n  \"role\": \"client\"\n}",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/pc/Desktop/MUSA.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{urls}}/users/create-user",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"create-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhaG1hZDJAZXhhbXBsZS5jb20iLCJyb2xlIjoiY2xpZW50IiwiaWF0IjoxNzUzOTcwNzQxLCJleHAiOjE3NTQ4MzQ3NDF9.1ATIIh_kBwD2M5WWKjEGs_o4e-t8G00NWohiTryDQP0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{urls}}/users/me",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users Admin, Subscriber and Client use query parameter",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJzaW1vbmVAdGhlbXZ2LmNvLnVrIiwicm9sZSI6InN1cGVyQWRtaW4iLCJpYXQiOjE3NTM5NzAzMjAsImV4cCI6MTc1NDgzNDMyMH0.Q3N57KNOrnSPVhQJRF2SR952L-Ky-H3OqJspNVxrWuI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "// {{urls}}/users?sort=-createdAt&page=1&limit=5&role=client",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/users?sort=-createdAt&page=1&limit=5&role=client",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "-createdAt"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "role",
+									"value": "client"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJzaW1vbmVAdGhlbXZ2LmNvLnVrIiwicm9sZSI6InN1cGVyQWRtaW4iLCJpYXQiOjE3NTM5NzAzMjAsImV4cCI6MTc1NDgzNDMyMH0.Q3N57KNOrnSPVhQJRF2SR952L-Ky-H3OqJspNVxrWuI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"blocked\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/change-status/688b7722c1bc2d1737714cb7",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"change-status",
+								"688b7722c1bc2d1737714cb7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhaG1hZDJAZXhhbXBsZS5jb20iLCJyb2xlIjoiY2xpZW50IiwiaWF0IjoxNzUzOTcxMDE3LCJleHAiOjE3NTQ4MzUwMTd9.CxoD0_z3gPMPh0HcP5NXaRh3Nf6m1Ctopd64vK5IBpk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "data",
+									"value": "{\n  \"name\": \"Ahmad Musa Abdullah\",\n  \"contactNo\": \"01970\",\n  \"email\": \"ahmadmusa9805@gmail.com\",\n  \"project\": \"64ed4a2f5b3d2a6c97a8c9f1\",\n  \"postCode\": \"1212\",\n  \"address\": \"Dhaka, Bangladesh\"\n}\n",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/pc/Desktop/MUSA.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{urls}}/users/688b789adafd173c4e426b65",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"688b789adafd173c4e426b65"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJzaW1vbmVAdGhlbXZ2LmNvLnVrIiwicm9sZSI6InN1cGVyQWRtaW4iLCJpYXQiOjE3NTM5NzAzMjAsImV4cCI6MTc1NDgzNDMyMH0.Q3N57KNOrnSPVhQJRF2SR952L-Ky-H3OqJspNVxrWuI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{urls}}/users/688b7722c1bc2d1737714cb7",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"688b7722c1bc2d1737714cb7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User monthly without admin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{subscriber1}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/users/users-monthly",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"users-monthly"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJzaW1vbmVAdGhlbXZ2LmNvLnVrIiwicm9sZSI6InN1cGVyQWRtaW4iLCJpYXQiOjE3NTM5NzAzMjAsImV4cCI6MTc1NDgzNDMyMH0.Q3N57KNOrnSPVhQJRF2SR952L-Ky-H3OqJspNVxrWuI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{urls}}/users/688b789adafd173c4e426b65",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"users",
+								"688b789adafd173c4e426b65"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Super Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"simone@themvv.co.uk\",\r\n  \"password\":\"superAdmin12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/login",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"amaahmadmusa12@gmail.com\",\r\n  \"password\":\"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/login",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Client  Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"amaahmadmusa11@gmail.com\",\r\n  \"password\":\"c12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/login",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhbWFhaG1hZG11c2FAZ21haWwuY29tIiwicm9sZSI6InN1YnNjcmliZXIiLCJpYXQiOjE3NTAxNjk3ODMsImV4cCI6MTc1MTAzMzc4M30.Yy30znjHD06tK3Lij6c3IaL088PCTLxnK05Q62yCFWc",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"s12345\",\r\n    \"newPassword\": \"ss12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/change-password",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh-Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/refresh-token",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forget Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"amaahmadmusa@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/forget-password",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"forget-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyRW1haWwiOiJhbWFhaG1hZG11c2FAZ21haWwuY29tIiwicm9sZSI6InN1YnNjcmliZXIiLCJpYXQiOjE3NTAxNjk0ODUsImV4cCI6MTc1MDE3MDA4NX0.3nZbVn60JLk4mqrrHBzDrQ_aKZVEjyi5Y9N5PYz2giw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"amaahmadmusa@gmail.com\",\r\n    \"newPassword\":\"s12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/auth/reset-password",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "OTP Copy",
+			"item": [
+				{
+					"name": "Generate OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{urls}}/otps/generate-otp",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"otps",
+								"generate-otp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"otp\": {\r\n        \"email\": \"amaahmadmusa@gmail.com\",\r\n        \"otp\": \"1282\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/otps/veryfy",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"otps",
+								"veryfy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Otp Verify For Forgot password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"otp\": {\r\n        \"email\": \"amaahmadmusa@gmail.com\",\r\n        \"otp\": \"2878\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{urls}}/otps//verify-forget-password",
+							"host": [
+								"{{urls}}"
+							],
+							"path": [
+								"otps",
+								"",
+								"verify-forget-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
