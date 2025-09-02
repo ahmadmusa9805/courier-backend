@@ -2,71 +2,87 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import {   UserStatus } from './user.constant';
 import { TUser, UserModel } from './user.interface';
 
 
-const userSchema = new Schema<TUser, UserModel>(
-  {
-    name: {
+const userSchema = new Schema<TUser, UserModel>({
+  name: {
+    firstName: {
       type: String,
       required: true,
       trim: true,
     },
-    contactNo: {
+    lastName: {
       type: String,
       required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    project: {
-      type: Schema.Types.ObjectId,
-      ref: 'Project',
-    },
-    password: {
-      type: String,
-      required: true,
-      select: false, // Prevent password from being returned in queries
-    },
-    passwordChangedAt: {
-      type: Date,
-    },
-    role: {
-      type: String,
-      enum: ['client', 'superAdmin', 'basicAdmin', 'primeAdmin'],
-      default: 'client',
-    },
-    profileImg : {
-      type: String,
-      default: '',
-    },
-    otpVerified: {
-      type: Boolean,
-      default: false,
-    },
-    postCode: {
-      type: String,
-    },
-    address: {
-      type: String,
-    },
-    status: {
-      type: String,
-      enum: Object.values(UserStatus),
-      default: 'active',
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
+      trim: true,
     },
   },
-  {
-    timestamps: true, // Automatically add createdAt and updatedAt fields
+  phoneNo: {
+    type: String,
+    required: true,
   },
-);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  emailStatus: {
+    type: String,
+    enum: ['verified', 'notVerified'],
+    default: 'notVerified',
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false, // Hide password in queries
+  },
+  otpVerified: {
+    type: Boolean,
+    default: false,
+  },
+  passwordChangedAt: Date,
+  profileImg: {
+    type: String,
+    default: '',
+  },
+  address: String,
+  legalForm: String,
+  document: String,
+  profileVerified: {
+    type: String,
+    enum: ['verified', 'notVerified'],
+  },
+  courierExperience: String,
+  companyLocation: String,
+  companyName: String,
+  communicationMode: {
+    type: String,
+    enum: ['whatsApp', 'textMessage'],
+  },
+  approvalStatus: String,
+  jobPosted: String,
+  howKnow: {
+    type: String,
+    enum: ['google', 'website', 'socialMedia'],
+  },
+  role: {
+    type: String,
+    enum: ['client', 'superAdmin', 'admin', 'business'],
+    default: 'client',
+  },
+  status: {
+    type: String,
+    enum: ['active', 'blocked'],
+    default: 'active',
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+}, {
+  timestamps: true, // adds createdAt & updatedAt automatically
+});
 
 userSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias

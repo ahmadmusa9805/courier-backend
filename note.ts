@@ -2,22 +2,24 @@
 // courier                  (courier, admin))
 // admin                    (admin)
 // auth                     (for courier, user, admin)
-// otp                      (for courier, user, admin)
-// item                     (for courier, user, admin)
+// otp  
+//                         (for courier, user, admin)
+// item                    (for courier, user, admin)
 // time slot                (for courier, user, admin)
-// jobs                     (for courier, user, admin) (need to discuss for courier part)
 // reviews                  
 // blog                     (home page for user)
-// notification             (for courier, user, admin)
 // customer support         (for courier, user, admin)
-// daily route              (for courier)  (need to discuss for courier part)
 // testimonial
 // Term and condition
 // Privacy policy
+// analitics
+
+// notification             (for courier, user, admin)
+// jobs                     (for courier, user, admin) (need to discuss for courier part)
+// daily route              (for courier)  (need to discuss for courier part)
 // chat                     (for courier, user, admin)
 // payout
 // payment
-// analitics
 
 // ==================================================================================
 

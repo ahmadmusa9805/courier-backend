@@ -1,22 +1,45 @@
 /* eslint-disable no-unused-vars */
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
-export interface TUser { 
-  name: string;
+
+export type EmailStatus = 'verified' | 'notVerified';
+export type ProfileStatus = 'verified' | 'notVerified';
+export type CommunicationMode = 'whatsApp' | 'textMessage';
+export type HowKnow = 'google' | 'website' | 'socialMedia';
+export type UserStatus = 'active' | 'blocked';
+export type UserRole = 'client' | 'superAdmin' | 'admin' | 'business';
+
+
+export interface TUser {
+  name: {
+    firstName: string;
+    lastName: string;
+  };
   email: string;
-  contactNo: string;
+  emailStatus: EmailStatus;
+  phoneNo: string;
   password: string;
   otpVerified: boolean;
   passwordChangedAt?: Date;
   profileImg?: string;
-  project?: Types.ObjectId;
   address?: string;
   postCode?: string;
-  role: 'client' | 'superAdmin' | 'basicAdmin' | 'primeAdmin';
-  status?: 'active' | 'blocked';
+  legalForm?: string;
+  document?: string;
+  profileVerified?: ProfileStatus;
+  courierExperience?: string;
+  companyLocation?: string;
+  companyName?: string;
+  communicationMode?: CommunicationMode;
+  approvalStatus?: string;
+  jobPosted?: string;
+  howKnow?: HowKnow;
+  role: UserRole;
+  status?: UserStatus;
   isDeleted: boolean;
 }
+
 export interface UserModel extends Model<TUser> {
   // Static methods for checking if the user exists
     // isUserExistsByCustomEmail(email: string): Promise<TUser>;
