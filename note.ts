@@ -1,3 +1,36 @@
+// user                     single/business
+// courier                  (courier, admin))
+// admin                    (admin)
+// auth                     (for courier, user, admin)
+// otp                      (for courier, user, admin)
+// item                     (for courier, user, admin)
+// time slot                (for courier, user, admin)
+// jobs                     (for courier, user, admin) (need to discuss for courier part)
+// reviews                  
+// blog                     (home page for user)
+// notification             (for courier, user, admin)
+// customer support         (for courier, user, admin)
+// daily route              (for courier)  (need to discuss for courier part)
+// testimonial
+// Term and condition
+// Privacy policy
+// chat                     (for courier, user, admin)
+// payout
+// payment
+// analitics
+
+// ==================================================================================
+
+// user have block feature
+// item should active or inactive
+// blog should active or inactive
+
+// need to discuss
+// payout
+// what is the difference between shipment and new job
+// type of transportation
+// items
+
 // Home page
 // navigation
 // banner
@@ -8,45 +41,116 @@
 // faq
 // Together we make an impact
 // footer
+// ===================================================
+// user
+// name first and last name
+// email
+// email Status (verified, unverified)
+// job posted
+// createdDate
+// password
+// userType (individual, business)
+// status (active, bloged)
 
-// ==================================================================================
-
-// user                     single/business
 // courier
-// admin
-// auth
-// otp
+// phone
+// company name
+// company location
+// Approval Status
+// CommunicationMode (whatsapp,text message)
+// How You Know About Us (google, social media, website)
+// Courier Experienc   (need to add)
+// Profile Verified    (verified, unverified)
+// document
+// Legal Form           (need to add)
+
+// image
+
+
+// =================================================
+
+// jobs
+// from
+// to
+// Where do we pick it up? (from private home, from store, from an auction, small move)
+// Where does the object come from?
 // item
-// time slot
-// jobs                     (for courier, user, admin) (need to discuss for courier part)
+     // Product Name *
+     // dimensions (L x W x H) in cm *
+     // Does it contain any of these materials? (glass, wood, metal, food, plants, animals, others)  
+
+
+
+
+
+
+
+
+
+//items
+// name
+// length
+// width
+// height
+// price
+// createDate
+// status (active, inactive)
+// description
+// file
+
+
 // reviews
-// payout
-// blog                     (home page for user)
-// notification             (for courier, user, admin)
-// customer support         (for courier, user, admin)
-// chat                     (for courier, user, admin)
-// payment
-// daily route              (for courier)  (need to discuss for courier part)
+// user
+// courier
+// job
+// ratings
+// comment
+// status
+
+// time slot  ( 10:00 - 14:00)
+// price
+// type (pickup, delivery)
+// startTime
+// endTime
+
+
+// Payout
+// courier
+// email
+// job
+// earnings
+// commision
+// final
+// paid on
+// paid from - to
+
+// blog
+// title
+// description
+// image
+// status (active, inactive)
+
 // testimonial
-// Term and condition
-// Privacy policy
-// analitics
+// name
+// sub title
+// status (active, inactive)
+// ratings (1-5)
+// comment
+// createdDate
+
+//FAQ
+// question
+// answer
+
+// Term
+// title
+
+// Privacy
+// title
 
 
-// ==================================================================================
-// user have block feature
-// item should active or inactive
-// blog should active or inactive
-
-// need to discuss
-// payout
-// 1. what is the difference between shipment and new job
-// type of transportation
-// items
-// date and time
-// extra services
-// extra servicer pickup
-// contact
-// services
-// extra services
-
+// dashboard
+// total users
+// active users
+// blocked users
+// total reviews
