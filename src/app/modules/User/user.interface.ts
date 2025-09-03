@@ -3,18 +3,31 @@ import { Model, Types } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
 export interface TUser { 
-  name: string;
+  name: {
+    firstName: string;
+    lastName: string;
+  };
   email: string;
-  contactNo: string;
+  phoneNo: string;
   password: string;
+  address?: string;
   otpVerified: boolean;
   passwordChangedAt?: Date;
   profileImg?: string;
-  project?: Types.ObjectId;
-  address?: string;
-  postCode?: string;
-  role: 'client' | 'superAdmin' | 'basicAdmin' | 'primeAdmin';
-  status?: 'active' | 'blocked';
+  role: 'superAdmin' | 'admin'   | 'courier' | 'user' | 'company';
+  status: 'active' | 'blocked';
+  emailStatus: 'verified' | 'unverified';
+  jobPosted?: boolean;
+  userType?: 'individual' | 'company';
+  companyName?: string;
+  companyLocation?: string;
+  approvalStatus?: boolean;
+  communicationMode?: 'whatsapp' | 'textMessage';
+  howKnow?: 'google' | 'socialMedia' | 'website';
+  courierExperience?: string;
+  profileVerified?: 'verified' | 'unverified';
+  document?: string;
+  legalForm?: string;
   isDeleted: boolean;
 }
 export interface UserModel extends Model<TUser> {

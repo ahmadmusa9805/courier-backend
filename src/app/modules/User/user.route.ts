@@ -12,7 +12,11 @@ const router = express.Router();
 router.post(
   '/create-user',
   auth(USER_ROLE.superAdmin),
-  uploadFileS3(true).single('file'),
+  // uploadFileS3(true).single('file'),
+       uploadFileS3(true).fields([
+  { name: 'img', maxCount: 5 },
+  { name: 'document', maxCount: 5 },
+]),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       try {
@@ -29,7 +33,7 @@ router.post(
 
 router.get(
   '/me',
-  auth(USER_ROLE.superAdmin, USER_ROLE.basicAdmin, USER_ROLE.client, USER_ROLE.primeAdmin),
+  auth(USER_ROLE.superAdmin),
   UserControllers.getMe,
 );
 
@@ -77,8 +81,12 @@ router.delete(
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.superAdmin, USER_ROLE.basicAdmin, USER_ROLE.client, USER_ROLE.primeAdmin),
-  uploadFileS3(true).single('file'),
+  auth(USER_ROLE.superAdmin),
+  // uploadFileS3(true).single('file'),
+         uploadFileS3(true).fields([
+  { name: 'img', maxCount: 5 },
+  { name: 'document', maxCount: 5 },
+]),
   (req: Request, res: Response, next: NextFunction) => {
     if (req.body.data) {
       try {

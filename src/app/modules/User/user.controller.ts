@@ -6,8 +6,12 @@ import { UserServices } from './user.service';
 // import sendImageToCloudinary from '../../utils/cloudinary';
 
 const createUser = catchAsync(async (req, res) => {
+
+  const files = req.files as {
+  [fieldname: string]: Express.MulterS3.File[];
+};
   const userData= req.body;
-  const result = await UserServices.createUserIntoDB(userData, req.file);
+  const result = await UserServices.createUserIntoDB(userData, files);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -87,9 +91,12 @@ const changeStatus = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
+    const files = req.files as {
+  [fieldname: string]: Express.MulterS3.File[];
+};
   const { id } = req.params;
   const user = req.body;
-  const result = await UserServices.updateUserIntoDB(id, user, req.file);
+  const result = await UserServices.updateUserIntoDB(id, user, files);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

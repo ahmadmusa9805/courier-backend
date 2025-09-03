@@ -11,12 +11,25 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 
-export const createUserIntoDB = async (payload: TUser, file?: any) => {
-  console.log('musa testing',payload);
+export const createUserIntoDB = async (payload: TUser,  files?:any) => {
 
-  if (file) {
-    payload.profileImg = file.location as string;
-  }
+// Example: get overview files
+const document = files['document']?.map((f:any) => f.location) || [];
+const img = files['img']?.map((f:any) => f.location) || [];
+
+
+    if(document.length > 0){
+      payload.document = document[0]; // Assuming file.location contains the S3 URL
+    }
+    if(img.length > 0){
+      payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
+    }
+
+
+  // if (file) {
+  //   console.log('musa testing img',img);
+  //   payload.profileImg = file.location as string;
+  // }
 
   const newUser = await User.create(payload);
   if (!newUser) throw new Error('Failed to create user');
@@ -185,14 +198,25 @@ const changeStatus = async (id: string, payload: { status: string }) => {
 const updateUserIntoDB = async (
   id: string,
   payload: Partial<TUser>,
-  file?: any,
+  files?: any,
 ) => {
 
 
   // Handle file upload if present
-  if (file) {
-    payload.profileImg = file.location as string;
-  }
+  // if (file) {
+  //   payload.profileImg = file.location as string;
+  // }
+
+  const document = files['document']?.map((f:any) => f.location) || [];
+const img = files['img']?.map((f:any) => f.location) || [];
+
+
+    if(document.length > 0){
+      payload.document = document[0]; // Assuming file.location contains the S3 URL
+    }
+    if(img.length > 0){
+      payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
+    }
 
   const result = await User.findByIdAndUpdate(id, payload, {
     new: true,

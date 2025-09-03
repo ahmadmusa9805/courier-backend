@@ -3,13 +3,14 @@ import { USER_ROLE } from '../modules/User/user.constant';
 import { User } from '../modules/User/user.model';
 
 const superUser = {
-  name: 'Super Admin',
-  email:  config.super_admin_email || 'simone@themvv.co.uk',
-  password: config.super_admin_password || 'superAdmin12345',
+  name: { firstName: 'Super', lastName: 'Admin' },
+  email:  config.super_admin_email || 'ahmadmusa9805@gmail.com',
+  password: config.super_admin_password || '12345',
   otpVerified: true,
   needsPasswordChange: false,
-  contactNo: "+4407823878152",
+  phoneNo: "+4407823878152",
   role: USER_ROLE.superAdmin,
+  approvalStatus: true,
   status: 'active',
   isDeleted: false,
 };

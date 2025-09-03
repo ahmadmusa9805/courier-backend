@@ -77,7 +77,7 @@
 // item
      // Product Name *
      // dimensions (L x W x H) in cm *
-     // Does it contain any of these materials? (glass, wood, metal, food, plants, animals, others)  
+     // Does it contain any of these materials? (glass, wood, metal , food, plants, animals, others)  
 
 
 
