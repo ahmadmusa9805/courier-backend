@@ -5,19 +5,22 @@
 // otp                      (for courier, user, admin)
 // item                     (for courier, user, admin)
 // time slot                (for courier, user, admin)
-// jobs                     (for courier, user, admin) (need to discuss for courier part)
-// reviews                  
 // blog                     (home page for user)
-// notification             (for courier, user, admin)
+// testimonial
+
 // customer support         (for courier, user, admin)
 // daily route              (for courier)  (need to discuss for courier part)
-// testimonial
 // Term and condition
 // Privacy policy
-// chat                     (for courier, user, admin)
-// payout
-// payment
+// FAQ
+
+// notification             (for courier, user, admin)
 // analitics
+// chat                     (for courier, user, admin)
+// jobs                     (for courier, user, admin) (need to discuss for courier part)
+// payment
+// payout
+// reviews                  
 
 // ==================================================================================
 
