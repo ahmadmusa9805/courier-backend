@@ -7,6 +7,10 @@ import { PrivacyRoutes } from '../modules/Privacy/Privacy.route';
 import { TermRoutes } from '../modules/Term/Term.route';
 import { ContactRoutes } from '../modules/Contact/Contact.route';
 import { NotificationRoutes } from '../modules/Notification/Notification.route';
+import { ItemRoutes } from '../modules/Item/Item.route';
+import { TimeSlotRoutes } from '../modules/TimeSlot/TimeSlot.route';
+import { BlogRoutes } from '../modules/Blog/Blog.route';
+import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
 
 const router = Router();
 
@@ -42,6 +46,22 @@ const moduleRoutes = [
   {
     path: '/notifications',
     route: NotificationRoutes,
+  },
+  {
+    path: '/items',
+    route: ItemRoutes,
+  },
+  {
+    path: '/time-slots',
+    route: TimeSlotRoutes,
+  },
+  {
+    path: '/blogs',
+    route: BlogRoutes,
+  },
+  {
+    path: '/testimonials',
+    route: TestimonialRoutes,
   }
 
 ];

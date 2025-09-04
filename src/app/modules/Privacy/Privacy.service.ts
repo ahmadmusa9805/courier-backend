@@ -13,7 +13,15 @@ const createPrivacyIntoDB = async (
   const privacy = await Privacy.find({ isDeleted: false });
   
   if(privacy.length > 0){
-    throw new AppError(httpStatus.CONFLICT, 'Term already exists');
+    // throw new AppError(httpStatus.CONFLICT, 'Term already exists');
+    
+  const updatedData = await Privacy.findByIdAndUpdate(
+    { _id: privacy[0]._id },
+    payload,
+    { new: true, runValidators: true },
+  );
+
+     return updatedData
   }
 
   const result = await Privacy.create(payload);
@@ -79,9 +87,9 @@ const updatePrivacyIntoDB = async (id: string, payload: any) => {
 };
 
 const deletePrivacyFromDB = async (id: string) => {
-  const deletedService = await Privacy.findByIdAndUpdate(
+  const deletedService = await Privacy.findByIdAndDelete(
     id,
-    { isDeleted: true },
+    // { isDeleted: true },
     { new: true },
   );
 
