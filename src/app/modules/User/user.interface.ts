@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
-export interface TUser { 
+export interface TUser {
   name: {
     firstName: string;
-    lastName: string;
+    lastName: string
   };
   email: string;
   phoneNo: string;
@@ -30,6 +30,7 @@ export interface TUser {
   legalForm?: string;
   isDeleted: boolean;
 }
+
 export interface UserModel extends Model<TUser> {
   // Static methods for checking if the user exists
     // isUserExistsByCustomEmail(email: string): Promise<TUser>;

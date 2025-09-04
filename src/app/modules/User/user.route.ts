@@ -4,8 +4,8 @@ import express, { NextFunction, Response, Request } from 'express';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from './user.constant';
 import { UserControllers } from './user.controller';
-import validateRequest from '../../middlewares/validateRequest';
-import { UserValidation } from './user.validation';
+// import validateRequest from '../../middlewares/validateRequest';
+// import { UserValidation } from './user.validation';
 import { uploadFileS3 } from '../../utils/UploaderS3';
 
 const router = express.Router();
@@ -27,7 +27,7 @@ router.post(
     }
     next();
   },
-  validateRequest(UserValidation.createUserValidationSchema),
+  // validateRequest(UserValidation.createUserValidationSchema),
   UserControllers.createUser,
 );
 
@@ -97,7 +97,7 @@ router.patch(
     }
     next();
   },
-  validateRequest(UserValidation.updateUserValidationSchema),
+  // validateRequest(UserValidation.updateUserValidationSchema),
   UserControllers.updateUser,
 );
 
