@@ -7,6 +7,7 @@ import { PrivacyRoutes } from '../modules/Privacy/Privacy.route';
 import { TermRoutes } from '../modules/Term/Term.route';
 import { ContactRoutes } from '../modules/Contact/Contact.route';
 import { NotificationRoutes } from '../modules/Notification/Notification.route';
+import { ItemRoutes } from '../modules/Item/Item.route';
 
 const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: '/notifications',
     route: NotificationRoutes,
+  },
+  {
+    path: '/items',
+    route: ItemRoutes,
   }
 
 ];
