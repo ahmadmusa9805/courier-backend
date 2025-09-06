@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { TermServices } from './Term.service';
 
 const createTerm = catchAsync(async (req, res) => {
-  const { term: TermData } = req.body;
+  const TermData = req.body;
   const result = await TermServices.createTermIntoDB(TermData);
 
   sendResponse(res, {
@@ -41,7 +41,7 @@ const getAllTerms = catchAsync(async (req, res) => {
 
 const updateTerm = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { term} = req.body;
+  const term = req.body;
   const result = await TermServices.updateTermIntoDB(id, term);
 
   sendResponse(res, {

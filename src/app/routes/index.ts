@@ -11,6 +11,7 @@ import { ItemRoutes } from '../modules/Item/Item.route';
 import { TimeSlotRoutes } from '../modules/TimeSlot/TimeSlot.route';
 import { BlogRoutes } from '../modules/Blog/Blog.route';
 import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
+import { FaqRoutes } from '../modules/Faq/Faq.route';
 
 const router = Router();
 
@@ -62,6 +63,10 @@ const moduleRoutes = [
   {
     path: '/testimonials',
     route: TestimonialRoutes,
+  },
+  {
+    path: '/faqs',
+    route: FaqRoutes,
   }
 
 ];

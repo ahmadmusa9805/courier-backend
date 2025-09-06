@@ -2,14 +2,17 @@ import { z } from 'zod';
 
 export const createContactValidationSchema = z.object({
   body: z.object({
-    contact: z.object({
-      phone: z.string().min(1),
+    // contact: z.object({
+      name: z.string().min(1),
       email: z.string().min(1),
-      facebook: z.string().min(1),
-      instagram: z.string().min(1),
-      twitter: z.string().min(1),
-      isDeleted: z.boolean().default(false),
-    }),
+      message: z.string().min(1),
+      // phone: z.string().min(1),
+      // email: z.string().min(1),
+      // facebook: z.string().min(1),
+      // instagram: z.string().min(1),
+      // twitter: z.string().min(1),
+      // isDeleted: z.boolean().default(false),
+    // }),
   }),
 });
 
