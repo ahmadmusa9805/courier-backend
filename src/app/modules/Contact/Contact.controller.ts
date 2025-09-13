@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { ContactServices } from './Contact.service';
 
 const createContact = catchAsync(async (req, res) => {
-  const { contact: ContactData } = req.body;
+  const ContactData = req.body;
   const result = await ContactServices.createContactIntoDB(ContactData);
 
   sendResponse(res, {
@@ -41,7 +41,7 @@ const getAllContacts = catchAsync(async (req, res) => {
 
 const updateContact = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { contact } = req.body;
+  const contact = req.body;
   const result = await ContactServices.updateContactIntoDB(id, contact);
 
   sendResponse(res, {

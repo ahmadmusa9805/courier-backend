@@ -6,17 +6,20 @@ import { CONTACT_SEARCHABLE_FIELDS } from './Contact.constant';
 import mongoose from 'mongoose';
 import { TContact } from './Contact.interface';
 import { Contact } from './Contact.model';
+import { SendEmail } from '../../utils/sendEmail';
 
 const createContactIntoDB = async (
   payload: TContact,
 ) => {
-  const result = await Contact.create(payload);
+    await SendEmail.sendEmailToAdmin(payload);
+  // const result = await Contact.create(payload);
   
-  if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Contact');
-  }
+  // if (!result) {
+  //   throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Contact');
+  // }
 
-  return result;
+  // return result;
+   return " Email Send Successfully"; 
 };
 
 const getAllContactsFromDB = async (query: Record<string, unknown>) => {

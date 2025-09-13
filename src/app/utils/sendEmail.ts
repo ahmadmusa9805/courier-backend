@@ -39,5 +39,30 @@ export class SendEmail {
       throw new Error('Failed to send OTP email.');
     }
   }
+
+ static async sendEmailToAdmin(payload: any): Promise<void> {
+    const { name, email, message } = payload;
+
+  const mailOptions = {
+    from: email,
+    to: config.admin_email_user,
+    subject: `New Message For Support from ${name}`,
+    text: `
+      Name: ${name}
+      Email: ${email}
+      Message: ${message}
+    `
+  };
+
+    console.log("testing", mailOptions)
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Email have come from ${payload.email}`);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new Error('Failed to come email.');
+    }
+  }
 }
 
