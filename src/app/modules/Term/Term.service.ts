@@ -13,7 +13,14 @@ const createTermIntoDB = async (
   const term = await Term.find({ isDeleted: false });
   
   if(term.length > 0){
-    throw new AppError(httpStatus.CONFLICT, 'Term already exists');
+
+ const updatedData = await Term.findByIdAndUpdate(
+    { _id: term[0]._id },
+    payload,
+    { new: true, runValidators: true },
+  );
+  return updatedData;
+    // throw new AppError(httpStatus.CONFLICT, 'Term already exists');
   }
   const result = await Term.create(payload);
   
