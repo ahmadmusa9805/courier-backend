@@ -8,34 +8,21 @@
 // time slot                (for courier, user, admin)
 // blog                     (home page for user)
 // testimonial
-
 // customer support         (for courier, user, admin)
-// daily route              (for courier)  (need to discuss for courier part)
 // Term and condition
 // Privacy policy
+// reviews                  
 // FAQ
-
-// notification             (for courier, user, admin)
-// analitics
-// chat                     (for courier, user, admin)
-// jobs                     (for courier, user, admin) (need to discuss for courier part)
-// payment
-// payout
-// reviews                  
-// reviews                  
-// blog                     (home page for user)
-// customer support         (for courier, user, admin)
-// testimonial
-// Term and condition
-// Privacy policy
 // analitics
 
-// notification             (for courier, user, admin)
 // jobs                     (for courier, user, admin) (need to discuss for courier part)
 // daily route              (for courier)  (need to discuss for courier part)
+// notification             (for courier, user, admin)
 // chat                     (for courier, user, admin)
-// payout
 // payment
+// payout
+
+
 
 // ==================================================================================
 

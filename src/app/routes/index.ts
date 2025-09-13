@@ -12,6 +12,7 @@ import { TimeSlotRoutes } from '../modules/TimeSlot/TimeSlot.route';
 import { BlogRoutes } from '../modules/Blog/Blog.route';
 import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
 import { RatingRoutes } from '../modules/Rating/Rating.route';
+import { AnalyticRoutes } from '../modules/Analytic/Analytic.route';
 
 const router = Router();
 
@@ -67,6 +68,10 @@ const moduleRoutes = [
   {
     path: '/ratings',
     route: RatingRoutes,
+  },
+  {
+    path: '/analytics',
+    route: AnalyticRoutes,
   }
 
 ];
