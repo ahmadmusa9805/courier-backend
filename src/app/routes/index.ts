@@ -13,6 +13,7 @@ import { BlogRoutes } from '../modules/Blog/Blog.route';
 import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
 import { RatingRoutes } from '../modules/Rating/Rating.route';
 import { AnalyticRoutes } from '../modules/Analytic/Analytic.route';
+import { FaqRoutes } from '../modules/Faq/Faq.route';
 
 const router = Router();
 
@@ -64,6 +65,10 @@ const moduleRoutes = [
   {
     path: '/testimonials',
     route: TestimonialRoutes,
+  },
+  {
+    path: '/faqs',
+    route: FaqRoutes,
   },
   {
     path: '/ratings',
