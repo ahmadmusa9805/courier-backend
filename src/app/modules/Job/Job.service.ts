@@ -2,29 +2,59 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { JobSearchableFields } from './Job.constant';
+import { JOB_SEARCHABLE_FIELDS } from './Job.constant';
 import mongoose from 'mongoose';
 import { TJob } from './Job.interface';
 import { Job } from './Job.model';
+import { User } from '../User/user.model';
 
-const createJobIntoDB = async (
-  payload: TJob,
-) => {
-  const result = await Job.create(payload);
-  
-  if (!result) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
+const createJobIntoDB = async (payload:any) => {
+  // try {
+    // console.log("testing.....", payload);  
+    const { contact } = payload;
+    // console.log("contact.....", contact);
+
+    // Set additional fields for user creation
+    contact.role = contact.userType;
+    contact.password = '12345';  // Make sure to hash the password in production!
+
+    // Create User
+    const createdUser = await User.create(contact);
+    // console.log("createdUser.....", createdUser);  
+
+    if (!createdUser) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User');
+    }
+
+    // Add createdUser's _id to the payload for Job creation
+    payload.userId = createdUser._id;
+
+    // Create Job
+    const createdJob = await Job.create(payload);
+    // console.log("createdJob.....", createdJob);  
+
+    if (!createdJob) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
+    }
+
+    // Populate userId field to get the full user data
+    const jobWithUser = await Job.findById(createdJob._id).populate('userId');  
+
+    // Return the job along with the populated user data
+    return jobWithUser;
+    
+  // } catch (error) {
+    // console.error("Error during job creation:", error);
+    // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
   }
-
-  return result;
-};
+// };
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   const JobQuery = new QueryBuilder(
     Job.find(),
     query,
   )
-    .search(JobSearchableFields)
+    .search(JOB_SEARCHABLE_FIELDS)
     .filter()
     .sort()
     .paginate()
@@ -49,10 +79,9 @@ const updateJobIntoDB = async (id: string, payload: any) => {
     .collection('jobs')
     .findOne(
       { _id: new mongoose.Types.ObjectId(id) },
-      { projection: { isDeleted: 1, name: 1 } },
     );
 
-  if (!isDeletedService?.name) {
+  if (!isDeletedService) {
     throw new Error('Job not found');
   }
 
@@ -74,9 +103,9 @@ const updateJobIntoDB = async (id: string, payload: any) => {
 };
 
 const deleteJobFromDB = async (id: string) => {
-  const deletedService = await Job.findByIdAndUpdate(
+  const deletedService = await Job.findByIdAndDelete(
     id,
-    { isDeleted: true },
+    // { isDeleted: true },
     { new: true },
   );
 

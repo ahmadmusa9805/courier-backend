@@ -8,7 +8,7 @@ export interface TUser {
     lastName: string
   };
   email: string;
-  phoneNo: string;
+  phone: string;
   password: string;
   address?: string;
   otpVerified: boolean;
@@ -18,7 +18,7 @@ export interface TUser {
   status: 'active' | 'blocked';
   emailStatus: 'verified' | 'unverified';
   jobPosted?: boolean;
-  userType?: 'individual' | 'company';
+  userType?: 'user' | 'company';
   companyName?: string;
   companyLocation?: string;
   approvalStatus?: boolean;

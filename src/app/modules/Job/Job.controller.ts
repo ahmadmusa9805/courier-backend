@@ -4,7 +4,7 @@ import sendResponse from '../../utils/sendResponse';
 import { JobServices } from './Job.service';
 
 const createJob = catchAsync(async (req, res) => {
-  const { Job: JobData } = req.body;
+  const JobData = req.body;
   const result = await JobServices.createJobIntoDB(JobData);
 
   sendResponse(res, {
@@ -41,7 +41,7 @@ const getAllJobs = catchAsync(async (req, res) => {
 
 const updateJob = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { Job } = req.body;
+  const Job = req.body;
   const result = await JobServices.updateJobIntoDB(id, Job);
 
   sendResponse(res, {

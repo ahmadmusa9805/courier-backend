@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TJob = {
+  userId: Types.ObjectId
+  // courierId: Types.ObjectId
   from: string;
   to: string;
   transportationType: {
@@ -20,7 +22,6 @@ export type TJob = {
     width: string;
     height: string;
   }]
-
   pickupDateInfo: {
     date: Date;
     timeSlot: string;
@@ -64,17 +65,17 @@ export type TJob = {
     description: string;
   };
 
-  contact: {
-    phone: string;
-    email: string;
-    name: {
-          firstName: string;
-          instagram: string;
-    };
-    userType: 'individual' | 'company';
-  };
+  // contact: {
+  //   phone: string;
+  //   email: string;
+  //   name: {
+  //         firstName: string;
+  //         lastName: string;
+  //   };
+  //   userType: 'user' | 'company';
+  // };
 
-  status: 'active' | 'inactive';
+  status: 'pending' | 'accepted' | 'completed';
   totalDistance: string;
   totalPrice: number;
   isDeleted: boolean;

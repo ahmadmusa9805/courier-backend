@@ -6,7 +6,7 @@ import { createJobValidationSchema, updateJobValidationSchema } from './Job.vali
 const router = express.Router();
 
 router.post(
-  '/create-Job',
+  '/create-job',
   validateRequest(createJobValidationSchema),
   JobControllers.createJob,
 );
@@ -18,7 +18,7 @@ router.get(
 
 router.patch(
   '/:id',
-  validateRequest(updateJobValidationSchema),
+  // validateRequest(updateJobValidationSchema),
   JobControllers.updateJob,
 );
 
