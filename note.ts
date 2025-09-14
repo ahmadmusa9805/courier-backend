@@ -77,20 +77,20 @@
 // jobs
 // from
 // to
-// Where do we pick it up? (from private home, from store, from an auction, small move)
+// transportationType{
+//     fromprivatehome:{
+
+// }
+//     fromstore
+//     fromanauction
+//     smallmove
+// }
+// Where do we pick it up? (fromprivatehome, fromstore, from an auction, small move)
 // Where does the object come from?
 // item
      // Product Name *
      // dimensions (L x W x H) in cm *
      // Does it contain any of these materials? (glass, wood, metal , food, plants, animals, others)  
-
-
-
-
-
-
-
-
 
 //items
 // name
@@ -102,6 +102,16 @@
 // status (active, inactive)
 // description
 // file
+
+
+
+
+
+
+
+
+
+
 
 
 // reviews
