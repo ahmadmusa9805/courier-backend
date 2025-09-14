@@ -30,11 +30,11 @@ export const createJobValidationSchema = z.object({
       }),
     ),
     pickupDateInfo: z.object({
-      date: z.date(),
+      date: z.string(),
       timeSlot: z.string().min(1),
     }),
     deliveryDateInfo: z.object({
-      date: z.date(),
+      date: z.string(),
       timeSlot: z.string().min(1),
     }),
     extraService: z.object({
@@ -44,8 +44,8 @@ export const createJobValidationSchema = z.object({
         extraHelp: z.number(),
       }),
       floor: z.object({
-        groundFloor: z.boolean(),
-        elevator: z.boolean(),
+        groundFloor: z.boolean().optional(),
+        elevator: z.boolean().optional(),
         level: z.number(),
         price: z.number(),
       }),
@@ -69,11 +69,11 @@ export const createJobValidationSchema = z.object({
       email: z.string().min(1),
       name: z.object({
         firstName: z.string().min(1),
-        instagram: z.string().min(1),
+        lastName: z.string().min(1),
       }),
-      userType: z.enum(['individual', 'company']),
+      userType: z.enum(['user', 'company']),
     }),
-    status: z.enum(['active', 'inactive']),
+    status: z.enum(['pending', 'accepted', 'completed']),
     totalDistance: z.string().min(1),
     totalPrice: z.number(),
     isDeleted: z.boolean().default(false),
@@ -82,11 +82,72 @@ export const createJobValidationSchema = z.object({
 
 export const updateJobValidationSchema = z.object({
   body: z.object({
-    Job: z.object({
-      name: z.string().optional(),
-      description: z.string().optional(),
-      atcCodes: z.string().optional(),
-      isDeleted: z.boolean().optional(),
-    }),
-  }),
+     from: z.string().min(1).optional(),
+    to: z.string().min(1).optional(),
+    transportationType: z.object({
+      name: z.string().min(1).optional(),
+      options: z.string().min(1).optional(),
+    }).optional(),
+    items: 
+    // z.object(
+      z.object({
+        name: z.string().min(1).optional(),
+        img: z.string().min(1).optional(),
+        quantity: z.number().optional(),
+        dimensions: z.string().min(1).optional(),
+        materialContent: z.enum([
+          'glass',
+          'wood',
+          'metal',
+          'food',
+          'plants',
+          'animals',
+          'others',
+        ]).optional(),
+        price: z.number().optional(),
+        length: z.string().min(1).optional(),
+        width: z.string().min(1).optional(),
+        height: z.string().min(1).optional(),
+      }).optional(),
+    // ).optional(),
+    pickupDateInfo: z.object({
+      date: z.string().optional(),
+      timeSlot: z.string().min(1).optional(),
+    }).optional(),
+    deliveryDateInfo: z.object({
+      date: z.string().optional(),
+      timeSlot: z.string().min(1).optional(),
+    }).optional(),
+    extraService: z.object({
+      service: z.object({
+        carWithLift: z.number().optional(),
+        noNeed: z.number().optional(),
+        extraHelp: z.number().optional(),
+      }).optional(),
+      floor: z.object({
+        groundFloor: z.boolean().optional(),
+        elevator: z.boolean().optional(),
+        level: z.number().optional(),
+        price: z.number().optional(),
+      }).optional(),
+    }).optional(),
+    pickupAddress: z.object({
+      streetAddress: z.string().min(1).optional(),
+      cityOrState: z.string().min(1).optional(),
+      zipCode: z.string().min(1).optional(),
+      country: z.string().min(1).optional(),
+      description: z.string().min(1).optional(),
+    }).optional(),
+    deliveryAddress: z.object({
+      streetAddress: z.string().min(1).optional(),
+      cityOrState: z.string().min(1).optional(),
+      zipCode: z.string().min(1).optional(),
+      country: z.string().min(1).optional(),
+      description: z.string().min(1).optional(),
+    }).optional(),
+    status: z.enum(['pending', 'accepted', 'completed']).optional(),
+    totalDistance: z.string().min(1).optional(),
+    totalPrice: z.number().optional(),
+    isDeleted: z.boolean().default(false).optional(),
+  }).optional(),
 });

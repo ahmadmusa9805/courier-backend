@@ -2,6 +2,16 @@ import { Schema, model } from 'mongoose';
 import { TJob, JobModel } from './Job.interface';
 
 const JobSchema = new Schema<TJob, JobModel>({
+    userId: {
+    type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
+    ref: 'User', // This links to the User model (if applicable)
+    required: true, // Optional, depending on your use case
+  },
+  // courierId: {
+  //   type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
+  //   ref: 'Courier', // This links to the Courier model (if applicable)
+  //   required: true, // Optional, depending on your use case
+  // },
   from: { type: String, required: true },
   to: { type: String, required: true },
   transportationType: {
@@ -40,10 +50,10 @@ const JobSchema = new Schema<TJob, JobModel>({
       extraHelp: { type: Number, required: true },
     },
     floor: {
-      groundFloor: { type: Boolean, required: true },
-      elevator: { type: Boolean, required: true },
-      level: { type: Number, required: true },
-      price: { type: Number, required: true },
+      groundFloor: { type: Boolean, default: false },
+      elevator: { type: Boolean, default: false},
+      level: { type: Number, default: 0 },
+      price: { type: Number, default: 0 },
     },
   },
   pickupAddress: {
@@ -60,20 +70,11 @@ const JobSchema = new Schema<TJob, JobModel>({
     country: { type: String, required: true },
     description: { type: String, required: true },
   },
-  contact: {
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    name: {
-      firstName: { type: String, required: true },
-      instagram: { type: String, required: true },
-    },
-    userType: { type: String, enum: ['individual', 'company'], required: true },
-  },
-  status: { type: String, enum: ['active', 'inactive'], required: true },
+  status: { type: String, enum: ['pending', 'accepted', 'completed'], required: true },
   totalDistance: { type: String, required: true },
   totalPrice: { type: Number, required: true },
   isDeleted: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 JobSchema.statics.isJobExists = async function (id: string) {
   return await this.findOne({ _id: id, isDeleted: false });
