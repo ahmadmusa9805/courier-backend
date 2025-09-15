@@ -169,3 +169,56 @@
 // active users
 // blocked users
 // total reviews
+//////////////////////////////
+// for updating data it canbe work
+
+// Flatten function remains unchanged
+// const flattenObject = (obj: any, parentKey: string = ''): any => {
+//   let result: any = {};
+
+//   for (const key in obj) {
+//     if (obj.hasOwnProperty(key)) {
+//       const newKey = parentKey ? `${parentKey}.${key}` : key;
+//       if (typeof obj[key] === 'object' && obj[key] !== null) {
+//         Object.assign(result, flattenObject(obj[key], newKey)); // Recurse into nested object
+//       } else {
+//         result[newKey] = obj[key]; // Base case: primitive value, add to result
+//       }
+//     }
+//   }
+//   return result;
+// };
+
+
+// const updateJobIntoDB = async (id: string, payload: any) => {
+//   const {transportationType, items, pickupDateInfo, deliveryDateInfo, extraService, pickupAddress, deliveryAddress, ...other} = payload
+//   const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
+//   const existingJob = await mongoose.connection
+//     .collection('jobs')
+//     .findOne(
+//       { _id: new mongoose.Types.ObjectId(id) },
+//     );
+//   if (!existingJob) {
+//     throw new Error('Job not found');
+//   }
+//   if (existingJob.isDeleted) {
+//     throw new Error('Cannot update a deleted Job');
+//   }
+//   // Build the update query using $set to update only the desired fields
+//   const updateQuery: any = { $set: {} };
+//   // Add each field from flattened payload to the $set query
+//   for (const key in flattenedPayload) {
+//     if (flattenedPayload[key] !== undefined) {
+//       updateQuery.$set[key] = flattenedPayload[key];
+//     }
+//   }
+//   const updatedJob = await Job.findByIdAndUpdate(
+//     { _id: id },
+//     updateQuery,
+//     { new: true, runValidators: true },
+//   );
+//   if (!updatedJob) {
+//     throw new Error('Job not found after update');
+//   }
+//   return updatedJob;
+// };

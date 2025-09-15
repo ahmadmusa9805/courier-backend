@@ -45,8 +45,6 @@ export type TJob = {
       level: number;
       price: number;
      };
-
-
   };
 
   pickupAddress: {

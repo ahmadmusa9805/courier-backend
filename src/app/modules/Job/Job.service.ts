@@ -7,6 +7,8 @@ import mongoose from 'mongoose';
 import { TJob } from './Job.interface';
 import { Job } from './Job.model';
 import { User } from '../User/user.model';
+import { flattenObject } from './job.utils';
+
 
 const createJobIntoDB = async (payload:any) => {
   // try {
@@ -47,7 +49,6 @@ const createJobIntoDB = async (payload:any) => {
     // console.error("Error during job creation:", error);
     // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
   }
-// };
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   const JobQuery = new QueryBuilder(
@@ -75,31 +76,63 @@ const getSingleJobFromDB = async (id: string) => {
 };
 
 const updateJobIntoDB = async (id: string, payload: any) => {
-  const isDeletedService = await mongoose.connection
-    .collection('jobs')
-    .findOne(
-      { _id: new mongoose.Types.ObjectId(id) },
-    );
+  const { items, extraService, ...other } = payload;
+  const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
 
-  if (!isDeletedService) {
+  console.log("Flattened Payload:", flattenedPayload);
+
+  const existingJob = await mongoose.connection
+    .collection('jobs')
+    .findOne({ _id: new mongoose.Types.ObjectId(id) });
+
+  if (!existingJob) {
     throw new Error('Job not found');
   }
 
-  if (isDeletedService.isDeleted) {
+  if (existingJob.isDeleted) {
     throw new Error('Cannot update a deleted Job');
   }
 
-  const updatedData = await Job.findByIdAndUpdate(
+  const updateQuery: any = { $set: {} };
+
+  // Handle "add" and "remove" for items separately to avoid conflicts
+  if (items) {
+    if (items.add && items.add.length > 0) {
+      // First update: Add new items
+      await Job.updateOne(
+        { _id: id },
+        { $push: { items: { $each: items.add } } }
+      );
+    }
+
+    if (items.remove && items.remove.length > 0) {
+      // Second update: Remove items by ID
+      await Job.updateOne(
+        { _id: id },
+        { $pull: { items: { _id: { $in: items.remove } } } }
+      );
+    }
+  }
+
+  // Add other fields from the flattened payload to the update query
+  for (const key in flattenedPayload) {
+    if (flattenedPayload[key] !== undefined) {
+      updateQuery.$set[key] = flattenedPayload[key];
+    }
+  }
+
+  // Perform the update for other fields
+  const updatedJob = await Job.findByIdAndUpdate(
     { _id: id },
-    payload,
-    { new: true, runValidators: true },
+    updateQuery,
+    { new: true, runValidators: true }
   );
 
-  if (!updatedData) {
+  if (!updatedJob) {
     throw new Error('Job not found after update');
   }
 
-  return updatedData;
+  return updatedJob;
 };
 
 const deleteJobFromDB = async (id: string) => {
