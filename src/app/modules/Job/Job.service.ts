@@ -4,7 +4,6 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { JOB_SEARCHABLE_FIELDS } from './Job.constant';
 import mongoose from 'mongoose';
-import { TJob } from './Job.interface';
 import { Job } from './Job.model';
 import { User } from '../User/user.model';
 import { flattenObject } from './job.utils';
@@ -51,6 +50,7 @@ const createJobIntoDB = async (payload:any) => {
   }
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
+    console.log('query', query)
   const JobQuery = new QueryBuilder(
     Job.find(),
     query,
@@ -67,6 +67,75 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
     result,
     meta,
   };
+};
+
+const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
+
+
+  const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+  if (!usr) {
+    throw new Error('User not found');
+  }
+
+
+  // // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
+  if (usr.role === 'user' || usr.role === 'company') {
+    const JobQuery = new QueryBuilder(
+      Job.find({userId:usr._id}),
+      query,
+    )
+      .search(JOB_SEARCHABLE_FIELDS)
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+
+    const result = await JobQuery.modelQuery;
+    const meta = await JobQuery.countTotal();
+      console.log('result', result)
+    return {
+      result,
+      meta,
+    };
+  } else if (usr.role === 'courier') {
+    const JobQuery = new QueryBuilder(
+      Job.find({ courierId: usr._id }),
+      query,
+    )
+      .search(JOB_SEARCHABLE_FIELDS)
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+
+    const result = await JobQuery.modelQuery;
+    const meta = await JobQuery.countTotal();
+    return {
+      result,
+      meta,
+    };
+  } else {
+    // For any other role, return all jobs
+    const JobQuery = new QueryBuilder(
+      Job.find(),
+      query,
+    )
+      .search(JOB_SEARCHABLE_FIELDS)
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+
+    const result = await JobQuery.modelQuery;
+    const meta = await JobQuery.countTotal();
+    return {
+      result,
+      meta,
+    };
+  }
+
 };
 
 const getSingleJobFromDB = async (id: string) => {
@@ -155,4 +224,5 @@ export const JobServices = {
   getSingleJobFromDB,
   updateJobIntoDB,
   deleteJobFromDB,
+  getAllJobsForUserFromDB
 };

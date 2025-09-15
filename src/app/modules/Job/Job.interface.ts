@@ -3,7 +3,7 @@ import { Model, Types } from 'mongoose';
 
 export type TJob = {
   userId: Types.ObjectId
-  // courierId: Types.ObjectId
+  courierId?: Types.ObjectId
   from: string;
   to: string;
   transportationType: {

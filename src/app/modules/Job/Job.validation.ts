@@ -73,7 +73,7 @@ export const createJobValidationSchema = z.object({
       }),
       userType: z.enum(['user', 'company']),
     }),
-    status: z.enum(['pending', 'accepted', 'completed']),
+    status: z.enum(['pending', 'accepted', 'completed']).optional(),
     totalDistance: z.string().min(1),
     totalPrice: z.number(),
     isDeleted: z.boolean().default(false),
