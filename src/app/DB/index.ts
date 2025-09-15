@@ -8,7 +8,7 @@ const superUser = {
   password: config.super_admin_password || '12345',
   otpVerified: true,
   needsPasswordChange: false,
-  phoneNo: "+4407823878152",
+  phone: "+4407823878152",
   role: USER_ROLE.superAdmin,
   approvalStatus: true,
   status: 'active',

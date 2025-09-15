@@ -7,11 +7,11 @@ const JobSchema = new Schema<TJob, JobModel>({
     ref: 'User', // This links to the User model (if applicable)
     required: true, // Optional, depending on your use case
   },
-  // courierId: {
-  //   type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
-  //   ref: 'Courier', // This links to the Courier model (if applicable)
-  //   required: true, // Optional, depending on your use case
-  // },
+  courierId: {
+    type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
+    ref: 'Courier', // This links to the Courier model (if applicable)
+    // required: true, // Optional, depending on your use case
+  },
   from: { type: String, required: true },
   to: { type: String, required: true },
   transportationType: {
@@ -70,7 +70,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     country: { type: String, required: true },
     description: { type: String, required: true },
   },
-  status: { type: String, enum: ['pending', 'accepted', 'completed'], required: true },
+  status: { type: String, enum: ['pending', 'accepted', 'completed'], default: 'pending' },
   totalDistance: { type: String, required: true },
   totalPrice: { type: Number, required: true },
   isDeleted: { type: Boolean, default: false },
