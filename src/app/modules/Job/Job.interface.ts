@@ -74,6 +74,8 @@ export type TJob = {
   // };
 
   status: 'pending' | 'accepted' | 'completed';
+  adminApproved: boolean;
+  courierPrice: number;
   totalDistance: string;
   totalPrice: number;
   isDeleted: boolean;

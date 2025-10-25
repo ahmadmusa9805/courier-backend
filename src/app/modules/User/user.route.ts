@@ -11,7 +11,7 @@ import { uploadFileS3 } from '../../utils/UploaderS3';
 const router = express.Router();
 router.post(
   '/create-user',
-  auth(USER_ROLE.superAdmin),
+  // auth(USER_ROLE.superAdmin),
   // uploadFileS3(true).single('file'),
        uploadFileS3(true).fields([
   { name: 'img', maxCount: 5 },
@@ -81,7 +81,7 @@ router.delete(
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   // uploadFileS3(true).single('file'),
          uploadFileS3(true).fields([
   { name: 'img', maxCount: 5 },

@@ -45,6 +45,7 @@ const getSingleTestimonialFromDB = async (id: string) => {
 };
 
 const updateTestimonialIntoDB = async (id: string, payload: any) => {
+
   const isDeletedService = await mongoose.connection
     .collection('testimonials')
     .findOne(
