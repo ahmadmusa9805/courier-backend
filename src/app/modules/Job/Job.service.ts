@@ -71,14 +71,12 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
 
 const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
 
-
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
 
   if (!usr) {
     throw new Error('User not found');
   }
-
 
   // // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'user' || usr.role === 'company') {

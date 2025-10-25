@@ -70,6 +70,8 @@ const JobSchema = new Schema<TJob, JobModel>({
     country: { type: String, required: true },
     description: { type: String, required: true },
   },
+  adminApproved: {  type: Boolean, default: false },
+  courierPrice: { type: Number, default: 0 },
   status: { type: String, enum: ['pending', 'accepted', 'completed'], default: 'pending' },
   totalDistance: { type: String, required: true },
   totalPrice: { type: Number, required: true },

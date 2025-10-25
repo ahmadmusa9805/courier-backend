@@ -41,7 +41,7 @@ const getAllTestimonials = catchAsync(async (req, res) => {
 
 const updateTestimonial = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { Testimonial } = req.body;
+  const Testimonial = req.body;
   const result = await TestimonialServices.updateTestimonialIntoDB(id, Testimonial);
 
   sendResponse(res, {
