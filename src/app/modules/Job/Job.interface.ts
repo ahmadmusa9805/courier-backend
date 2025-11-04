@@ -73,7 +73,7 @@ export type TJob = {
   //   userType: 'user' | 'company';
   // };
 
-  status: 'pending' | 'accepted' | 'completed';
+  status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
   adminApproved: boolean;
   courierPrice: number;
   totalDistance: string;

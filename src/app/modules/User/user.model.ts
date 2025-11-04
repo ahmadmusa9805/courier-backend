@@ -12,6 +12,7 @@ const userSchema = new Schema<TUser, UserModel>(
     lastName: { type: String, required: true },
   },
   email: { type: String, required: true, unique: true },
+  averageRatings: { type: Number, default: 0 },
   phone: { type: String, required: true },
   password: { type: String, required: true },
   address: { type: String },

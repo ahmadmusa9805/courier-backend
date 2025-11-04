@@ -7,12 +7,29 @@ import mongoose from 'mongoose';
 import { TRating } from './Rating.interface';
 import { Rating } from './Rating.model';
 import { User } from '../User/user.model';
+import { Job } from '../Job/Job.model';
 
 const createRatingIntoDB = async (
   payload: TRating,
+  user: any
 ) => {
 
-    const { professionalism, communication, friendliness } = payload;
+const job = await Job.findOne({ _id: payload.jobId });
+
+if (!job?.courierId) {
+  throw new AppError(httpStatus.BAD_REQUEST, 'Courier ID not found for this job');
+}
+
+  payload.courierId = job?.courierId;
+
+  // Fetch the user based on email
+  const usr = await User.findOne({ email: user.userEmail });
+
+   // Set the userId to the currently logged-in user's ID
+   payload.userId = usr?._id;
+
+
+  const { professionalism, communication, friendliness } = payload;
   const totalRatings = professionalism + communication + friendliness;
   let averageRatings = totalRatings / 3;
 
@@ -22,12 +39,38 @@ const createRatingIntoDB = async (
   // Set the average ratings value
   payload.averageRatings = averageRatings;
 
-
   const result = await Rating.create(payload);
-  
+
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Rating');
   }
+
+  const ratings = await Rating.find({ courierId: payload.courierId });
+  
+  if(ratings.length === 0) {
+    throw new AppError(httpStatus.BAD_REQUEST, ' Rating not available for this courier');
+  }
+
+  const totalAverageRating = ratings.reduce((sum, rating) => sum + rating.averageRatings, 0);
+  const totalRatingsCount = ratings.length;
+  const overallAverageRating = totalAverageRating / totalRatingsCount;
+
+  const courierData = await User.findOne({ _id: job?.courierId });
+
+  if (!courierData) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Courier not found');
+  }
+
+  // Update the courier's average ratings
+  courierData.averageRatings = parseFloat(overallAverageRating.toFixed(2));
+
+  // Perform the update operation for the user (not the rating)
+  const updatedCourier = await User.findByIdAndUpdate(
+    job?.courierId,
+    { averageRatings: courierData.averageRatings },
+    { new: true, runValidators: true }
+  );
+
 
   return result;
 };

@@ -4,9 +4,21 @@ import { TRating, RatingModel } from './Rating.interface';
 
 const RatingSchema = new Schema<TRating, RatingModel>(
   {
-    userId: { type: String, required: true },
-    courierId: { type: String },
-    jobId: { type: String, required: true },
+    userId: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    ref: 'User',
+  },
+    courierId: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    ref: 'User',
+  },
+    jobId: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'Job id is required'],
+    ref: 'Job',
+  },
     comment: { type: String, required: true },
     professionalism: { type: Number, default: 0 },
     communication: { type: Number, default: 0 },
