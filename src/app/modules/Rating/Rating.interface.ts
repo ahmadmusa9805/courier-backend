@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TRating = {
-  userId: string;
-  courierId: string;
+  userId: Types.ObjectId,
+  courierId: Types.ObjectId,
+  jobId: Types.ObjectId,
   professionalism: number;
   communication: number;
   friendliness: number;
-  jobId: string;
-  comment: string;
   averageRatings: number;
+  comment: string;
   status: 'active' | 'blocked';
   isDeleted: boolean;
 };

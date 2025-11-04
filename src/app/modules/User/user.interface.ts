@@ -14,6 +14,7 @@ export interface TUser {
   address?: string;
   otpVerified: boolean;
   passwordChangedAt?: Date;
+  averageRatings?: number;
   profileImg?: string;
   role: 'superAdmin' | 'admin'   | 'courier' | 'user' | 'company';
   status: 'active' | 'blocked';
