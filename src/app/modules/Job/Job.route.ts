@@ -14,6 +14,12 @@ router.post(
 );
 
 router.get(
+  '/daily-route',
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
+  JobControllers.getDailyRouteJobs,
+);
+
+router.get(
   '/user',
   auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   JobControllers.getAllJobsForUser,
@@ -40,6 +46,7 @@ router.get(
   auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   JobControllers.getAllJobs,
 );
+
 
 
 export const JobRoutes = router;

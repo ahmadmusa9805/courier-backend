@@ -136,6 +136,59 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 
 };
 
+const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any) => {
+  console.log('query', query.pickupDate);
+
+  const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+  if (!usr) {
+    throw new Error('User not found');
+  }
+
+  // --- Handle pickupDate query ---
+  let dateFilter = {};
+  if (query.pickupDate) {
+    const date = new Date(query.pickupDate as string);
+
+    // Full UTC day range
+    const startOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0));
+
+    dateFilter = {
+      'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay },
+    };
+
+    console.log('Date filter:', dateFilter);
+
+    // Prevent QueryBuilder.filter() from overriding our date filter
+    delete query.pickupDate;
+  }
+
+  // --- Base query depending on role ---
+  let baseQuery = {};
+  if (usr.role === 'user' || usr.role === 'company') {
+    baseQuery = { userId: usr._id, ...dateFilter };
+  } else if (usr.role === 'courier') {
+    baseQuery = { courierId: usr._id, ...dateFilter };
+  } else {
+    baseQuery = { ...dateFilter };
+  }
+
+  // --- Query Builder chain ---
+  const JobQuery = new QueryBuilder(Job.find(baseQuery), query)
+    .search(JOB_SEARCHABLE_FIELDS)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await JobQuery.modelQuery;
+  const meta = await JobQuery.countTotal();
+
+  return { result, meta };
+};
+
 const getSingleJobFromDB = async (id: string) => {
   const result = await Job.findById(id);
 
@@ -222,5 +275,6 @@ export const JobServices = {
   getSingleJobFromDB,
   updateJobIntoDB,
   deleteJobFromDB,
-  getAllJobsForUserFromDB
+  getAllJobsForUserFromDB,
+  getDailyRouteJobsFromDB
 };
