@@ -9,9 +9,9 @@ import catchAsync from '../utils/catchAsync';
 
 const auth = (...requiredRoles: TUserRole[]) => {
    return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    
+      // console.log('Required Roles:');
     const token = req.headers.authorization;
-    console.log('Token for me:', token);
+    // console.log('Token for me:', token);
     // console.log('booking Dataaaaaaaaaaaaaaaaa:', req.body);
     // checking if the token is missing
     if (!token) {
@@ -68,7 +68,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
 
     req.user = decoded as JwtPayload & { role: string };
-    console.log('req.user:', req.user);
+    // console.log('req.user:', req.user);
     next();
   });
 };

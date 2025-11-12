@@ -1,32 +1,62 @@
-FROM node:22  AS builder
-# RUN apk add --no-cache python3 make g++ 
+# Build Stage (No changes needed here)
+FROM node:22 AS builder
 WORKDIR /app
-
-COPY package.json  ./
-COPY package-lock.json ./
-
-# RUN yarn cache clean
-# RUN npm cache clean --force
-
-# RUN yarn install --frozen-lockfile
-# RUN npm install --production
+COPY package.json package-lock.json ./
 RUN npm install
-
 COPY . .
-
-# RUN yarn build
 RUN npm run build
 
-FROM node:22 
+# ----------------------------------------------------------------------
 
+# Production Stage (Fix the COPY steps)
+FROM node:22
+
+# Ensure Node Modules are installed for production (if you need dev tools, use the builder stage)
+# The WORKDIR must be defined first
 WORKDIR /app
 
-# Copy package.json is required for npm to run
-COPY --from=builder /app/package.json ./
+# 1. Copy over the package files (to ensure node_modules from builder can be validated)
+COPY --from=builder /app/package.json /app/package-lock.json /app/
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
+# 2. Copy the *compiled* application files (dist)
+COPY --from=builder /app/dist /app/dist/
 
-EXPOSE 5000
+# 3. Copy the node_modules
+# NOTE: The build process should have put all necessary production dependencies in /app/node_modules
+COPY --from=builder /app/node_modules /app/node_modules/
 
-CMD ["npm","run", "start:prod"]
+
+# Expose the port
+EXPOSE 5001
+
+# Start the app in production mode
+CMD ["npm", "run", "start:prod"]
+
+
+# # Build Stage
+# FROM node:22 AS builder
+
+# WORKDIR /app
+
+# # Install dependencies
+# COPY package.json package-lock.json ./
+# RUN npm install
+
+# # Copy the entire app source code and build the app
+# COPY . .
+# RUN npm run build
+
+# # Production Stage
+# FROM node:22
+
+# WORKDIR /app
+
+# # Copy necessary files from the builder stage to the final image
+# COPY --from=builder /app/package.json /app/package-lock.json /app/dist /app/node_modules /app/
+
+# # Expose the port
+# EXPOSE 5001
+
+# # Start the app in production mode
+# CMD ["npm", "run", "start:prod"]
+# /////////////////////////////////////////

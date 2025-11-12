@@ -1,5 +1,4 @@
 
-# dependencies
 /node_modules
 /.pnp
 .pnp.js
@@ -9,6 +8,7 @@
 
 # production
 /build
+/dist        # <-- Add dist here to ignore it
 
 # misc
 .DS_Store

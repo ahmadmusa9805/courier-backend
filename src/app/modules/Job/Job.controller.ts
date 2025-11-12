@@ -49,6 +49,18 @@ const getAllJobs = catchAsync(async (req, res) => {
     data: result.result,
   });
 });
+const getDailyRouteJobs = catchAsync(async (req, res) => {
+
+  const result = await JobServices.getDailyRouteJobsFromDB(req.query, req.user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Jobs are retrieved successfully',
+    meta: result.meta,
+    data: result.result,
+  });
+});
 
 const updateJob = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -81,5 +93,6 @@ export const JobControllers = {
   getAllJobs,
   updateJob,
   deleteJob,
-  getAllJobsForUser
+  getAllJobsForUser,
+  getDailyRouteJobs
 };
