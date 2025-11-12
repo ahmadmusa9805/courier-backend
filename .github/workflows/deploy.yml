@@ -84,6 +84,7 @@ jobs:
     - name: Deploy Application
       run: |
         ssh -i /tmp/courier-keypair.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+        sudo usermod -aG docker $USER
         cd /var/www/courier-backend
         docker-compose down || true  # Ensure containers are stopped first
         docker-compose up -d --build  # Build and run the containers in detached mode
