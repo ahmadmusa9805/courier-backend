@@ -1,17 +1,13 @@
-# version: '3.8'
+version: '3.8'
 
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: . 
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
     ports:
-      - "5000:5000" # Match the PORT from your .env file
-    volumes:        # For hot-reloading during development(optional, not need in production)
-      - .:/app
-      - /app/node_modules
+      - "5001:5001"  # Expose port 5001 from the container to the host
     env_file:
-      - .env # Specify your .env file
-    # command: npm run start:dev # Or your relevant start script
-    command: npm run start:prod # Or your relevant start script
-    restart: always
+      - .env  # Load environment variables from the .env file
+    command: npm run start:prod  # Command to start the app in production mode
+    restart: always  # Ensure the container restarts if it stops
