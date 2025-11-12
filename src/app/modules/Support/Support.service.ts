@@ -2,7 +2,7 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { SupportSearchableFields } from './Support.constant';
+import { SUPPORT_SEARCHABLE_FIELDS } from './Support.constant';
 import mongoose from 'mongoose';
 import { TSupport } from './Support.interface';
 import { Support } from './Support.model';
@@ -24,7 +24,7 @@ const getAllSupportsFromDB = async (query: Record<string, unknown>) => {
     Support.find(),
     query,
   )
-    .search(SupportSearchableFields)
+    .search(SUPPORT_SEARCHABLE_FIELDS)
     .filter()
     .sort()
     .paginate()
