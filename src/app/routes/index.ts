@@ -17,6 +17,7 @@ import { FaqRoutes } from '../modules/Faq/Faq.route';
 import { Upload } from '../modules/Upload/Upload.model';
 import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
+import { paymetRoute } from '../modules/mollie_payments/mollie.route';
 
 const router = Router();
 
@@ -88,6 +89,10 @@ const moduleRoutes = [
   {
     path: '/jobs',
     route: JobRoutes,
+  },
+   {
+    path: '/payments',
+    route: paymetRoute,
   }
 
 ];

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import httpServer from './app.js';  // Import HTTP server from app.ts
 import config from './app/config/index.js';
 import seedSuperAdmin from './app/DB/index.js';
+import { createPaymentWithMollie } from './app/modules/mollie_payments/mollie.service.js';
 let server: Server;
 async function main() {
   try {
@@ -14,6 +15,7 @@ async function main() {
     server = httpServer.listen(config.port, () => {
       // server = app.listen(5000, () => {
       console.log(`application is listening on port ${config.port}`);
+      // createPaymentWithMollie()
     });
   } catch (err) {
     console.log(err);
