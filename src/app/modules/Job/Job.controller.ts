@@ -65,7 +65,7 @@ const getDailyRouteJobs = catchAsync(async (req, res) => {
 const updateJob = catchAsync(async (req, res) => {
   const { id } = req.params;
   const Job = req.body;
-  const result = await JobServices.updateJobIntoDB(id, Job);
+  const result = await JobServices.updateJobIntoDB(id, Job, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -34,15 +34,11 @@ export type TJob = {
 
   extraService: {
      service: {
-       carWithLift: number;
-       noNeed: number;
-       extraHelp: number;
+      options: string
      };
 
      floor: {
-      groundFloor: boolean;
-      elevator:boolean
-      level: number;
+      options: string;
       price: number;
      };
   };
@@ -62,17 +58,6 @@ export type TJob = {
     country: string;
     description: string;
   };
-
-  // contact: {
-  //   phone: string;
-  //   email: string;
-  //   name: {
-  //         firstName: string;
-  //         lastName: string;
-  //   };
-  //   userType: 'user' | 'company';
-  // };
-
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
   adminApproved: boolean;
   courierPrice: number;

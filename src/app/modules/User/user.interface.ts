@@ -3,7 +3,6 @@ import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
 export interface TUser {
-  _id: any;
   name: {
     firstName: string;
     lastName: string
@@ -12,7 +11,7 @@ export interface TUser {
   phone: string;
   password: string;
   address?: string;
-  otpVerified: boolean;
+  otpVerified?: boolean;
   passwordChangedAt?: Date;
   averageRatings?: number;
   profileImg?: string;
@@ -28,6 +27,7 @@ export interface TUser {
   howKnow?: 'google' | 'socialMedia' | 'website';
   courierExperience?: string;
   profileVerified?: 'verified' | 'unverified';
+  kvkNumber?: string;
   document?: string;
   legalForm?: string;
   isDeleted: boolean;

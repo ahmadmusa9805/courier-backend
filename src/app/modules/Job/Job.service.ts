@@ -11,16 +11,24 @@ import { flattenObject } from './job.utils';
 
 const createJobIntoDB = async (payload:any) => {
   // try {
-    // console.log("testing.....", payload);  
     const { contact } = payload;
-    // console.log("contact.....", contact);
 
-    // Set additional fields for user creation
-    contact.role = contact.userType;
-    contact.password = '12345';  // Make sure to hash the password in production!
+   const userdata = {
+    name: contact.name,
+    email: contact.email,
+    phone: contact.phone,
+    password: contact.password || '12345',
+    role: contact.userType,
+    userType: contact.userType,
+   }
+
+
+    const existingUser = await User.isUserExistsByCustomEmail(contact.email);
+
+    if (!existingUser) {
 
     // Create User
-    const createdUser = await User.create(contact);
+    const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);  
 
     if (!createdUser) {
@@ -29,6 +37,13 @@ const createJobIntoDB = async (payload:any) => {
 
     // Add createdUser's _id to the payload for Job creation
     payload.userId = createdUser._id;
+  }
+
+   if(existingUser) {
+    payload.userId = (existingUser as any)._id;
+   }
+
+
 
     // Create Job
     const createdJob = await Job.create(payload);
@@ -48,9 +63,7 @@ const createJobIntoDB = async (payload:any) => {
     // console.error("Error during job creation:", error);
     // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
   }
-
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
-    console.log('query', query)
   const JobQuery = new QueryBuilder(
     Job.find(),
     query,
@@ -70,7 +83,6 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
-
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
 
@@ -81,7 +93,7 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
   // // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'user' || usr.role === 'company') {
     const JobQuery = new QueryBuilder(
-      Job.find({userId:usr._id}),
+      Job.find({userId:(usr as any)._id}),
       query,
     )
       .search(JOB_SEARCHABLE_FIELDS)
@@ -92,14 +104,13 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 
     const result = await JobQuery.modelQuery;
     const meta = await JobQuery.countTotal();
-      console.log('result', result)
     return {
       result,
       meta,
     };
   } else if (usr.role === 'courier') {
     const JobQuery = new QueryBuilder(
-      Job.find({ courierId: usr._id }),
+      Job.find({ courierId: (usr as any)._id }),
       query,
     )
       .search(JOB_SEARCHABLE_FIELDS)
@@ -137,7 +148,6 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 };
 
 const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any) => {
-  console.log('query', query.pickupDate);
 
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
@@ -159,8 +169,6 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
       'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay },
     };
 
-    console.log('Date filter:', dateFilter);
-
     // Prevent QueryBuilder.filter() from overriding our date filter
     delete query.pickupDate;
   }
@@ -168,9 +176,9 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
   // --- Base query depending on role ---
   let baseQuery = {};
   if (usr.role === 'user' || usr.role === 'company') {
-    baseQuery = { userId: usr._id, ...dateFilter };
+    baseQuery = { userId: (usr as any)._id, ...dateFilter };
   } else if (usr.role === 'courier') {
-    baseQuery = { courierId: usr._id, ...dateFilter };
+    baseQuery = { courierId: (usr as any)._id, ...dateFilter };
   } else {
     baseQuery = { ...dateFilter };
   }
@@ -190,16 +198,25 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
 };
 
 const getSingleJobFromDB = async (id: string) => {
-  const result = await Job.findById(id);
+  const result = await Job.findById(id).populate('userId').populate('courierId');
 
   return result;
 };
 
-const updateJobIntoDB = async (id: string, payload: any) => {
-  const { items, extraService, ...other } = payload;
-  const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
+const updateJobIntoDB = async (id: string, payload: any, user: any) => {
 
-  console.log("Flattened Payload:", flattenedPayload);
+  const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+  if (!usr) {
+    throw new Error('User not found');
+  }
+
+
+
+  const { items } = payload;
+  // const { items, extraService, ...other } = payload;
+  const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
 
   const existingJob = await mongoose.connection
     .collection('jobs')
@@ -239,6 +256,11 @@ const updateJobIntoDB = async (id: string, payload: any) => {
     if (flattenedPayload[key] !== undefined) {
       updateQuery.$set[key] = flattenedPayload[key];
     }
+  }
+
+   // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
+  if (usr.role === 'courier' || payload.status === 'accepted') {
+    updateQuery.courierId = (usr as any)._id;
   }
 
   // Perform the update for other fields

@@ -32,6 +32,7 @@ const userSchema = new Schema<TUser, UserModel>(
   courierExperience: { type: String },
   profileVerified: { type: String, enum: ['verified', 'unverified'], default: 'verified' },
   document: { type: String },
+  kvkNumber: { type: String },
   legalForm: { type: String },
   isDeleted: { type: Boolean, default: false },
   },

@@ -9,7 +9,7 @@ const JobSchema = new Schema<TJob, JobModel>({
   },
   courierId: {
     type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
-    ref: 'Courier', // This links to the Courier model (if applicable)
+    ref: 'User', // This links to the Courier model (if applicable)
     // required: true, // Optional, depending on your use case
   },
   from: { type: String, required: true },
@@ -45,14 +45,10 @@ const JobSchema = new Schema<TJob, JobModel>({
   },
   extraService: {
     service: {
-      carWithLift: { type: Number, required: true },
-      noNeed: { type: Number, required: true },
-      extraHelp: { type: Number, required: true },
+      options: { type: String, required: true },
     },
     floor: {
-      groundFloor: { type: Boolean, default: false },
-      elevator: { type: Boolean, default: false},
-      level: { type: Number, default: 0 },
+      options: { type: String,  required: true},
       price: { type: Number, default: 0 },
     },
   },
