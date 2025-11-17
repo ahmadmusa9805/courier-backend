@@ -12,7 +12,6 @@ import { flattenObject } from './job.utils';
 const createJobIntoDB = async (payload:any) => {
   // try {
     const { contact } = payload;
-
    const userdata = {
     name: contact.name,
     email: contact.email,
@@ -22,11 +21,8 @@ const createJobIntoDB = async (payload:any) => {
     userType: contact.userType,
    }
 
-
     const existingUser = await User.isUserExistsByCustomEmail(contact.email);
-
     if (!existingUser) {
-
     // Create User
     const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);  
@@ -42,8 +38,6 @@ const createJobIntoDB = async (payload:any) => {
    if(existingUser) {
     payload.userId = (existingUser as any)._id;
    }
-
-
 
     // Create Job
     const createdJob = await Job.create(payload);
@@ -81,7 +75,6 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
     meta,
   };
 };
-
 
 
 const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
@@ -158,8 +151,15 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
     const startOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0));
     const endOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0));
 
-    dateFilter = {
-      'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay },
+    // dateFilter = {
+    //   'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay },
+    // };
+
+        dateFilter = {
+      $or: [
+        { 'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay } },
+        { 'deliveryDateInfo.date': { $gte: startOfDay, $lt: endOfDay } },
+      ]
     };
 
     // Prevent QueryBuilder.filter() from overriding our date filter
