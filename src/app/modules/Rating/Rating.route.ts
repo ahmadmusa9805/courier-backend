@@ -1,7 +1,7 @@
 import express from 'express';
 import { RatingControllers } from './Rating.controller';
-import validateRequest from '../../middlewares/validateRequest';
-import { createRatingValidationSchema, updateRatingValidationSchema } from './Rating.validation';
+// import validateRequest from '../../middlewares/validateRequest';
+// import { createRatingValidationSchema, updateRatingValidationSchema } from './Rating.validation';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../User/user.constant';
 
@@ -27,7 +27,7 @@ router.get(
 
 router.patch(
   '/:id',
-  validateRequest(updateRatingValidationSchema),
+  // validateRequest(updateRatingValidationSchema),
   RatingControllers.updateRating,
 );
 

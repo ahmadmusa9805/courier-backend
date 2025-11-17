@@ -14,6 +14,12 @@ const createRatingIntoDB = async (
   user: any
 ) => {
 
+  // const { userEmail } = user;
+  // const usr = await User.isUserExistsByCustomEmail(userEmail);
+  // if (!usr) {
+  //   throw new Error('User not found');
+  // }
+
 const job = await Job.findOne({ _id: payload.jobId });
 
 if (!job?.courierId) {
@@ -25,8 +31,12 @@ if (!job?.courierId) {
   // Fetch the user based on email
   const usr = await User.findOne({ email: user.userEmail });
 
+  if (!usr) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
    // Set the userId to the currently logged-in user's ID
-   payload.userId = usr?._id;
+   payload.userId = usr._id;
 
 
   const { professionalism, communication, friendliness } = payload;
@@ -65,11 +75,16 @@ if (!job?.courierId) {
   courierData.averageRatings = parseFloat(overallAverageRating.toFixed(2));
 
   // Perform the update operation for the user (not the rating)
-  const updatedCourier = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     job?.courierId,
     { averageRatings: courierData.averageRatings },
     { new: true, runValidators: true }
   );
+  // const updatedCourier = await User.findByIdAndUpdate(
+  //   job?.courierId,
+  //   { averageRatings: courierData.averageRatings },
+  //   { new: true, runValidators: true }
+  // );
 
 
   return result;
