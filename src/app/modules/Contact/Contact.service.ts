@@ -11,6 +11,9 @@ import { SendEmail } from '../../utils/sendEmail';
 const createContactIntoDB = async (
   payload: TContact,
 ) => {
+
+  console.log("Payload in service:", payload);
+
     await SendEmail.sendEmailToAdmin(payload);
   // const result = await Contact.create(payload);
   

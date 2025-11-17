@@ -49,6 +49,7 @@ export type TJob = {
     zipCode: string;
     country: string;
     description: string;
+    region?: string;
   };
 
   deliveryAddress: {
@@ -57,6 +58,7 @@ export type TJob = {
     zipCode: string;
     country: string;
     description: string;
+    region?: string;
   };
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
   adminApproved: boolean;

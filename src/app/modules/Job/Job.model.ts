@@ -58,6 +58,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     zipCode: { type: String, required: true },
     country: { type: String, required: true },
     description: { type: String, required: true },
+    region:{ type: String },
   },
   deliveryAddress: {
     streetAddress: { type: String, required: true },
@@ -65,6 +66,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     zipCode: { type: String, required: true },
     country: { type: String, required: true },
     description: { type: String, required: true },
+    region:{ type: String },
   },
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },
