@@ -47,7 +47,7 @@ app.post("/webhook",async(req , res)=>{
   // console.log(req) 
   try{
 const body = req.body
-  // console.log(body)
+console.log('Weebhook Body',body)
   if(!body.id){
     throw new AppError(400, "Id is not provided .")
   }

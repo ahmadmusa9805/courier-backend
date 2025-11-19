@@ -1,0 +1,118 @@
+{
+  "resource": "payment",
+  "id": "tr_cF4U92mCdPpVMiFBaR4HJ",
+  "mode": "test",
+  "createdAt": "2025-11-16T09:00:27+00:00",
+  "amount": {
+    "value": "128.28",
+    "currency": "EUR"
+  },
+  "description": "2025-11-16",
+  "method": "creditcard",
+  "metadata": {
+    "userId": "68893890824b995e0ff0df6a",
+    "fromAddress": {
+      "address": "Q9HJ+23X, Begum Rokeya Avenue, Dhaka, Bangladesh",
+      "country": "Bangladesh",
+      "region": "Dhaka Division",
+      "city": "Dhaka",
+      "postalCode": "",
+      "lat": 23.7776072,
+      "lng": 90.3802194
+    },
+    "toAddress": {
+      "address": "554 Begum Rokeya Avenue, Dhaka, Bangladesh",
+      "country": "Bangladesh",
+      "region": "Dhaka Division",
+      "city": "Dhaka",
+      "postalCode": "",
+      "lat": 23.7998053,
+      "lng": 90.3717679
+    },
+    "pickupType": "private home",
+    "itemSource": "family",
+    "items": [
+      {
+        "name": "Fiets",
+        "length": 185,
+        "width": 40,
+        "height": 70,
+        "material": "Metal",
+        "image": "",
+        "qty": 2,
+        "price": 12.89
+      }
+    ],
+    "pickupDate": "2025-11-16",
+    "timeSlot": {
+      "start": "08:00 - 18:00",
+      "end": "08:00 - 20:00",
+      "cost": 0
+    },
+    "extraServices": {
+      "floor": "Ground floor",
+      "helpers": 1,
+      "help": "No Help"
+    },
+    "deliveryContact": {
+      "smartHomeAddress": "Rajabari Road, Konabari",
+      "region": "",
+      "country": "",
+      "city": "Gazipur",
+      "zipCode": "1346",
+      "additionalInfo": ""
+    },
+    "totalPrice": "128.28",
+    "userType": "Individual",
+    "companyName": "",
+    "vinNumber": ""
+  },
+  "status": "paid",
+  "paidAt": "2025-11-16T09:01:15+00:00",
+  "amountRefunded": {
+    "value": "0.00",
+    "currency": "EUR"
+  },
+  "amountRemaining": {
+    "value": "128.28",
+    "currency": "EUR"
+  },
+  "locale": "en_US",
+  "profileId": "pfl_5RUPC597y7",
+  "sequenceType": "oneoff",
+  "redirectUrl": "http://localhost:5173/",
+  "webhookUrl": "https://tops-saver-valuable-took.trycloudflare.com/webhook",
+  "settlementAmount": {
+    "value": "128.28",
+    "currency": "EUR"
+  },
+  "details": {
+    "cardToken": "tkn_MdJ5Cwtest",
+    "cardNumber": "4242",
+    "cardHolder": "T. TEST",
+    "cardAudience": "consumer",
+    "cardLabel": "Mastercard",
+    "cardCountryCode": "NL",
+    "cardIssuerCountry": "NL",
+    "feeRegion": "other",
+    "fraudScore": 3.3
+  },
+  "_links": {
+    "self": {
+      "href": "https://api.mollie.com/v2/payments/tr_cF4U92mCdPpVMiFBaR4HJ",
+      "type": "application/hal+json"
+    },
+    "dashboard": {
+      "href": "https://my.mollie.com/dashboard/org_19281909/payments/tr_cF4U92mCdPpVMiFBaR4HJ",
+      "type": "text/html"
+    },
+    "changePaymentState": {
+      "href": "https://www.mollie.com/checkout/test-mode?method=creditcard&token=6.jmleni",
+      "type": "text/html"
+    },
+    "documentation": {
+      "href": "https://docs.mollie.com/reference/get-payment",
+      "type": "text/html"
+    }
+  }
+}

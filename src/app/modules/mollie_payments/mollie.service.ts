@@ -3,23 +3,32 @@ import AppError from "../../errors/AppError";
 
 import fs from 'fs'
 import { PaymentInfo } from "./types/payment.types";
-
+import { JobModel } from "../Job/Job.interface";
+import { Job } from "../Job/Job.model";
 const { createMollieClient } = require('@mollie/api-client');
 const mollieClient = createMollieClient({ apiKey:process.env.MOLLIE_BASIC_TEST_API_KEY});
 
 
 // function is responsible for creating link into mollie platform
-export const createPaymentWithMollie = async function( {currency,metadata,amount,description,}:{currency:'EUR',metadata:any, amount:string , description:string , }) {
+export const createPaymentWithMollie = async function( {jobId,currency,url}:{url:string,currency:'EUR',jobId:string , }) {
+if(!jobId){
+  throw new AppError(400, 'Job id not provided!')
+}
+  const jobInfo = await Job.findOne({_id:jobId}).populate("userId")
 
-try{  const payment = await mollieClient.payments.create({
+  console.log(jobInfo)
+try{
+    const payment = await mollieClient.payments.create({
   amount: {
     currency: currency,
-    value: amount
+    value: String(jobInfo?.totalPrice)
   },
-  description: description,
-  redirectUrl: 'http://localhost:5173/',
-  webhookUrl: 'https://tops-saver-valuable-took.trycloudflare.com/webhook',
-  metadata: metadata
+  description: `JobNo : #${jobId} Job will be picked from ${jobInfo?.from} and sent to ${jobInfo?.to}`,
+  redirectUrl: url,
+  webhookUrl: process.env.WEBHOOKURL,
+  metadata: {
+    jobId
+  }
 });
 // console.log(payment._links)
 return payment
