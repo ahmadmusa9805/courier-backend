@@ -43,8 +43,6 @@ const createJobIntoDB = async (payload:any) => {
     payload.userId = (existingUser as any)._id;
    }
 
-
-
     // Create Job
     const createdJob = await Job.create(payload);
     // console.log("createdJob.....", createdJob);  
@@ -85,6 +83,7 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
 
 
 const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
+      console.log('ahmad text user/company0')
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
@@ -106,10 +105,12 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 
   // // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'user' || usr.role === 'company') {
+    console.log('ahmad text user/company')
       baseQuery = Job.find({ userId: (usr as any)._id });
   } else if (usr.role === 'courier') {
       baseQuery = Job.find({ courierId: (usr as any)._id });
   } else {
+  // } else if (usr.role === 'superAdmin' || usr.role === 'admin') {
      baseQuery = Job.find();
 
   }
