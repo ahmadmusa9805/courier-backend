@@ -108,6 +108,30 @@ const getAllRatingsFromDB = async (query: Record<string, unknown>) => {
     meta,
   };
 };
+const getAllRatingsOnlySingleCourierFromDB = async (query: Record<string, unknown>, user:any) => {
+
+  const usr = await User.findOne({ email: user.userEmail });
+  if (!usr) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
+  const RatingQuery = new QueryBuilder(
+    Rating.find({ courierId: usr?._id }),
+    query,
+  )
+    .search(RATING_SEARCHABLE_FIELDS)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await RatingQuery.modelQuery;
+  const meta = await RatingQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
+};
 
 const getAllAverageElementsRatingsFromDB = async (query: Record<string, unknown>, user: any) => {
 
@@ -163,8 +187,6 @@ const getAllAverageElementsRatingsFromDB = async (query: Record<string, unknown>
     data: aggregatedResult,
   };
 };
-
-
 
 const getSingleRatingFromDB = async (id: string) => {
   const result = await Rating.findById(id);
@@ -233,5 +255,6 @@ export const RatingServices = {
   getSingleRatingFromDB,
   updateRatingIntoDB,
   deleteRatingFromDB,
-  getAllAverageElementsRatingsFromDB
+  getAllAverageElementsRatingsFromDB,
+  getAllRatingsOnlySingleCourierFromDB
 };
