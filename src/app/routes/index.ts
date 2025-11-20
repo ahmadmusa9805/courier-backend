@@ -17,6 +17,8 @@ import { FaqRoutes } from '../modules/Faq/Faq.route';
 // import { Upload } from '../modules/Upload/Upload.model';
 import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
+import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
+import { ChatRoutes } from '../modules/Chat/Chat.route';
 
 const router = Router();
 
@@ -88,6 +90,14 @@ const moduleRoutes = [
   {
     path: '/jobs',
     route: JobRoutes,
+  },
+  {
+    path: '/chat-rooms',
+    route: ChatRoomRoutes,
+  },
+  {
+    path: '/chats',
+    route: ChatRoutes,
   }
 
 ];

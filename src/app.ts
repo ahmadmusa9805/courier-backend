@@ -30,7 +30,22 @@ app.use(
 app.use(express.json({ verify: (req: any, res, buf) => { req.rawBody = buf.toString(); } }));
 
 
+// Serve static files
+// app.use("/uploads", express.static("uploads"));
 
+
+// // WEBHOOK route *must come before* any JSON or URL-encoded parsers
+// app.post(
+//   '/api/v1/payments/webhook',
+//   express.raw({ type: 'application/json' }), // raw parser for exact body
+//   PaymentControllers.webhook,
+// );
+
+
+// app.use(express.raw({ type: 'application/json' }));
+// app.use(express.json({ limit: '50mb' }));
+
+// app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Routes
 app.use('/api/v1', router);
