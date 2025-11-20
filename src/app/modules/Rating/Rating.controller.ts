@@ -50,6 +50,18 @@ const getAllAverageElementsRatings = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getAllRatingsOnlySingleCourier = catchAsync(async (req, res) => {
+
+  const result = await RatingServices.getAllRatingsOnlySingleCourierFromDB(req.query, req.user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Ratings are retrieved successfully',
+    // meta: result.meta,
+    data: result,
+  });
+});
 
 const updateRating = catchAsync(async (req, res) => {
   const { id } = req.params;
@@ -82,5 +94,6 @@ export const RatingControllers = {
   getAllRatings,
   updateRating,
   deleteRating,
-  getAllAverageElementsRatings
+  getAllAverageElementsRatings,
+  getAllRatingsOnlySingleCourier
 };

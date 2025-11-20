@@ -19,25 +19,34 @@ router.get(
     auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   RatingControllers.getAllAverageElementsRatings,
 );
+router.get(
+  '/courier-rating',
+    auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
+  RatingControllers.getAllRatingsOnlySingleCourier,
+);
 
 router.get(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   RatingControllers.getSingleRating,
 );
 
 router.patch(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   // validateRequest(updateRatingValidationSchema),
   RatingControllers.updateRating,
 );
 
 router.delete(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   RatingControllers.deleteRating,
 );
 
 router.get(
   '/',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   RatingControllers.getAllRatings,
 );
 
