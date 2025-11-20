@@ -288,9 +288,12 @@ filter() {
  const combinedFilter: FilterQuery<T>[] = [];
 
 // --- 1. Handle EXACT Date Filter (YYYY-MM-DD) ---
- if (this.query.date && typeof this.query.date === 'string') {
+//  if (this.query.date && typeof this.query.date === 'string') {
+if (this.query.pickupDate && typeof this.query.pickupDate === 'string' ||this.query.date && typeof this.query.date === 'string') {
  // Force the date string to be interpreted as UTC midnight (00:00:00Z)
- const specificDate = new Date(`${this.query.date}T00:00:00.000Z`);
+//  const specificDate = new Date(`${this.query.date}T00:00:00.000Z`);
+    const specificDate = new Date(`${this.query.pickupDate || this.query.date}T00:00:00.000Z`);
+
 
  if (isNaN(specificDate.getTime())) {
  throw new Error('Invalid date format');
