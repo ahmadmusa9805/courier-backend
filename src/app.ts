@@ -12,6 +12,7 @@ import helmet from 'helmet';
 import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
 import AppError from './app/errors/AppError.js';
 import { findTransections } from './app/modules/mollie_payments/mollie.service.js';
+import { Job } from './app/modules/Job/Job.model.js';
 const app: Application = express();
 const httpServer = createServer(app);
 
@@ -44,7 +45,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use(globalErrorHandler);
 app.use(notFound);
 app.post("/webhook",async(req , res)=>{
-  // console.log(req) 
+  console.log(req) 
   try{
 const body = req.body
 console.log('Weebhook Body',body)
@@ -53,7 +54,19 @@ console.log('Weebhook Body',body)
   }
 
   const payments  = await findTransections({transection_id:body.id})
-  console.log(payments)
+  // payments.status = 'paid'
+  const job = await Job.findById(payments?.metadata?._id)
+
+  if(!job){
+    throw new AppError(400, "Job not found")
+  }
+  job.status = 'completed'
+
+  await job?.save()
+
+  // await 
+  
+  // console.log(payments)
   }catch(error){
 
   }

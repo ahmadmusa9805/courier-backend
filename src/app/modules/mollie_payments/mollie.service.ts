@@ -7,7 +7,7 @@ import { JobModel } from "../Job/Job.interface";
 import { Job } from "../Job/Job.model";
 const { createMollieClient } = require('@mollie/api-client');
 const mollieClient = createMollieClient({ apiKey:process.env.MOLLIE_BASIC_TEST_API_KEY});
-
+console.log(process.env.WEBHOOKURL)
 
 // function is responsible for creating link into mollie platform
 export const createPaymentWithMollie = async function( {jobId,currency,url}:{url:string,currency:'EUR',jobId:string , }) {
@@ -16,7 +16,7 @@ if(!jobId){
 }
   const jobInfo = await Job.findOne({_id:jobId}).populate("userId")
 
-  console.log(jobInfo)
+  
 try{
     const payment = await mollieClient.payments.create({
   amount: {
@@ -41,14 +41,15 @@ return payment
 // createPaymentWithMollie()
 
 
-export const findTransections = async function( {transection_id}:{transection_id:string}) : Promise<PaymentInfo> {
+export const findTransections = async function( {transection_id}:{transection_id:string})  {
 
 try{  
   const payment = await mollieClient.payments.get(transection_id);
+// console.log(payment)
 return payment
 }catch(error:any){
   console.log(error)
   throw new AppError(error.statusCode , error.message)
 }
 }
-findTransections({transection_id:"tr_cF4U92mCdPpVMiFBaR4HJ"})
+// findTransections({transection_id:"tr_cF4U92mCdPpVMiFBaR4HJ"})
