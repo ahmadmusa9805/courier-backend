@@ -20,9 +20,6 @@ export class SendEmail {
 
   static async sendOTPEmail(email: string, otp: string): Promise<void> {
 
-   console.log('email=======musa', email);
-   console.log('otp=======musa', otp);
-
     const mailOptions = {
       // from: process.env.EMAIL_USER, // Sender email address
       from: config.admin_email_user, // Sender email address

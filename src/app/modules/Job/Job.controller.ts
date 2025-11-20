@@ -28,6 +28,7 @@ const getSingleJob = catchAsync(async (req, res) => {
 });
 
 const getAllJobsForUser = catchAsync(async (req, res) => {
+      console.log('ahmad text user/company00')
   const result = await JobServices.getAllJobsForUserFromDB(req.query, req.user);
 
   sendResponse(res, {
@@ -65,7 +66,7 @@ const getDailyRouteJobs = catchAsync(async (req, res) => {
 const updateJob = catchAsync(async (req, res) => {
   const { id } = req.params;
   const Job = req.body;
-  const result = await JobServices.updateJobIntoDB(id, Job);
+  const result = await JobServices.updateJobIntoDB(id, Job, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -14,11 +14,12 @@ import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
 import { RatingRoutes } from '../modules/Rating/Rating.route';
 import { AnalyticRoutes } from '../modules/Analytic/Analytic.route';
 import { FaqRoutes } from '../modules/Faq/Faq.route';
-import { Upload } from '../modules/Upload/Upload.model';
+// import { Upload } from '../modules/Upload/Upload.model';
 import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
 import { paymetRoute } from '../modules/mollie_payments/mollie.route';
-
+import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
+import { ChatRoutes } from '../modules/Chat/Chat.route';
 const router = Router();
 
 const moduleRoutes = [
@@ -93,6 +94,14 @@ const moduleRoutes = [
    {
     path: '/payments',
     route: paymetRoute,
+   },
+  {
+    path: '/chat-rooms',
+    route: ChatRoomRoutes,
+  },
+  {
+    path: '/chats',
+    route: ChatRoutes,
   }
 
 ];

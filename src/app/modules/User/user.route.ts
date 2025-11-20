@@ -13,7 +13,7 @@ router.post(
   '/create-user',
   // auth(USER_ROLE.superAdmin),
   // uploadFileS3(true).single('file'),
-       uploadFileS3(true).fields([
+  uploadFileS3(true).fields([
   { name: 'img', maxCount: 5 },
   { name: 'document', maxCount: 5 },
 ]),
