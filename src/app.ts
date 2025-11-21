@@ -83,7 +83,7 @@ console.log('Weebhook Body',body)
   
   // console.log(payments)
   }catch(error){
-
+    console.log('Webhook Error',error)
   }
   
   
