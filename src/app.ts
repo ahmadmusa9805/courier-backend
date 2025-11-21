@@ -13,6 +13,8 @@ import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
 import AppError from './app/errors/AppError.js';
 import { findTransections } from './app/modules/mollie_payments/mollie.service.js';
 import { Job } from './app/modules/Job/Job.model.js';
+import morgan from 'morgan'
+import { attachLogger, httpLogger } from './app/logger/logger.middleware.js';
 const app: Application = express();
 const httpServer = createServer(app);
 
@@ -21,10 +23,17 @@ app.use(helmet()); // Security headers
 app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Use the 'dev' format for development
+app.use(morgan('dev'));
+
+// Or use a custom format string
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
+// app.use
 app.use(
   cors({
     origin:"*",
-    credentials: true,
+    // credentials: false,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     // origin: ['http://192.168.12.63:5173', 'http://192.168.12.63:3001', 'http://34.233.41.57:3000', 'http://34.233.41.57:3001',],
   })
@@ -49,16 +58,12 @@ app.use(express.json({ verify: (req: any, res, buf) => { req.rawBody = buf.toStr
 // app.use(express.json({ limit: '50mb' }));
 
 // app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// app.use(attachLogger);
 
+// 2. HTTP Access Logger (using Morgan integrated with Winston)
+// app.use(httpLogger);
 // Routes
-app.use('/api/v1', router);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome To Project-Management API !');
-});
-
-app.use(globalErrorHandler);
-app.use(notFound);
 app.post("/webhook",async(req , res)=>{
   console.log(req) 
   try{
@@ -70,24 +75,33 @@ console.log('Weebhook Body',body)
 
   const payments  = await findTransections({transection_id:body.id})
   // payments.status = 'paid'
-  const job = await Job.findById(payments?.metadata?._id)
+  const job = await Job.findById(payments?.metadata?.jobId)
 
   if(!job){
     throw new AppError(400, "Job not found")
   }
-  job.status = 'completed'
+  job.paymentStatus = 'paid'
 
   await job?.save()
-
+res.status(200).json({message:"Payment successfull"})
   // await 
   
   // console.log(payments)
   }catch(error){
-
+res.status(500).json({message:"Internal server error"})
   }
   
   
 })
+app.use('/api/v1', router);
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome To Project-Management API !');
+});
+
+app.use(globalErrorHandler);
+app.use(notFound);
+
 
 
 process.on('SIGTERM', () => {

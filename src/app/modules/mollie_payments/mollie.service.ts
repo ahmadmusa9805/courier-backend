@@ -45,11 +45,11 @@ export const findTransections = async function( {transection_id}:{transection_id
 
 try{  
   const payment = await mollieClient.payments.get(transection_id);
-// console.log(payment)
+console.log(payment)
 return payment
 }catch(error:any){
   console.log(error)
   throw new AppError(error.statusCode , error.message)
 }
 }
-// findTransections({transection_id:"tr_cF4U92mCdPpVMiFBaR4HJ"})
+findTransections({transection_id:"tr_VrCpjnoBhUTFqhzuTyFHJ"})
