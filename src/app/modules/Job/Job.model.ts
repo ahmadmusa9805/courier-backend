@@ -26,7 +26,7 @@ const JobSchema = new Schema<TJob, JobModel>({
       dimensions: { type: String, required: true },
       materialContent: {
         type: String,
-        enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
+        // enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
         required: true,
       },
       price: { type: Number, required: true },

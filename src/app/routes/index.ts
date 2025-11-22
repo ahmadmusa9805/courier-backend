@@ -17,8 +17,10 @@ import { FaqRoutes } from '../modules/Faq/Faq.route';
 // import { Upload } from '../modules/Upload/Upload.model';
 import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
+import { paymetRoute } from '../modules/mollie_payments/mollie.route';
 import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
 import { ChatRoutes } from '../modules/Chat/Chat.route';
+import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
 
 const router = Router();
 
@@ -91,6 +93,10 @@ const moduleRoutes = [
     path: '/jobs',
     route: JobRoutes,
   },
+   {
+    path: '/payments',
+    route: paymetRoute,
+   },
   {
     path: '/chat-rooms',
     route: ChatRoomRoutes,
@@ -98,6 +104,10 @@ const moduleRoutes = [
   {
     path: '/chats',
     route: ChatRoutes,
+  },
+  {
+    path: '/contact-socials',
+    route: ContactSocialRoutes,
   }
 
 ];

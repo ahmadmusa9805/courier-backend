@@ -108,8 +108,8 @@ const getAllRatingsFromDB = async (query: Record<string, unknown>) => {
     meta,
   };
 };
-const getAllRatingsOnlySingleCourierFromDB = async (query: Record<string, unknown>, user:any) => {
 
+const getAllRatingsOnlySingleCourierFromDB = async (query: Record<string, unknown>, user:any) => {
   const usr = await User.findOne({ email: user.userEmail });
   if (!usr) {
     throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
@@ -235,6 +235,7 @@ const updateRatingIntoDB = async (id: string, payload: any) => {
 
   return updatedData;
 };
+
 const deleteRatingFromDB = async (id: string) => {
   const deletedService = await Rating.findByIdAndUpdate(
     id,
