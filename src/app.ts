@@ -10,6 +10,9 @@ import router from './app/routes/index.js';
 import { createServer } from 'http';
 import helmet from 'helmet';
 import globalErrorHandler from './app/middlewares/globalErrorhandler.js';
+import AppError from './app/errors/AppError.js';
+import { findTransections } from './app/modules/mollie_payments/mollie.service.js';
+import { Job } from './app/modules/Job/Job.model.js';
 const app: Application = express();
 const httpServer = createServer(app);
 
@@ -56,6 +59,36 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(globalErrorHandler);
 app.use(notFound);
+app.post("/webhook",async(req , res)=>{
+  console.log(req) 
+  try{
+const body = req.body
+console.log('Weebhook Body',body)
+  if(!body.id){
+    throw new AppError(400, "Id is not provided .")
+  }
+
+  const payments  = await findTransections({transection_id:body.id})
+  // payments.status = 'paid'
+  const job = await Job.findById(payments?.metadata?._id)
+
+  if(!job){
+    throw new AppError(400, "Job not found")
+  }
+  job.status = 'completed'
+
+  await job?.save()
+
+  // await 
+  
+  // console.log(payments)
+  }catch(error){
+    console.log('Webhook Error',error)
+  }
+  
+  
+})
+
 
 process.on('SIGTERM', () => {
   // eslint-disable-next-line no-console

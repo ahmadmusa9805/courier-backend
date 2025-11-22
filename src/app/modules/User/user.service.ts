@@ -12,19 +12,27 @@ import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
+  // Example: get overview files
+  console.log(files,payload)
+  let document 
+  let img
+  if(files){
 
-// Example: get overview files
-const document = files['document']?.map((f:any) => f.location) || [];
-const img = files['img']?.map((f:any) => f.location) || [];
+     document = files['document']?.map((f:any) => f.location) || [];
+     img = files['img']?.map((f:any) => f.location) || [];
+  }
+  console.log("Create User",document)
 
-
-    if(document.length > 0){
+if(document){ 
+  if(document.length > 0){
       payload.document = document[0]; // Assuming file.location contains the S3 URL
     }
     if(img.length > 0){
       payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
     }
 
+}
+  
 
   // if (file) {
   //   console.log('musa testing img',img);
