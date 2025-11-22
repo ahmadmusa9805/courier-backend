@@ -19,6 +19,7 @@ import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
 import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
 import { ChatRoutes } from '../modules/Chat/Chat.route';
+import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
 
 const router = Router();
 
@@ -98,6 +99,10 @@ const moduleRoutes = [
   {
     path: '/chats',
     route: ChatRoutes,
+  },
+  {
+    path: '/contact-socials',
+    route: ContactSocialRoutes,
   }
 
 ];
