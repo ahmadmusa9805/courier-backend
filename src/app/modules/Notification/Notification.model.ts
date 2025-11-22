@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { TNotification, NotificationModel } from './Notification.interface';
 
 const NotificationSchema = new Schema<TNotification, NotificationModel>({
-  type: { type: String, enum: ['quote', 'callBooking'], required: true },
+  type: { type: String, enum: ['jobCreated', 'jobAccepted', 'jobApproved', 'payment'], required: true },
   message: { type: String, required: true },
 //  readBy: [
 //     {
@@ -12,11 +12,11 @@ const NotificationSchema = new Schema<TNotification, NotificationModel>({
 //     },
 //   ],
  readBy: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
-  subscriberId: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User id is required'],
-    ref: 'User',
-  },
+  // subscriberId: {
+  //   type: Schema.Types.ObjectId,
+  //   required: [true, 'User id is required'],
+  //   ref: 'User',
+  // },
 }, { timestamps: true });
 
 NotificationSchema.statics.isNotificationExists = async function (id: string) {

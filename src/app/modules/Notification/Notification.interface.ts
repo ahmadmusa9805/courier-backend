@@ -2,10 +2,10 @@
 import { Model, Types } from 'mongoose';
 
 export type TNotification = {
-  type: 'quote' | 'callBooking';
+  type: 'jobCreated' | 'jobAccepted' | 'jobApproved' | 'payment';
   message: string;
   readBy: Types.ObjectId[];
-  subscriberId: Types.ObjectId;
+  // subscriberId: Types.ObjectId;
 };
 
 export interface NotificationModel extends Model<TNotification> {
