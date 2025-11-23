@@ -55,6 +55,12 @@ router.get(
 // );
 
 router.get(
+  '/dashboard',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserControllers.getDashboardData,
+);
+
+router.get(
   '/:id',
   auth(USER_ROLE.superAdmin),
   UserControllers.getSingleUser,
@@ -72,6 +78,7 @@ router.get(
   auth(USER_ROLE.superAdmin),
   UserControllers.getAllUsers,
 );
+
 
 router.delete(
   '/:id',

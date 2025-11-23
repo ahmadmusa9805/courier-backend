@@ -38,9 +38,22 @@ const getAllBlogsFromDB = async (query: Record<string, unknown>) => {
 
   const result = await BlogQuery.modelQuery;
   const meta = await BlogQuery.countTotal();
+
+
+     const allPendingJobs = await Blog.countDocuments({});
+     const allAcceptedJobs = await Blog.countDocuments({isBlocked: false});
+     const allCompletedJobs = await Blog.countDocuments({isBlocked: true});
+
+     const allBlogsWithStats = {
+        allPendingJobs,
+        allAcceptedJobs,
+        allCompletedJobs,
+      }
+
   return {
     result,
     meta,
+    allBlogsWithStats
   };
 };
 

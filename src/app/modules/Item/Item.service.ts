@@ -40,9 +40,23 @@ const getAllItemsFromDB = async (query: Record<string, unknown>) => {
 
   const result = await ItemQuery.modelQuery;
   const meta = await ItemQuery.countTotal();
+
+
+     const allPendingJobs = await Item.countDocuments({});
+     const allAcceptedJobs = await Item.countDocuments({isBlocked: false});
+     const allCompletedJobs = await Item.countDocuments({isBlocked: true});
+
+     const allItemsWithStats = {
+        allPendingJobs,
+        allAcceptedJobs,
+        allCompletedJobs,
+      }
+
+
   return {
     result,
     meta,
+    allItemsWithStats
   };
 };
 

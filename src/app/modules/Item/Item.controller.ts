@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
@@ -30,13 +31,22 @@ const getSingleItem = catchAsync(async (req, res) => {
 const getAllItems = catchAsync(async (req, res) => {
   const result = await ItemServices.getAllItemsFromDB(req.query);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
+  // sendResponse(res, {
+  //   statusCode: httpStatus.OK,
+  //   success: true,
+  //   message: 'Items are retrieved successfully',
+  //   meta: result.meta,
+  //   allItemsWithStats: result.allItemsWithStats,
+  //   data: result.result,
+  // } as any);
+
+    res.status(200).json({
     success: true,
-    message: 'Items are retrieved successfully',
+    message: 'test',
     meta: result.meta,
+    allItemsWithStats: result.allItemsWithStats,
     data: result.result,
-  });
+  } as any);
 });
 
 const updateItem = catchAsync(async (req, res) => {

@@ -28,7 +28,6 @@ const getSingleJob = catchAsync(async (req, res) => {
 });
 
 const getAllJobsForUser = catchAsync(async (req, res) => {
-      console.log('ahmad text user/company00')
   const result = await JobServices.getAllJobsForUserFromDB(req.query, req.user);
 
   sendResponse(res, {
@@ -37,6 +36,16 @@ const getAllJobsForUser = catchAsync(async (req, res) => {
     message: 'Jobs are retrieved successfully',
     meta: result.meta,
     data: result.result,
+  });
+});
+const getAllJobsWithAllStatus = catchAsync(async (req, res) => {
+  const result = await JobServices.getAllJobsWithAllStatusFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Jobs are retrieved successfully',
+    data: result
   });
 });
 const getAllJobs = catchAsync(async (req, res) => {
@@ -95,5 +104,6 @@ export const JobControllers = {
   updateJob,
   deleteJob,
   getAllJobsForUser,
-  getDailyRouteJobs
+  getDailyRouteJobs,
+  getAllJobsWithAllStatus
 };

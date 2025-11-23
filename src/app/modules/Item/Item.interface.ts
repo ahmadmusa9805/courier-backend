@@ -12,6 +12,7 @@ export type TItem = {
   status: 'active' | 'inactive'; // You might want to change this to an enum if you have defined status types
   description: string;
   img: string; // Assuming this is a URL or path to the image
+  isBlocked: boolean;
   isDeleted: boolean;
 };
 

@@ -6,6 +6,7 @@ export type TBlog = {
   description?: string;
   status: 'active' | 'inactive';
   img: string;
+  isDeisBlocked: boolean;
   isDeleted: boolean;
 };
 
