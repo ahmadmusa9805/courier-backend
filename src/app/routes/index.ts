@@ -20,6 +20,8 @@ import { JobRoutes } from '../modules/Job/Job.route';
 import { paymetRoute } from '../modules/mollie_payments/mollie.route';
 import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
 import { ChatRoutes } from '../modules/Chat/Chat.route';
+import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
+
 const router = Router();
 
 const moduleRoutes = [
@@ -102,6 +104,10 @@ const moduleRoutes = [
   {
     path: '/chats',
     route: ChatRoutes,
+  },
+  {
+    path: '/contact-socials',
+    route: ContactSocialRoutes,
   }
 
 ];
