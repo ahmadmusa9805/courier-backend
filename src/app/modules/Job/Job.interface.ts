@@ -2,6 +2,7 @@
 import { Model, Types } from 'mongoose';
 
 export type TJob = {
+  jobId: string
   userId: Types.ObjectId
   courierId?: Types.ObjectId
   from: string;

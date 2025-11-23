@@ -19,6 +19,8 @@ const ItemSchema = new Schema<TItem, ItemModel>({
   }, // You can use an enum for status if needed
   description: { type: String, required: true },
   img: { type: String, required: true }, // Image URL or path
+  isBlocked: { type: Boolean, default: false },
+  isDeleted: { type: Boolean, default: false },
 });
 
 ItemSchema.statics.isItemExists = async function (id: string) {

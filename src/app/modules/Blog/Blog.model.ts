@@ -11,6 +11,7 @@ const BlogSchema = new Schema<TBlog, BlogModel>({
   },
   img: { type: String, required: true },
   isDeleted: { type: Boolean, default: false },
+  isDeisBlocked: { type: Boolean, default: false },
 });
 
 BlogSchema.statics.isBlogExists = async function (id: string) {
