@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import { Job } from './Job.model';
 import { User } from '../User/user.model';
 import { flattenObject } from './job.utils';
+import { ChatRoom } from '../ChatRoom/ChatRoom.model';
 // Arrow function to generate the next jobId
 const generateJobId = async (): Promise<string> => {
   // Find the latest job in the collection
@@ -249,8 +250,6 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
     throw new Error('User not found');
   }
 
-
-
   const { items } = payload;
   // const { items, extraService, ...other } = payload;
   const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
@@ -298,6 +297,21 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
    // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'courier' || payload.status === 'accepted') {
     updateQuery.courierId = (usr as any)._id;
+
+
+  let room = await ChatRoom.findOne({
+    participants: { $all: [(usr as any)._id, id] },
+  });
+
+  if (!room) {
+    room = await ChatRoom.create({ participants: [(usr as any)._id, id] });
+  }
+
+  
+  if (!room) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create ChatRoom');
+  }
+
   }
 
   // Perform the update for other fields
