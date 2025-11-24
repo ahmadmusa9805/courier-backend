@@ -21,6 +21,7 @@ import { paymetRoute } from '../modules/mollie_payments/mollie.route';
 import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
 import { ChatRoutes } from '../modules/Chat/Chat.route';
 import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
+import { AddRouteRoutes } from '../modules/addRoute/addRoute.route';
 
 const router = Router();
 
@@ -108,6 +109,10 @@ const moduleRoutes = [
   {
     path: '/contact-socials',
     route: ContactSocialRoutes,
+  },
+  {
+    path: '/add-routes',
+    route: AddRouteRoutes,
   }
 
 ];

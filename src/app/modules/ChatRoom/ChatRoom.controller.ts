@@ -28,8 +28,7 @@ const getSingleChatRoom = catchAsync(async (req, res) => {
 });
 
 const getAllMyChatRooms = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await ChatRoomServices.getAllMyChatRoomsFromDB(id, req.query);
+  const result = await ChatRoomServices.getAllMyChatRoomsFromDB( req.query, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

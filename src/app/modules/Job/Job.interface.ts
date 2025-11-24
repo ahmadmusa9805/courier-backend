@@ -17,7 +17,7 @@ export type TJob = {
     img: string;
     quantity: number;
     dimensions: string;
-    materialContent: 'glass | wood | metal | food | plants | animals | others';
+    // materialContent: 'glass | wood | metal | food | plants | animals | others';
     price: number;
     length: string;
     width: string;
