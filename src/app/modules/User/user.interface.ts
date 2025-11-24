@@ -30,6 +30,7 @@ export interface TUser {
   kvkNumber?: string;
   document?: string;
   legalForm?: string;
+  isBlocked: boolean;
   isDeleted: boolean;
 }
 

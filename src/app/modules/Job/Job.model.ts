@@ -2,6 +2,8 @@ import { Schema, model } from 'mongoose';
 import { TJob, JobModel } from './Job.interface';
 
 const JobSchema = new Schema<TJob, JobModel>({
+
+  jobId: { type: String, required: true },
     userId: {
     type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
     ref: 'User', // This links to the User model (if applicable)

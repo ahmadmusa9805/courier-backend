@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import httpServer from './app.js';  // Import HTTP server from app.ts
 import config from './app/config/index.js';
 import seedSuperAdmin from './app/DB/index.js';
-import { createPaymentWithMollie } from './app/modules/mollie_payments/mollie.service.js';
-let server: Server;
+// import { createPaymentWithMollie } from './app/modules/mollie_payments/mollie.service.js';
+// let server: Server;
 import { initializeChatSocket } from './app/modules/Chat/chat.socket.js';
 // let server: Server;
 async function main() {

@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
-import { Body } from 'node-fetch';
+// import { Body } from 'node-fetch';
 // import sendImageToCloudinary from '../../utils/cloudinary';
 
 const createUser = catchAsync(async (req, res) => {
@@ -68,6 +68,16 @@ const getAllUsers = catchAsync(async (req, res) => {
     data: result?.result,
   });
 });
+const getDashboardData = catchAsync(async (req, res) => {
+  const result = await UserServices.getDashboardDataFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dashboard are retrieved succesfully',
+    data: result,
+  });
+});
 
 // const getUsersMonthly = catchAsync(async (req, res) => {
 //   const result = await UserServices.getUsersMonthlyFromDB(req.user);
@@ -126,5 +136,6 @@ export const UserControllers = {
   createUser,
   getMe,
   changeStatus,
-  getAllUsers
+  getAllUsers,
+  getDashboardData
 };

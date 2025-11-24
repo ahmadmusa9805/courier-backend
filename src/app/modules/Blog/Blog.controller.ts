@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
@@ -30,13 +31,22 @@ const getSingleBlog = catchAsync(async (req, res) => {
 const getAllBlogs = catchAsync(async (req, res) => {
   const result = await BlogServices.getAllBlogsFromDB(req.query);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
+  // sendResponse(res, {
+  //   statusCode: httpStatus.OK,
+  //   success: true,
+  //   message: 'Blogs are retrieved successfully',
+  //   meta: result.meta,
+  //   data: result.result,
+  // });
+
+    res.status(200).json({
     success: true,
-    message: 'Blogs are retrieved successfully',
+    message: 'test',
     meta: result.meta,
+    allItemsWithStats: result.allBlogsWithStats,
     data: result.result,
-  });
+  } as any);
+
 });
 
 const updateBlog = catchAsync(async (req, res) => {

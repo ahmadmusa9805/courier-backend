@@ -7,7 +7,32 @@ import mongoose from 'mongoose';
 import { Job } from './Job.model';
 import { User } from '../User/user.model';
 import { flattenObject } from './job.utils';
+import { ChatRoom } from '../ChatRoom/ChatRoom.model';
+// Arrow function to generate the next jobId
+const generateJobId = async (): Promise<string> => {
+  // Find the latest job in the collection
+  const lastJob = await Job.findOne().sort({ _id: -1 });
 
+  // If no jobs exist, return the first jobId 'JOB-0001'
+  if (!lastJob) {
+    return 'JOB-0001';
+  }
+
+  // Extract the numeric part from the last jobId (e.g., 'JOB-0009' -> 9)
+  const lastJobId = lastJob.jobId;
+  const match = lastJobId.match(/^JOB-(\d+)$/);
+  
+  if (match && match[1]) {
+    // Convert the extracted number to a number type, increment by 1
+    const lastJobNumber = parseInt(match[1], 10);
+    const nextJobNumber = lastJobNumber + 1;
+
+    // Format the next job number to have leading zeros (e.g., 10 -> 0010)
+    return `JOB-${nextJobNumber.toString().padStart(4, '0')}`;
+  } else {
+    throw new Error('Invalid jobId format.');
+  }
+};
 
 const createJobIntoDB = async (payload:any) => {
   // try {
@@ -39,6 +64,11 @@ const createJobIntoDB = async (payload:any) => {
     payload.userId = (existingUser as any)._id;
    }
 
+  
+  const newJobId = await generateJobId();
+  payload.jobId = newJobId;
+
+
     // Create Job
     const createdJob = await Job.create(payload);
     // console.log("createdJob.....", createdJob);  
@@ -57,6 +87,8 @@ const createJobIntoDB = async (payload:any) => {
     // console.error("Error during job creation:", error);
     // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
   }
+
+  
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   const JobQuery = new QueryBuilder(
     Job.find(),
@@ -78,18 +110,13 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
 
 
 const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
-      console.log('ahmad text user/company0')
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
     throw new Error('User not found');
   }
 
-
-
-
   let sortOption = {};
-
   // Check if a 'sort' parameter exists in the query for 'courierPrice'
   if (query.sortBy === 'courierPrice') {
     const order = query.order === 'desc' ? -1 : 1; // Default to ascending (1), descending (-1)
@@ -110,8 +137,6 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 
   }
 
-  console.log('ahmad text', usr)
-  console.log('baseQuery', baseQuery)
 
   // Create the query builder instance
   const JobQuery = new QueryBuilder(baseQuery, query)
@@ -134,6 +159,23 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
     result,
     meta,
   };
+};
+const getAllJobsWithAllStatusFromDB = async () => {
+     const allJobs = await Job.countDocuments({});
+     const allPendingJobs = await Job.countDocuments({status: 'pending'});
+     const allAcceptedJobs = await Job.countDocuments({status: 'accepted'});
+     const allCompletedJobs = await Job.countDocuments({status: 'completed'});
+     const allCancelledJobs = await Job.countDocuments({status: 'cancelled'});
+  
+  
+  
+    return {
+      allJobs,
+      allPendingJobs,
+      allAcceptedJobs,
+      allCompletedJobs,
+      allCancelledJobs,
+    };
 };
 
 const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any) => {
@@ -208,8 +250,6 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
     throw new Error('User not found');
   }
 
-
-
   const { items } = payload;
   // const { items, extraService, ...other } = payload;
   const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
@@ -257,6 +297,21 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
    // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'courier' || payload.status === 'accepted') {
     updateQuery.courierId = (usr as any)._id;
+
+
+  let room = await ChatRoom.findOne({
+    participants: { $all: [(usr as any)._id, id] },
+  });
+
+  if (!room) {
+    room = await ChatRoom.create({ participants: [(usr as any)._id, id] });
+  }
+
+  
+  if (!room) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create ChatRoom');
+  }
+
   }
 
   // Perform the update for other fields
@@ -294,7 +349,8 @@ export const JobServices = {
   updateJobIntoDB,
   deleteJobFromDB,
   getAllJobsForUserFromDB,
-  getDailyRouteJobsFromDB
+  getDailyRouteJobsFromDB,
+  getAllJobsWithAllStatusFromDB
 };
 ///////////////////////////
 // /* eslint-disable @typescript-eslint/no-explicit-any */

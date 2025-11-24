@@ -10,10 +10,11 @@ import { usersSearchableFields } from './user.constant';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
+import { Rating } from '../Rating/Rating.model';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
   // Example: get overview files
-  console.log(files,payload)
+
   let document 
   let img
   if(files){
@@ -21,7 +22,7 @@ export const createUserIntoDB = async (payload: TUser,  files?:any) => {
      document = files['document']?.map((f:any) => f.location) || [];
      img = files['img']?.map((f:any) => f.location) || [];
   }
-  console.log("Create User",document)
+
 
 if(document){ 
   if(document.length > 0){
@@ -78,6 +79,33 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   return {
     meta,
     result,
+  };
+
+};
+const getDashboardDataFromDB = async () => {
+
+   const allUsers = await User.countDocuments({});
+   const allActiveUsers = await User.countDocuments({isBlocked: false});
+   const allBlockedUsers = await User.countDocuments({isBlocked: true});
+   const allIndividualUsers = await User.countDocuments({role: 'user'});
+   const allCompanyUsers = await User.countDocuments({role: 'company'});
+   const allCourierUsers = await User.countDocuments({role: 'courier'});
+   const allCourierActiveUsers = await User.countDocuments({role: 'courier',  isBlocked: false});
+   const allCourierBlockedUsers = await User.countDocuments({role: 'courier', isBlocked: true});
+   const allRatinga = await Rating.countDocuments({});
+
+
+
+  return {
+    allUsers,
+    allBlockedUsers,
+    allActiveUsers,
+    allIndividualUsers,
+    allCompanyUsers,
+    allCourierUsers,
+    allCourierActiveUsers,
+    allCourierBlockedUsers,
+    allRatinga,
   };
 
 };
@@ -214,8 +242,8 @@ const updateUserIntoDB = async (
   // if (file) {
   //   payload.profileImg = file.location as string;
   // }
-
-  const document = files['document']?.map((f:any) => f.location) || [];
+  if (files) {
+    const document = files['document']?.map((f:any) => f.location) || [];
 const img = files['img']?.map((f:any) => f.location) || [];
 
 
@@ -225,11 +253,13 @@ const img = files['img']?.map((f:any) => f.location) || [];
     if(img.length > 0){
       payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
     }
+  }
 
   const result = await User.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
   }).select('-password');
+
 
   return result;
 };
@@ -297,4 +327,5 @@ export const UserServices = {
   changeStatus,
   getAllUsersFromDB,
   updateUserIntoDB,
+  getDashboardDataFromDB
 };

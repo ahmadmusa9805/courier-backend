@@ -34,6 +34,7 @@ const userSchema = new Schema<TUser, UserModel>(
   document: { type: String },
   kvkNumber: { type: String },
   legalForm: { type: String },
+  isBlocked: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },
   },
   {

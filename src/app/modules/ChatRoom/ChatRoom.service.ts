@@ -69,11 +69,19 @@ const getAllChatRoomsFromDB = async (query: Record<string, unknown>) => {
 // };
 
 const getAllMyChatRoomsFromDB = async (
-  userId: string,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
+  user: any
 ) => {
 
-  console.log('userId', userId)
+   const usr = await User.isUserExistsByCustomEmail(user.userEmail);
+   if(!usr){
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+   }
+
+  // console.log('usr?._id', usr?._id)
+  // console.log('userId', userId)
+
+ const userId = (usr as any)?._id
 
   const ChatRoomQuery = new QueryBuilder(
     ChatRoom.find({ participants: userId }),
@@ -98,7 +106,6 @@ const getAllMyChatRoomsFromDB = async (
       const otherUserId = room.participants.find(
         (id: string) => id !== userId
       );
-      console.log('otherUserId', otherUserId)
       if (!otherUserId) {
         // If somehow user is chatting with themselves or invalid data
         return {
@@ -118,8 +125,6 @@ const getAllMyChatRoomsFromDB = async (
           .select('message createdAt')
           .lean(),
       ]);
-
-  //  console.log('otherUser', otherUser)
 
       return {
         ...room.toObject(),
