@@ -10,6 +10,8 @@ import { DailyRoute } from '../dailyRoute/dailyRoute.model';
 
 const createAddRouteIntoDB = async (payload: TAddRoute) => {
   const AddRouteData = await AddRoute.create(payload);
+
+
   if (!AddRouteData) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create AddRoute');
   }
@@ -52,9 +54,8 @@ const createAddRouteIntoDB = async (payload: TAddRoute) => {
   const dailyRouteData: any = {};
   const routeContainer: any[] = [];
   const item: any = {};
-
-console.log('deliveryData.from', deliveryData.from);
-  if (deliveryData.from) {
+  
+  if (pickupData.from) {
   // if (Object.keys(pickupData).length > 0 ) {
     item['addRouteId'] = AddRouteData._id;
     item['address'] = pickupData.from || '';
@@ -83,11 +84,7 @@ console.log('deliveryData.from', deliveryData.from);
   if (deliveryData.to) {
   // if (Object.keys(deliveryData).length > 0 ) {
     item['addRouteId'] = AddRouteData._id;
-    // item.addRouteId = AddRouteData._id;
-
     item['address'] = deliveryData.to || '';
-    // item.address = deliveryData.to || '';
-
     item['dateTimeSlot'] = deliveryData.deliveryDateInfo
       ? {
           date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
@@ -97,19 +94,13 @@ console.log('deliveryData.from', deliveryData.from);
 
     item['deliveryMode'] = 'delivery';
     item['dataSource'] = 'addroute';
-    console.log('routeContainer', routeContainer);
     routeContainer.push(item);
-        console.log('item+++++++++', item);
-        console.log('routeContainer2', routeContainer);
     dailyRouteData.routeContainer = routeContainer;
     dailyRouteData.date = deliveryData.deliveryDateInfo?.date
-      ? new Date(pickupData.pickupDateInfo.date)
+      ? new Date(deliveryData.deliveryDateInfo.date)
       : new Date();
-   console.log('item=====', item);
-   console.log('routeContainer', routeContainer);
-   console.log('dailyRouteData', dailyRouteData);
    const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
-   console.log('dailyRouteDataCreated', dailyRouteDataCreated);
+
     if (!dailyRouteDataCreated) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
     }

@@ -8,11 +8,13 @@ import { Job } from './Job.model';
 import { User } from '../User/user.model';
 import { flattenObject } from './job.utils';
 import { ChatRoom } from '../ChatRoom/ChatRoom.model';
+import { DailyRoute } from '../dailyRoute/dailyRoute.model';
 // Arrow function to generate the next jobId
 const generateJobId = async (): Promise<string> => {
+  console.log('Generating new jobId...');
   // Find the latest job in the collection
   const lastJob = await Job.findOne().sort({ _id: -1 });
-
+  console.log('lastJob found:', lastJob);
   // If no jobs exist, return the first jobId 'JOB-0001'
   if (!lastJob) {
     return 'JOB-0001';
@@ -35,6 +37,7 @@ const generateJobId = async (): Promise<string> => {
 };
 
 const createJobIntoDB = async (payload:any) => {
+
   // try {
     const { contact } = payload;
    const userdata = {
@@ -47,7 +50,7 @@ const createJobIntoDB = async (payload:any) => {
    }
 
     const existingUser = await User.isUserExistsByCustomEmail(contact.email);
-    if (!existingUser) {
+ if (!existingUser) {
     // Create User
     const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);  
@@ -55,7 +58,7 @@ const createJobIntoDB = async (payload:any) => {
     if (!createdUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User');
     }
-
+  //  console.log('createdUser', createdUser);
     // Add createdUser's _id to the payload for Job creation
     payload.userId = createdUser._id;
   }
@@ -64,11 +67,12 @@ const createJobIntoDB = async (payload:any) => {
     payload.userId = (existingUser as any)._id;
    }
 
-  
+  // console.log('existingUser', existingUser);
   const newJobId = await generateJobId();
   payload.jobId = newJobId;
 
-
+  // console.log('newJobId', newJobId);
+    //  console.log('Payload in createJobIntoDB:', payload);
     // Create Job
     const createdJob = await Job.create(payload);
     // console.log("createdJob.....", createdJob);  
@@ -76,7 +80,9 @@ const createJobIntoDB = async (payload:any) => {
     if (!createdJob) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
     }
+    /////////////
 
+/////////////////
     // Populate userId field to get the full user data
     const jobWithUser = await Job.findById(createdJob._id).populate('userId');  
 
@@ -324,6 +330,100 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
   if (!updatedJob) {
     throw new Error('Job not found after update');
   }
+
+  /////////////////
+  
+      const pickupData: any = {};
+      const deliveryData: any = {};
+    
+      if (updatedJob.from) {
+        pickupData['from'] = updatedJob.from;
+      }
+      // if (AddRouteData.pickupMinute) {
+      //   pickupData['pickupMinute'] = payload.pickupMinute;
+      // }
+      // if (AddRouteData.pickupExtraText) {
+      //   pickupData['pickupExtraText'] = payload.pickupExtraText;
+      // }
+      if (updatedJob.pickupDateInfo) {
+        pickupData['pickupDateInfo'] = updatedJob.pickupDateInfo;
+      }
+      // if (AddRouteData.pickupExtraAdress) {
+      //   pickupData['pickupExtraAdress'] = payload.pickupExtraAdress;
+      // }
+    
+      if (updatedJob.to) {
+        deliveryData['to'] = updatedJob.to;
+      }
+      // if (AddRouteData.deliveryMinute) {
+      //   deliveryData['deliveryMinute'] = payload.deliveryMinute;
+      // }
+      // if (AddRouteData.deliveryExtraText) {
+      //   deliveryData['deliveryExtraText'] = payload.deliveryExtraText;
+      // }
+      if (updatedJob.deliveryDateInfo) {
+        deliveryData['deliveryDateInfo'] = updatedJob.deliveryDateInfo;
+      }
+      // if (AddRouteData.deliveryExtraAdress) {
+      //   deliveryData['deliveryExtraAdress'] = payload.deliveryExtraAdress;
+      // }
+    
+      const dailyRouteData: any = {};
+      const routeContainer: any[] = [];
+      const item: any = {};
+      
+      if (pickupData.from) {
+      // if (Object.keys(pickupData).length > 0 ) {
+        item['addRouteId'] = updatedJob._id;
+        item['address'] = pickupData.from || '';
+        item['dateTimeSlot'] = pickupData.pickupDateInfo
+          ? {
+              date: new Date(pickupData.pickupDateInfo.date), // Ensure this is a Date object
+              timeSlot: pickupData.pickupDateInfo.timeSlot || '',
+            }
+          : { date: new Date(), timeSlot: '' };
+    
+        item['deliveryMode'] = 'pickup';
+        item['dataSource'] = 'addroute';
+        routeContainer.push(item);
+        dailyRouteData.routeContainer = routeContainer;
+    
+        dailyRouteData.date = pickupData.pickupDateInfo?.date
+          ? new Date(pickupData.pickupDateInfo.date)
+          : new Date();
+    
+        const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
+        if (!dailyRouteDataCreated) {
+          throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
+        }
+      }
+    
+      if (updatedJob.to) {
+      // if (Object.keys(deliveryData).length > 0 ) {
+        item['addRouteId'] = updatedJob._id;
+        item['address'] = deliveryData.to || '';
+        item['dateTimeSlot'] = deliveryData.deliveryDateInfo
+          ? {
+              date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
+              timeSlot: deliveryData.deliveryDateInfo.timeSlot || '',
+            }
+          : { date: new Date(), timeSlot: '' };
+    
+        item['deliveryMode'] = 'delivery';
+        item['dataSource'] = 'addroute';
+        routeContainer.push(item);
+        dailyRouteData.routeContainer = routeContainer;
+        dailyRouteData.date = deliveryData.deliveryDateInfo?.date
+          ? new Date(deliveryData.deliveryDateInfo.date)
+          : new Date();
+       const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
+    
+        if (!dailyRouteDataCreated) {
+          throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
+        }
+      }
+  /////////////////
+
 
   return updatedJob;
 };

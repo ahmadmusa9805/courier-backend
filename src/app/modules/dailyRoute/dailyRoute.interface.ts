@@ -17,6 +17,8 @@ export interface IRouteItem {
 
 
 export type TDailyRoute = {
+  userId?: Types.ObjectId;
+  courierId?: Types.ObjectId;
   date: Date;
   routeContainer: IRouteItem[];
   // routeContainer: any[];
