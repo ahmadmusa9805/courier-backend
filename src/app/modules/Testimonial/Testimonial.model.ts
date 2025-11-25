@@ -13,7 +13,7 @@ const TestimonialSchema = new Schema<TTestimonial, TestimonialModel>({
   },
   createdDate: { type: String },
   isDeleted: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 TestimonialSchema.statics.isTestimonialExists = async function (id: string) {
   return await this.findOne({ _id: id, isDeleted: false });
