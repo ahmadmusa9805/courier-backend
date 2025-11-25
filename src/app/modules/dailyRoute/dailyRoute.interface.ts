@@ -3,8 +3,8 @@
 import { Model , Types } from 'mongoose';
 
 export interface IRouteItem {
-  jobId:Types.ObjectId;
-  addRouteId: Types.ObjectId;
+  jobId?:Types.ObjectId;
+  addRouteId?: Types.ObjectId;
   address: string;
   dateTimeSlot: {
     date: Date;
@@ -17,6 +17,8 @@ export interface IRouteItem {
 
 
 export type TDailyRoute = {
+  userId?: Types.ObjectId;
+  courierId?: Types.ObjectId;
   date: Date;
   routeContainer: IRouteItem[];
   // routeContainer: any[];
@@ -25,8 +27,6 @@ export type TDailyRoute = {
 export interface DailyRouteModel extends Model<TDailyRoute> {
   isDailyRouteExists(id: string): Promise<TDailyRoute | null>;
 }
-
-
   // jobId?: Types.ObjectId;
   // addRouteId?: Types.ObjectId;
   // address?: string;

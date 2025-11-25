@@ -46,6 +46,14 @@ const routeItemSchema = new Schema<IRouteItem>({
 const dailyRouteSchema = new Schema<TDailyRoute, DailyRouteModel>(
   {
     date: { type: Date, required: true },  
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    courierId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     routeContainer: {
       type: [routeItemSchema],  
       required: true,
