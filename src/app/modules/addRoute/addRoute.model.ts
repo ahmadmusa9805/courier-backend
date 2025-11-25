@@ -1,7 +1,6 @@
 import { model, Schema } from "mongoose";
 import { AddRouteModel, TAddRoute } from "./addRoute.interface";
 
-
 const AddRouteSchema = new Schema<TAddRoute, AddRouteModel>(
   {
     jobId: { type: String },
@@ -17,6 +16,12 @@ const AddRouteSchema = new Schema<TAddRoute, AddRouteModel>(
     },
     from: { type: String },
     to: { type: String },
+    pickupMinute: { type: Number },
+    deliveryMinute: { type: Number },
+    pickupExtraText: { type: String },
+    deliveryExtraText: { type: String },
+    pickupExtraAdress: { type: String },
+    deliveryExtraAdress: { type: String },
     transportationType: {
       name: { type: String,  },
       options: { type: String},
@@ -32,9 +37,9 @@ const AddRouteSchema = new Schema<TAddRoute, AddRouteModel>(
           enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
         },
         price: { type: Number,  },
-        length: { type: String,  },
-        width: { type: String, },
-        height: { type: String,  },
+        length: { type: String},
+        width: { type: String},
+        height: { type: String},
       },
     ],
     pickupDateInfo: {
