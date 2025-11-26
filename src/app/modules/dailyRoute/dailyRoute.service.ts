@@ -6,6 +6,7 @@ import { DAILYROUTE_SEARCHABLE_FIELDS } from './dailyRoute.constant';
 import mongoose from 'mongoose';
 import { TDailyRoute } from './dailyRoute.interface';
 import { DailyRoute } from './dailyRoute.model';
+import { User } from '../User/user.model';
 
 const createDailyRouteIntoDB = async (
   payload: TDailyRoute,
@@ -19,9 +20,17 @@ const createDailyRouteIntoDB = async (
   return result;
 };
 
-const getAllDailyRoutesFromDB = async (query: Record<string, unknown>) => {
+const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user:any) => {
+
+  console.log('query', query);
+    const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+  if (!usr) {
+    throw new Error('User not found');
+  }
   const DailyRouteQuery = new QueryBuilder(
-    DailyRoute.find(),
+    DailyRoute.find({ courierId: (usr as any)._id }),
     query,
   )
     .search(DAILYROUTE_SEARCHABLE_FIELDS)

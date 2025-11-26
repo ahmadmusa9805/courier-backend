@@ -391,7 +391,8 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
         dailyRouteData.date = pickupData.pickupDateInfo?.date
           ? new Date(pickupData.pickupDateInfo.date)
           : new Date();
-    
+    dailyRouteData.userId = updatedJob.userId;
+    dailyRouteData.courierId = updatedJob.courierId;
         const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
         if (!dailyRouteDataCreated) {
           throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
@@ -416,6 +417,8 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
         dailyRouteData.date = deliveryData.deliveryDateInfo?.date
           ? new Date(deliveryData.deliveryDateInfo.date)
           : new Date();
+       dailyRouteData.userId = updatedJob.userId;
+       dailyRouteData.courierId = updatedJob.courierId;
        const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
     
         if (!dailyRouteDataCreated) {

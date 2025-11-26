@@ -5,7 +5,7 @@ import { AddRouteServices } from './addRoute.service';
 
 const createAddRoute = catchAsync(async (req, res) => {
   const dailyRouteData = req.body;
-  const result = await AddRouteServices.createAddRouteIntoDB(dailyRouteData);
+  const result = await AddRouteServices.createAddRouteIntoDB(dailyRouteData, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

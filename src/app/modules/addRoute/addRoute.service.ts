@@ -7,8 +7,17 @@ import mongoose from 'mongoose';
 import { TAddRoute } from './addRoute.interface';
 import { AddRoute } from './addRoute.model';
 import { DailyRoute } from '../dailyRoute/dailyRoute.model';
+import { User } from '../User/user.model';
 
-const createAddRouteIntoDB = async (payload: TAddRoute) => {
+const createAddRouteIntoDB = async (payload: TAddRoute, user:any) => {
+  const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+  if (!usr) {
+    throw new Error('User not found');
+  }
+
+ payload.courierId = (usr as any)._id;
   const AddRouteData = await AddRoute.create(payload);
 
 
@@ -54,7 +63,7 @@ const createAddRouteIntoDB = async (payload: TAddRoute) => {
   const dailyRouteData: any = {};
   const routeContainer: any[] = [];
   const item: any = {};
-  
+
   if (pickupData.from) {
   // if (Object.keys(pickupData).length > 0 ) {
     item['addRouteId'] = AddRouteData._id;
@@ -75,6 +84,8 @@ const createAddRouteIntoDB = async (payload: TAddRoute) => {
       ? new Date(pickupData.pickupDateInfo.date)
       : new Date();
 
+
+    dailyRouteData.courierId = AddRouteData.courierId;  
     const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
     if (!dailyRouteDataCreated) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
@@ -99,6 +110,8 @@ const createAddRouteIntoDB = async (payload: TAddRoute) => {
     dailyRouteData.date = deliveryData.deliveryDateInfo?.date
       ? new Date(deliveryData.deliveryDateInfo.date)
       : new Date();
+    
+       dailyRouteData.courierId = AddRouteData.courierId;    
    const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
 
     if (!dailyRouteDataCreated) {
