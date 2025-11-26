@@ -28,7 +28,7 @@ const getSingleDailyRoute = catchAsync(async (req, res) => {
 });
 
 const getAllDailyRoutes = catchAsync(async (req, res) => {
-  const result = await DailyRouteServices.getAllDailyRoutesFromDB(req.query);
+  const result = await DailyRouteServices.getAllDailyRoutesFromDB(req.query, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
