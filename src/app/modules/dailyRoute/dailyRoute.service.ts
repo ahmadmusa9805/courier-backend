@@ -3,10 +3,10 @@ import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { DAILYROUTE_SEARCHABLE_FIELDS } from './dailyRoute.constant';
-import mongoose from 'mongoose';
 import { TDailyRoute } from './dailyRoute.interface';
 import { DailyRoute } from './dailyRoute.model';
 import { User } from '../User/user.model';
+import { Job } from '../Job/Job.model';
 
 const createDailyRouteIntoDB = async (
   payload: TDailyRoute,
@@ -22,7 +22,7 @@ const createDailyRouteIntoDB = async (
 
 const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user:any) => {
 
-  console.log('query', query);
+
     const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
 
@@ -53,25 +53,32 @@ const getSingleDailyRouteFromDB = async (id: string) => {
   return result;
 };
 
-const updateDailyRouteIntoDB = async (id: string, payload: any) => {
-  const isDeletedService = await mongoose.connection
-    .collection('dailyroutes')
-    .findOne(
-      { _id: new mongoose.Types.ObjectId(id) },
-      { projection: { isDeleted: 1, name: 1 } },
-    );
+const updateDailyRouteIntoDB = async (id: string, payload: any, user: any) => {
+  const { userEmail } = user;
+  const usr = await User.isUserExistsByCustomEmail(userEmail);
+  const dailyRouteData = await DailyRoute.findById(id);
 
-  if (!isDeletedService?.name) {
-    throw new Error('DailyRoute not found');
+  if (!usr) {
+    throw new Error('User not found');
+  }
+  if (!dailyRouteData) {
+    throw new Error(' dailyRoute not found');
   }
 
-  if (isDeletedService.isDeleted) {
-    throw new Error('Cannot update a deleted dailyRoute');
+  if((usr as any)._id.toString() !==  dailyRouteData?.courierId?.toString()){
+    throw new Error('You are not authorized to update this dailyRoute');
   }
+
+const { data,  routeContainer} = payload;
+const { timeSlot,  address,  deliveryMode, jobId} = data;
 
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
-    payload,
+      {
+      $set: {
+        routeContainer: routeContainer,  // Updating routeContainer directly
+      }
+    },
     { new: true, runValidators: true },
   );
 
@@ -79,6 +86,17 @@ const updateDailyRouteIntoDB = async (id: string, payload: any) => {
     throw new Error('DailyRoute not found after update');
   }
 
+   const jobData = await Job.findById(jobId);
+  if(deliveryMode === 'delivery' && jobData){
+    jobData.to = address;
+    jobData.deliveryDateInfo.timeSlot = timeSlot;
+    await jobData.save();
+  }
+  if(deliveryMode === 'pickup' && jobData){
+    jobData.from = address;
+    jobData.pickupDateInfo.timeSlot = timeSlot;
+    await jobData.save();
+  }
   return updatedData;
 };
 

@@ -41,8 +41,8 @@ const getAllDailyRoutes = catchAsync(async (req, res) => {
 
 const updateDailyRoute = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { dailyRoute } = req.body;
-  const result = await DailyRouteServices.updateDailyRouteIntoDB(id, dailyRoute);
+  const dailyRoute = req.body;
+  const result = await DailyRouteServices.updateDailyRouteIntoDB(id, dailyRoute, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
