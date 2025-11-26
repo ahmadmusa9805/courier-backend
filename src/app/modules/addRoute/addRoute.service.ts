@@ -17,7 +17,7 @@ const createAddRouteIntoDB = async (payload: TAddRoute, user:any) => {
     throw new Error('User not found');
   }
 
- payload.courierId = (usr as any)._id;
+   payload.courierId = (usr as any)._id;
   const AddRouteData = await AddRoute.create(payload);
 
 
@@ -60,8 +60,10 @@ const createAddRouteIntoDB = async (payload: TAddRoute, user:any) => {
     deliveryData['deliveryExtraAdress'] = payload.deliveryExtraAdress;
   }
 
-  const dailyRouteData: any = {};
-  const routeContainer: any[] = [];
+  const dailyRouteDataPickup: any = {};
+  const dailyRouteDataDelivery: any = {};
+  const routeContainerPickup: any[] = [];
+  const routeContainerDelivery: any[] = [];
   const item: any = {};
 
   if (pickupData.from) {
@@ -77,19 +79,31 @@ const createAddRouteIntoDB = async (payload: TAddRoute, user:any) => {
 
     item['deliveryMode'] = 'pickup';
     item['dataSource'] = 'addroute';
-    routeContainer.push(item);
-    dailyRouteData.routeContainer = routeContainer;
+    routeContainerPickup.push(item);
+    dailyRouteDataPickup.routeContainer = routeContainerPickup;
 
-    dailyRouteData.date = pickupData.pickupDateInfo?.date
+    dailyRouteDataPickup.date = pickupData.pickupDateInfo?.date
       ? new Date(pickupData.pickupDateInfo.date)
       : new Date();
 
 
-    dailyRouteData.courierId = AddRouteData.courierId;  
-    const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
+    dailyRouteDataPickup.courierId = AddRouteData.courierId;  
+
+    const existingDailyRouteData = await DailyRoute.findOne({
+      date: dailyRouteDataPickup.date,
+      courierId: dailyRouteDataPickup.courierId,
+    });
+
+    if (existingDailyRouteData) {
+      // Update existing DailyRoute by adding new route items
+      existingDailyRouteData.routeContainer.push(...routeContainerPickup);
+      await existingDailyRouteData.save();
+    } else {
+    const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataPickup);
     if (!dailyRouteDataCreated) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
     }
+  }
   }
 
   if (deliveryData.to) {
@@ -105,18 +119,29 @@ const createAddRouteIntoDB = async (payload: TAddRoute, user:any) => {
 
     item['deliveryMode'] = 'delivery';
     item['dataSource'] = 'addroute';
-    routeContainer.push(item);
-    dailyRouteData.routeContainer = routeContainer;
-    dailyRouteData.date = deliveryData.deliveryDateInfo?.date
+    routeContainerDelivery.push(item);
+    dailyRouteDataDelivery.routeContainer = routeContainerDelivery;
+    dailyRouteDataDelivery.date = deliveryData.deliveryDateInfo?.date
       ? new Date(deliveryData.deliveryDateInfo.date)
       : new Date();
     
-       dailyRouteData.courierId = AddRouteData.courierId;    
-   const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
+       dailyRouteDataDelivery.courierId = AddRouteData.courierId;   
+       
+       
+     const existingDailyRoute = await DailyRoute.findOne({
+      date: dailyRouteDataDelivery.date,
+      courierId: dailyRouteDataDelivery.courierId,
+    });
 
+    if (existingDailyRoute) {
+      existingDailyRoute.routeContainer.push(...routeContainerDelivery);
+      await existingDailyRoute.save();
+    } else {
+   const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataDelivery);
     if (!dailyRouteDataCreated) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
     }
+  }
   }
 
   return AddRouteData;
