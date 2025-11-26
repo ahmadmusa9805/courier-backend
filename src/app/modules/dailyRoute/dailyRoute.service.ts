@@ -20,17 +20,54 @@ const createDailyRouteIntoDB = async (
   return result;
 };
 
-const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user:any) => {
+// const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user:any) => {
 
 
-    const { userEmail } = user;
+//     const { userEmail } = user;
+//   const usr = await User.isUserExistsByCustomEmail(userEmail);
+
+//   if (!usr) {
+//     throw new Error('User not found');
+//   }
+//   const DailyRouteQuery = new QueryBuilder(
+//     DailyRoute.find({ courierId: (usr as any)._id }),
+//     query,
+//   )
+//     .search(DAILYROUTE_SEARCHABLE_FIELDS)
+//     .filter()
+//     .sort()
+//     .paginate()
+//     .fields();
+
+//   const result = await DailyRouteQuery.modelQuery;
+//   const meta = await DailyRouteQuery.countTotal();
+//   return {
+//     result,
+//     meta,
+//   };
+// };
+const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user: any) => {
+  const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
 
   if (!usr) {
     throw new Error('User not found');
   }
+
+  // Parse the `date` query parameter if it's provided
+  if (query.date && typeof query.date === 'string') {
+    const date = new Date(query.date); // Convert the date string to a Date object
+
+    // Construct a date range for the query, e.g., from 2025-11-26T00:00:00.000Z to 2025-11-26T23:59:59.999Z
+    const startOfDay = new Date(date.setHours(0, 0, 0, 0)); // Start of the day
+    const endOfDay = new Date(date.setHours(23, 59, 59, 999)); // End of the day
+
+    // Modify your query to match documents that have the date within the range
+    query.date = { $gte: startOfDay, $lte: endOfDay };
+  }
+
   const DailyRouteQuery = new QueryBuilder(
-    DailyRoute.find({ courierId: (usr as any)._id }),
+    DailyRoute.find({ courierId: (usr as any)._id, ...query }), // Apply the date range filter to the query
     query,
   )
     .search(DAILYROUTE_SEARCHABLE_FIELDS)
@@ -41,6 +78,7 @@ const getAllDailyRoutesFromDB = async (query: Record<string, unknown>, user:any)
 
   const result = await DailyRouteQuery.modelQuery;
   const meta = await DailyRouteQuery.countTotal();
+
   return {
     result,
     meta,
