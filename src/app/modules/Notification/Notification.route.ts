@@ -15,17 +15,20 @@ router.put(
   auth(USER_ROLE.superAdmin, ),
   NotificationControllers.markNotificationsAsRead,
 );
+
+router.get(
+  '/unread',
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
+  NotificationControllers.getAllUnreadNotifications,
+);
+
 router.patch(
   '/:id/read',
   auth(USER_ROLE.superAdmin, ),
   NotificationControllers.markNotificationAsRead,
 );
 
-router.get(
-  '/unread',
-  auth(USER_ROLE.superAdmin, ),
-  NotificationControllers.getAllUnreadNotifications,
-);
+
 
 
 export const NotificationRoutes = router;
