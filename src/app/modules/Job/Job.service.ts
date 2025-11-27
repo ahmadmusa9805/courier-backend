@@ -87,24 +87,9 @@ const createJobIntoDB = async (payload: any) => {
     });
   }
  
-    /////////////
-
-/////////////////
-    // Populate userId field to get the full user data
-    const jobWithUser = await Job.findById(createdJob._id).populate('userId');  
-
-    // Return the job along with the populated user data
-    return jobWithUser;
-    
-  // } catch (error) {
-    // console.error("Error during job creation:", error);
-    // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
   if (!createdJob) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
   }
-  /////////////
-
-  /////////////////
   // Populate userId field to get the full user data
   const jobWithUser = await Job.findById(createdJob._id).populate('userId');
 
@@ -286,17 +271,6 @@ const getSingleJobFromDB = async (id: string) => {
 };
 
 const updateJobIntoDB = async (id: string, payload: any, user: any) => {
-
- console.log('updating testing:', payload);
-
-  let parameter: boolean = false;
-  if(payload.status = 'completed'){
-    parameter = true;
-  }
-
-  if(payload.status = 'accepted'){
-    parameter = true;
-  }
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
@@ -319,6 +293,9 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
 if (usr.role === 'user' || usr.role === 'company' ) {
     if(existingJob.adminApproved === true) {
       throw new Error('You are not authorized to update this Job after admin approval');
+    }
+    if(existingJob.status === 'accepted' || existingJob.status === 'in-progress' || existingJob.status === 'completed') {
+      throw new Error('You are not authorized to update this Job after Courier approval');
     }
   }
 if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
@@ -376,14 +353,6 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
     }
   }
 
-  
-  if (!room) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create ChatRoom');
-  }
-   
-}
-
-  // Perform the update for other fields
   const updatedJob = await Job.findByIdAndUpdate({ _id: id }, updateQuery, {
     new: true,
     runValidators: true,
@@ -409,86 +378,6 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
   });
   }
 
-
-
-
-  /////////////////
-  
-      const pickupData: any = {};
-      const deliveryData: any = {};
-    
-      if (updatedJob.from) {
-        pickupData['from'] = updatedJob.from;
-      }
-      if (updatedJob.pickupDateInfo) {
-        pickupData['pickupDateInfo'] = updatedJob.pickupDateInfo;
-      }
-    
-      if (updatedJob.to) {
-        deliveryData['to'] = updatedJob.to;
-      }
-      if (updatedJob.deliveryDateInfo) {
-        deliveryData['deliveryDateInfo'] = updatedJob.deliveryDateInfo;
-      }
-    
-      const dailyRouteData: any = {};
-      const routeContainer: any[] = [];
-      const item: any = {};
-      
-      if (pickupData.from) {
-      // if (Object.keys(pickupData).length > 0 ) {
-        item['addRouteId'] = updatedJob._id;
-        item['address'] = pickupData.from || '';
-        item['dateTimeSlot'] = pickupData.pickupDateInfo
-          ? {
-              date: new Date(pickupData.pickupDateInfo.date), // Ensure this is a Date object
-              timeSlot: pickupData.pickupDateInfo.timeSlot || '',
-            }
-          : { date: new Date(), timeSlot: '' };
-    
-        item['deliveryMode'] = 'pickup';
-        item['dataSource'] = 'addroute';
-        routeContainer.push(item);
-        dailyRouteData.routeContainer = routeContainer;
-    
-        dailyRouteData.date = pickupData.pickupDateInfo?.date
-          ? new Date(pickupData.pickupDateInfo.date)
-          : new Date();
-    dailyRouteData.userId = updatedJob.userId;
-    dailyRouteData.courierId = updatedJob.courierId;
-        const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
-        if (!dailyRouteDataCreated) {
-          throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
-        }
-      }
-    
-      if (updatedJob.to) {
-      // if (Object.keys(deliveryData).length > 0 ) {
-        item['addRouteId'] = updatedJob._id;
-        item['address'] = deliveryData.to || '';
-        item['dateTimeSlot'] = deliveryData.deliveryDateInfo
-          ? {
-              date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
-              timeSlot: deliveryData.deliveryDateInfo.timeSlot || '',
-            }
-          : { date: new Date(), timeSlot: '' };
-    
-        item['deliveryMode'] = 'delivery';
-        item['dataSource'] = 'addroute';
-        routeContainer.push(item);
-        dailyRouteData.routeContainer = routeContainer;
-        dailyRouteData.date = deliveryData.deliveryDateInfo?.date
-          ? new Date(deliveryData.deliveryDateInfo.date)
-          : new Date();
-       dailyRouteData.userId = updatedJob.userId;
-       dailyRouteData.courierId = updatedJob.courierId;
-       const dailyRouteDataCreated = await DailyRoute.create(dailyRouteData);
-    
-        if (!dailyRouteDataCreated) {
-          throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create DailyRoute');
-        }
-      }
-  /////////////////
 
 if(usr.role === 'courier' ) {
   const pickupData: any = {};
@@ -598,10 +487,11 @@ if(usr.role === 'courier' ) {
     }
   }
 }
-  /////////////////
 
   return updatedJob;
-};
+
+}
+
 
 const deleteJobFromDB = async (id: string) => {
   const deletedService = await Job.findByIdAndDelete(
