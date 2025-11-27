@@ -361,19 +361,30 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
   if (!updatedJob) {
     throw new Error('Job not found after update');
   }
-  if( payload.status === 'completed' || updatedJob.status === 'completed' ){
+  if( payload.status === 'completed' && updatedJob.status === 'completed' ){
    await Notification.create({
-    type: 'jobCompleted',
+    type: 'JobCompleted',
     courierId: updatedJob.courierId,
+    userId: updatedJob.userId,
     message: `The job with ID ${updatedJob.jobId} has been completed.`,
     readBy: [],
   });
   }
-  if( payload.status === 'accepted' || updatedJob.status === 'accepted' ){
+  if( payload.status === 'accepted' && updatedJob.status === 'accepted' ){
    await Notification.create({
     type: 'jobAccepted',
     courierId: updatedJob.courierId,
+    userId: updatedJob.userId,
     message: `The job with ID ${updatedJob.jobId} has been jobAccepted.`,
+    readBy: [],
+  });
+  }
+  if( payload.adminApproved === true && updatedJob.adminApproved === true ){
+   await Notification.create({
+    type: 'adminApproved',
+    courierId: updatedJob.courierId,
+    userId: updatedJob.userId,
+    message: `The job with ID ${updatedJob.jobId} has been adminApproved.`,
     readBy: [],
   });
   }

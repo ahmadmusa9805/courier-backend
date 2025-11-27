@@ -4,15 +4,14 @@ import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../User/user.constant';
 
 const router = express.Router();
-
 router.post(
   '/create-Notification',
   NotificationControllers.createNotification,
 );
 
-router.put(
+router.patch(
   '/mark-all-as-read',
-  auth(USER_ROLE.superAdmin, ),
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   NotificationControllers.markNotificationsAsRead,
 );
 
@@ -24,7 +23,7 @@ router.get(
 
 router.patch(
   '/:id/read',
-  auth(USER_ROLE.superAdmin, ),
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   NotificationControllers.markNotificationAsRead,
 );
 
