@@ -12,10 +12,8 @@ import { DailyRoute } from '../dailyRoute/dailyRoute.model';
 import { Notification } from '../Notification/Notification.model';
 // Arrow function to generate the next jobId
 const generateJobId = async (): Promise<string> => {
-  console.log('Generating new jobId...');
   // Find the latest job in the collection
   const lastJob = await Job.findOne().sort({ _id: -1 });
-  console.log('lastJob found:', lastJob);
   // If no jobs exist, return the first jobId 'JOB-0001'
   if (!lastJob) {
     return 'JOB-0001';
@@ -24,7 +22,7 @@ const generateJobId = async (): Promise<string> => {
   // Extract the numeric part from the last jobId (e.g., 'JOB-0009' -> 9)
   const lastJobId = lastJob.jobId;
   const match = lastJobId.match(/^JOB-(\d+)$/);
-  
+
   if (match && match[1]) {
     // Convert the extracted number to a number type, increment by 1
     const lastJobNumber = parseInt(match[1], 10);
@@ -37,46 +35,45 @@ const generateJobId = async (): Promise<string> => {
   }
 };
 
-const createJobIntoDB = async (payload:any) => {
-
+const createJobIntoDB = async (payload: any) => {
   // try {
-    const { contact } = payload;
-   const userdata = {
+  const { contact } = payload;
+  const userdata = {
     name: contact.name,
     email: contact.email,
     phone: contact.phone,
     password: contact.password || '12345',
     role: contact.userType,
     userType: contact.userType,
-   }
+  };
 
-    const existingUser = await User.isUserExistsByCustomEmail(contact.email);
- if (!existingUser) {
+  const existingUser = await User.isUserExistsByCustomEmail(contact.email);
+  if (!existingUser) {
     // Create User
     const createdUser = await User.create(userdata);
-    // console.log("createdUser.....", createdUser);  
+    // console.log("createdUser.....", createdUser);
 
     if (!createdUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User');
     }
-  //  console.log('createdUser', createdUser);
+    //  console.log('createdUser', createdUser);
     // Add createdUser's _id to the payload for Job creation
     payload.userId = createdUser._id;
   }
 
-   if(existingUser) {
+  if (existingUser) {
     payload.userId = (existingUser as any)._id;
-   }
+  }
 
   // console.log('existingUser', existingUser);
   const newJobId = await generateJobId();
   payload.jobId = newJobId;
 
   // console.log('newJobId', newJobId);
-    //  console.log('Payload in createJobIntoDB:', payload);
-    // Create Job
-    const createdJob = await Job.create(payload);
-    // console.log("createdJob.....", createdJob);  
+  //  console.log('Payload in createJobIntoDB:', payload);
+  // Create Job
+  const createdJob = await Job.create(payload);
+  // console.log("createdJob.....", createdJob);
 
     if (!createdJob) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
@@ -102,14 +99,25 @@ const createJobIntoDB = async (payload:any) => {
   // } catch (error) {
     // console.error("Error during job creation:", error);
     // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+  if (!createdJob) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
   }
+  /////////////
 
-  
+  /////////////////
+  // Populate userId field to get the full user data
+  const jobWithUser = await Job.findById(createdJob._id).populate('userId');
+
+  // Return the job along with the populated user data
+  return jobWithUser;
+
+  // } catch (error) {
+  // console.error("Error during job creation:", error);
+  // throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal Server Error');
+};
+
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
-  const JobQuery = new QueryBuilder(
-    Job.find(),
-    query,
-  )
+  const JobQuery = new QueryBuilder(Job.find(), query)
     .search(JOB_SEARCHABLE_FIELDS)
     .filter()
     .sort()
@@ -124,8 +132,10 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
   };
 };
 
-
-const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any) => {
+const getAllJobsForUserFromDB = async (
+  query: Record<string, unknown>,
+  user: any,
+) => {
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
@@ -143,24 +153,22 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
 
   // // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
   if (usr.role === 'user' || usr.role === 'company') {
-    console.log('ahmad text user/company')
-      baseQuery = Job.find({ userId: (usr as any)._id });
+    console.log('ahmad text user/company');
+    baseQuery = Job.find({ userId: (usr as any)._id });
   } else if (usr.role === 'courier') {
-      baseQuery = Job.find({ courierId: (usr as any)._id });
+    baseQuery = Job.find({ courierId: (usr as any)._id });
   } else {
-  // } else if (usr.role === 'superAdmin' || usr.role === 'admin') {
-     baseQuery = Job.find();
-
+    // } else if (usr.role === 'superAdmin' || usr.role === 'admin') {
+    baseQuery = Job.find();
   }
-
 
   // Create the query builder instance
   const JobQuery = new QueryBuilder(baseQuery, query)
-    .search(JOB_SEARCHABLE_FIELDS)  // Search functionality
-    .filter()                       // Apply filters
-    .sort()                         // Apply sorting (this will use dynamic sort if provided in the query)
-    .paginate()                     // Apply pagination
-    .fields();                      // Apply field selection
+    .search(JOB_SEARCHABLE_FIELDS) // Search functionality
+    .filter() // Apply filters
+    .sort() // Apply sorting (this will use dynamic sort if provided in the query)
+    .paginate() // Apply pagination
+    .fields(); // Apply field selection
 
   // If 'sortBy' is provided in the query, adjust sorting dynamically
   if (Object.keys(sortOption).length > 0) {
@@ -177,25 +185,25 @@ const getAllJobsForUserFromDB = async (query: Record<string, unknown>, user: any
   };
 };
 const getAllJobsWithAllStatusFromDB = async () => {
-     const allJobs = await Job.countDocuments({});
-     const allPendingJobs = await Job.countDocuments({status: 'pending'});
-     const allAcceptedJobs = await Job.countDocuments({status: 'accepted'});
-     const allCompletedJobs = await Job.countDocuments({status: 'completed'});
-     const allCancelledJobs = await Job.countDocuments({status: 'cancelled'});
-  
-  
-  
-    return {
-      allJobs,
-      allPendingJobs,
-      allAcceptedJobs,
-      allCompletedJobs,
-      allCancelledJobs,
-    };
+  const allJobs = await Job.countDocuments({});
+  const allPendingJobs = await Job.countDocuments({ status: 'pending' });
+  const allAcceptedJobs = await Job.countDocuments({ status: 'accepted' });
+  const allCompletedJobs = await Job.countDocuments({ status: 'completed' });
+  const allCancelledJobs = await Job.countDocuments({ status: 'cancelled' });
+
+  return {
+    allJobs,
+    allPendingJobs,
+    allAcceptedJobs,
+    allCompletedJobs,
+    allCancelledJobs,
+  };
 };
 
-const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any) => {
-
+const getDailyRouteJobsFromDB = async (
+  query: Record<string, unknown>,
+  user: any,
+) => {
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
 
@@ -209,18 +217,36 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
     const date = new Date(query.pickupDate as string);
 
     // Full UTC day range
-    const startOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + 1, 0, 0, 0));
+    const startOfDay = new Date(
+      Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        0,
+        0,
+        0,
+      ),
+    );
+    const endOfDay = new Date(
+      Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate() + 1,
+        0,
+        0,
+        0,
+      ),
+    );
 
     // dateFilter = {
     //   'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay },
     // };
 
-        dateFilter = {
+    dateFilter = {
       $or: [
         { 'pickupDateInfo.date': { $gte: startOfDay, $lt: endOfDay } },
         { 'deliveryDateInfo.date': { $gte: startOfDay, $lt: endOfDay } },
-      ]
+      ],
     };
 
     // Prevent QueryBuilder.filter() from overriding our date filter
@@ -252,7 +278,9 @@ const getDailyRouteJobsFromDB = async (query: Record<string, unknown>, user: any
 };
 
 const getSingleJobFromDB = async (id: string) => {
-  const result = await Job.findById(id).populate('userId').populate('courierId');
+  const result = await Job.findById(id)
+    .populate('userId')
+    .populate('courierId');
 
   return result;
 };
@@ -271,15 +299,12 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
   }
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
-
   if (!usr) {
     throw new Error('User not found');
   }
 
   const { items } = payload;
-  // const { items, extraService, ...other } = payload;
-  const flattenedPayload = flattenObject(payload);  // Flatten the entire payload
-
+  const flattenedPayload = flattenObject(payload);
   const existingJob = await mongoose.connection
     .collection('jobs')
     .findOne({ _id: new mongoose.Types.ObjectId(id) });
@@ -287,13 +312,23 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
   if (!existingJob) {
     throw new Error('Job not found');
   }
-
   if (existingJob.isDeleted) {
     throw new Error('Cannot update a deleted Job');
   }
 
-  const updateQuery: any = { $set: {} };
+if (usr.role === 'user' || usr.role === 'company' ) {
+    if(existingJob.adminApproved === true) {
+      throw new Error('You are not authorized to update this Job after admin approval');
+    }
+  }
+if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
+    if(existingJob.status === 'accepted' || existingJob.status === 'in-progress' || existingJob.status === 'completed') {
+      throw new Error('You are not authorized to update this Job after Courier acceptance');
+    }
+  }
 
+
+  const updateQuery: any = { $set: {} };
   // Handle "add" and "remove" for items separately to avoid conflicts
   if (items) {
      console.log('items testing:', items);
@@ -303,7 +338,7 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
       // First update: Add new items
       await Job.updateOne(
         { _id: id },
-        { $push: { items: { $each: items.add } } }
+        { $push: { items: { $each: items.add } } },
       );
     }
 
@@ -311,7 +346,7 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
       // Second update: Remove items by ID
       await Job.updateOne(
         { _id: id },
-        { $pull: { items: { _id: { $in: items.remove } } } }
+        { $pull: { items: { _id: { $in: items.remove } } } },
       );
     }
   }
@@ -323,17 +358,22 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
     }
   }
 
-   // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
-  if (usr.role === 'courier' || payload.status === 'accepted') {
+  // Accept both 'user', 'company', and 'superAdmin' as valid roles for userId
+  // if (usr.role === 'courier' && payload.status === 'accepted' && existingJob.status === 'pending') {
+  if (usr.role === 'courier' && payload.status === 'accepted') {
     updateQuery.courierId = (usr as any)._id;
 
+    let room = await ChatRoom.findOne({
+      participants: { $all: [(usr as any)._id, id] },
+    });
 
-  let room = await ChatRoom.findOne({
-    participants: { $all: [(usr as any)._id, id] },
-  });
+    if (!room) {
+      room = await ChatRoom.create({ participants: [(usr as any)._id, id] });
+    }
 
-  if (!room) {
-    room = await ChatRoom.create({ participants: [(usr as any)._id, id] });
+    if (!room) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create ChatRoom');
+    }
   }
 
   
@@ -344,11 +384,10 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
 }
 
   // Perform the update for other fields
-  const updatedJob = await Job.findByIdAndUpdate(
-    { _id: id },
-    updateQuery,
-    { new: true, runValidators: true }
-  );
+  const updatedJob = await Job.findByIdAndUpdate({ _id: id }, updateQuery, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!updatedJob) {
     throw new Error('Job not found after update');
@@ -451,6 +490,115 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
       }
   /////////////////
 
+if(usr.role === 'courier' ) {
+  const pickupData: any = {};
+  const deliveryData: any = {};
+
+  if (updatedJob.from) {
+    pickupData['from'] = updatedJob.from;
+  }
+
+  if (updatedJob.pickupDateInfo) {
+    pickupData['pickupDateInfo'] = updatedJob.pickupDateInfo;
+  }
+
+  if (updatedJob.to) {
+    deliveryData['to'] = updatedJob.to;
+  }
+
+  if (updatedJob.deliveryDateInfo) {
+    deliveryData['deliveryDateInfo'] = updatedJob.deliveryDateInfo;
+  }
+  const dailyRouteDataPickup: any = {};
+  const dailyRouteDataDelivery: any = {};
+  const routeContainerPickup: any[] = [];
+  const routeContainerDelivery: any[] = [];
+  const item: any = {};
+
+  if (pickupData.from) {
+    // if (Object.keys(pickupData).length > 0 ) {
+    item['jobId'] = updatedJob._id;
+    item['address'] = pickupData.from || '';
+    item['dateTimeSlot'] = pickupData.pickupDateInfo
+      ? {
+          date: new Date(pickupData.pickupDateInfo.date), // Ensure this is a Date object
+          timeSlot: pickupData.pickupDateInfo.timeSlot || '',
+        }
+      : { date: new Date(), timeSlot: '' };
+
+    item['deliveryMode'] = 'pickup';
+    item['dataSource'] = 'job';
+    routeContainerPickup.push(item);
+    dailyRouteDataPickup.routeContainer = routeContainerPickup;
+
+    dailyRouteDataPickup.date = pickupData.pickupDateInfo?.date
+      ? new Date(pickupData.pickupDateInfo.date)
+      : new Date();
+    dailyRouteDataPickup.userId = updatedJob.userId;
+    dailyRouteDataPickup.courierId = updatedJob.courierId;
+
+    const existingDailyRouteData = await DailyRoute.findOne({
+      date: dailyRouteDataPickup.date,
+      courierId: dailyRouteDataPickup.courierId,
+    });
+
+    if (existingDailyRouteData) {
+      // Update existing DailyRoute by adding new route items
+      existingDailyRouteData.routeContainer.push(...routeContainerPickup);
+      await existingDailyRouteData.save();
+    } else {
+      const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataPickup);
+      if (!dailyRouteDataCreated) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Failed to create DailyRoute',
+        );
+      }
+    }
+  }
+
+  if (updatedJob.to) {
+    // if (Object.keys(deliveryData).length > 0 ) {
+    item['jobId'] = updatedJob._id;
+    item['address'] = deliveryData.to || '';
+    item['dateTimeSlot'] = deliveryData.deliveryDateInfo
+      ? {
+          date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
+          timeSlot: deliveryData.deliveryDateInfo.timeSlot || '',
+        }
+      : { date: new Date(), timeSlot: '' };
+
+    item['deliveryMode'] = 'delivery';
+    item['dataSource'] = 'job';
+    routeContainerDelivery.push(item);
+    dailyRouteDataDelivery.routeContainer = routeContainerDelivery;
+    dailyRouteDataDelivery.date = deliveryData.deliveryDateInfo?.date
+      ? new Date(deliveryData.deliveryDateInfo.date)
+      : new Date();
+    dailyRouteDataDelivery.userId = updatedJob.userId;
+    dailyRouteDataDelivery.courierId = updatedJob.courierId;
+
+    const existingDailyRoute = await DailyRoute.findOne({
+      date: dailyRouteDataDelivery.date,
+      courierId: dailyRouteDataDelivery.courierId,
+    });
+
+    if (existingDailyRoute) {
+
+      existingDailyRoute.routeContainer.push(...routeContainerDelivery);
+      await existingDailyRoute.save();
+    } else {
+      const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataDelivery);
+      if (!dailyRouteDataCreated) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Failed to create DailyRoute',
+        );
+      }
+    }
+  }
+}
+  /////////////////
 
   return updatedJob;
 };
@@ -477,5 +625,5 @@ export const JobServices = {
   deleteJobFromDB,
   getAllJobsForUserFromDB,
   getDailyRouteJobsFromDB,
-  getAllJobsWithAllStatusFromDB
+  getAllJobsWithAllStatusFromDB,
 };

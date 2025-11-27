@@ -20,6 +20,7 @@ router.get(
 
 router.patch(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   validateRequest(updateDailyRouteValidationSchema),
   DailyRouteControllers.updateDailyRoute,
 );
