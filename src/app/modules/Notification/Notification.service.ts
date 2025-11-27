@@ -5,6 +5,7 @@ import { TNotification } from './Notification.interface';
 import { Notification } from './Notification.model';
 import { User } from '../User/user.model';
 
+
 const createNotificationIntoDB = async (
   payload: TNotification,
 ) => {
@@ -17,26 +18,49 @@ const createNotificationIntoDB = async (
 };
 
 const getAllUnreadNotificationsFromDB = async (user: any) => {
-
   const {userEmail} = user;
   const currentUser = await User.findOne({email: userEmail});
   if(!currentUser) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
 
-//  if (currentUser.role === 'admin') {
-//   // Fetch notifications for the admin's subscriberId
-//   const allNotifications = await Notification.find({
-//     subscriberId: currentUser.subscriberId,
-//   }).sort({ createdAt: -1 }).lean().limit(20);
+ if (currentUser.role === 'admin' || currentUser.role === 'superAdmin' ) {
+  // Fetch notifications for the admin's subscriberId
+  const allNotifications = await Notification.find({}).sort({ createdAt: -1 }).lean().limit(20);
 
-//   const response = allNotifications.map((notif) => ({
-//     ...notif,
-//     isRead: notif.readBy?.some(
-//       (entry: any) => entry?.toString() === currentUser._id.toString()
-//     ),
-//   }));
+  const response = allNotifications.map((notif) => ({
+    ...notif,
+    isRead: notif.readBy?.some(
+      (entry: any) => entry?.toString() === currentUser._id.toString()
+    ),
+  }));
 
-//   return response;
-// }
+  return response;
+}
+ if (currentUser.role === 'courier') {
+  // Fetch notifications for the admin's subscriberId
+  const allNotifications = await Notification.find({courierId:currentUser._id}).sort({ createdAt: -1 }).lean().limit(20);
+
+  const response = allNotifications.map((notif) => ({
+    ...notif,
+    isRead: notif.readBy?.some(
+      (entry: any) => entry?.toString() === currentUser._id.toString()
+    ),
+  }));
+
+  return response;
+}
+ if (currentUser.role === 'user' || currentUser.role === 'company' ) {
+  // Fetch notifications for the admin's subscriberId
+  const allNotifications = await Notification.find({userId:currentUser._id}).sort({ createdAt: -1 }).lean().limit(20);
+
+  const response = allNotifications.map((notif) => ({
+    ...notif,
+    isRead: notif.readBy?.some(
+      (entry: any) => entry?.toString() === currentUser._id.toString()
+    ),
+  }));
+
+  return response;
+}
 
 // if (currentUser.role === 'subscriber' || currentUser.role === 'superAdmin') {
 //   // Fetch notifications for the subscriber

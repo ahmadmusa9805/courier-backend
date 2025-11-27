@@ -2,8 +2,11 @@ import { Schema, model } from 'mongoose';
 import { TNotification, NotificationModel } from './Notification.interface';
 
 const NotificationSchema = new Schema<TNotification, NotificationModel>({
-  type: { type: String, enum: ['jobCreated', 'jobAccepted', 'jobApproved', 'payment'], required: true },
+  type: { type: String, enum: ['jobCreated', 'jobAccepted', 'JobCompleted', 'payment'], required: true },
   message: { type: String, required: true },
+
+  userId: { type: Schema.Types.ObjectId, ref: 'User'  },
+  courierId: { type: Schema.Types.ObjectId, ref: 'User' },
 //  readBy: [
 //     {
 //         type: Schema.Types.ObjectId,
