@@ -14,8 +14,6 @@ const createNotification = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
-
 const getAllUnreadNotifications = catchAsync(async (req, res) => {
 
   const result = await NotificationServices.getAllUnreadNotificationsFromDB(req.user);
@@ -28,7 +26,6 @@ const getAllUnreadNotifications = catchAsync(async (req, res) => {
     data: result,
   });
 });
-
 const markNotificationAsRead = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await NotificationServices.markNotificationAsReadIntoDB(id, req.user);

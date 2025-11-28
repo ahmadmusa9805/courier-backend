@@ -39,11 +39,12 @@ export const createJobValidationSchema = z.object({
     }),
     extraService: z.object({
       service: z.object({
-        options: z.string(),
+        options: z.string().optional(),
+        price: z.number().optional(),
       }),
       floor: z.object({
         options: z.string().optional(),
-        price: z.number(),
+        price: z.number().optional(),
       }),
     }),
     pickupAddress: z.object({
@@ -117,14 +118,11 @@ export const updateJobValidationSchema = z.object({
     }).optional(),
     extraService: z.object({
       service: z.object({
-        carWithLift: z.number().optional(),
-        noNeed: z.number().optional(),
-        extraHelp: z.number().optional(),
+        options: z.number().optional(),
+        price: z.number().optional(),
       }).optional(),
       floor: z.object({
-        groundFloor: z.boolean().optional(),
-        elevator: z.boolean().optional(),
-        level: z.number().optional(),
+        options: z.number().optional(),
         price: z.number().optional(),
       }).optional(),
     }).optional(),

@@ -2,7 +2,7 @@
 import { Model, Types } from 'mongoose';
 
 export type TNotification = {
-  type: 'jobCreated' | 'jobAccepted' | 'JobCompleted' | 'payment';
+  type: 'jobCreated' | 'jobAccepted' | 'JobCompleted' | 'jobPayment' | 'adminApproved';
   userId?: Types.ObjectId;
   courierId?: Types.ObjectId;
   message: string;
