@@ -48,6 +48,7 @@ const JobSchema = new Schema<TJob, JobModel>({
   extraService: {
     service: {
       options: { type: String, required: true },
+      price: { type: Number, default: 0 },
     },
     floor: {
       options: { type: String,  required: true},
@@ -74,6 +75,9 @@ const JobSchema = new Schema<TJob, JobModel>({
   status: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
   totalDistance: { type: String, required: true },
   totalPrice: { type: Number, required: true },
+  timeSlotCost: { type: Number, default : 0 },
+  deliveryImg: { type: String },
+  pickupImg: { type: String },
   isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 
