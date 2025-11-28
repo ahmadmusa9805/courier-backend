@@ -106,10 +106,9 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any) => {
   if((usr as any)._id.toString() !==  dailyRouteData?.courierId?.toString()){
     throw new Error('You are not authorized to update this dailyRoute');
   }
-
 const { data,  routeContainer} = payload;
-const { timeSlot,  address,  deliveryMode, jobId} = data;
-
+if (data && data.jobId) {
+  const { timeSlot,  address,  deliveryMode, jobId} = data;
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
       {
@@ -135,6 +134,34 @@ const { timeSlot,  address,  deliveryMode, jobId} = data;
     jobData.pickupDateInfo.timeSlot = timeSlot;
     await jobData.save();
   }
+  return updatedData;
+}
+
+  const updatedData = await DailyRoute.findByIdAndUpdate(
+    { _id: id },
+      {
+      $set: {
+        routeContainer: routeContainer,  // Updating routeContainer directly
+      }
+    },
+    { new: true, runValidators: true },
+  );
+
+  if (!updatedData) {
+    throw new Error('DailyRoute not found after update');
+  }
+
+  //  const jobData = await Job.findById(jobId);
+  // if(deliveryMode === 'delivery' && jobData){
+  //   jobData.to = address;
+  //   jobData.deliveryDateInfo.timeSlot = timeSlot;
+  //   await jobData.save();
+  // }
+  // if(deliveryMode === 'pickup' && jobData){
+  //   jobData.from = address;
+  //   jobData.pickupDateInfo.timeSlot = timeSlot;
+  //   await jobData.save();
+  // }
   return updatedData;
 };
 
