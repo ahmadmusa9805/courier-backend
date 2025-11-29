@@ -25,12 +25,12 @@ export type TJob = {
   }]
   pickupDateInfo: {
     date: Date;
-    timeSlot: string;
+    timeSlot?: string;
   };
 
   deliveryDateInfo: {
     date: Date;
-    timeSlot: string;
+    timeSlot?: string;
   };
 
   extraService: {

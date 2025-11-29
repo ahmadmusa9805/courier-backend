@@ -91,7 +91,7 @@ const getSingleDailyRouteFromDB = async (id: string) => {
   return result;
 };
 
-const updateDailyRouteIntoDB = async (id: string, payload: any, user: any) => {
+const updateDailyRouteIntoDB = async (id: string, payload: any, user: any, files:any) => {
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   const dailyRouteData = await DailyRoute.findById(id);
@@ -106,9 +106,18 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any) => {
   if((usr as any)._id.toString() !==  dailyRouteData?.courierId?.toString()){
     throw new Error('You are not authorized to update this dailyRoute');
   }
+
+  if (files) {
+    const document = files['document']?.map((f:any) => f.location) || [];
+    if(document.length > 0){
+      payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
+    }
+  }
+
 const { data,  routeContainer} = payload;
 if (data && data.jobId) {
-  const { timeSlot,  address,  deliveryMode, jobId} = data;
+  const { timeSlot,  address,  deliveryMode, jobId, status} = data;
+  console.log('routeContainer', routeContainer);
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
       {
@@ -125,13 +134,26 @@ if (data && data.jobId) {
 
    const jobData = await Job.findById(jobId);
   if(deliveryMode === 'delivery' && jobData){
+   if(status){
+     jobData.status = 'completed';
+      jobData.deliveryImg = routeContainer[0].document || '';
+   } else{
     jobData.to = address;
     jobData.deliveryDateInfo.timeSlot = timeSlot;
+   } 
     await jobData.save();
   }
   if(deliveryMode === 'pickup' && jobData){
-    jobData.from = address;
-    jobData.pickupDateInfo.timeSlot = timeSlot;
+        console.log('pickup img updated2');
+
+   if(status){
+    jobData.status = 'in-progress';
+    jobData.pickupImg = routeContainer[0].document || '';
+    console.log('pickup img updated', jobData);
+   }else{
+        jobData.from = address;
+        jobData.pickupDateInfo.timeSlot = timeSlot;
+   }
     await jobData.save();
   }
   return updatedData;

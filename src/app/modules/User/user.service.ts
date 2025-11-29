@@ -11,6 +11,7 @@ import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { Rating } from '../Rating/Rating.model';
+import { Job } from '../Job/Job.model';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
   // Example: get overview files
@@ -55,10 +56,38 @@ const getMe = async (userEmail: string) => {
   return result;
 };
 
-const getSingleUserIntoDB = async (id: string) => {
+const getSingleUserIntoDB = async (id: string, user:any) => {
+  let requestedUser;
   const result = await User.findOne({ _id: id, isDeleted: false });
+    if(!result){
+      throw new AppError(httpStatus.UNAUTHORIZED, 'User Not Found');
+    }
 
-  return result;
+  if(result.role === 'company' || result.role === 'user'){
+    // if(user.id !== id){
+    //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized to access this user data');
+    // }
+
+    requestedUser = await Job.find({userId: result._id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+
+  }
+
+  if(result.role === 'courier'){
+    // if(user.id !== id){
+    //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized to access this user data');
+    // }
+
+      requestedUser = await Job.find({courierId: result._id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+  }
+
+  if(result.role === 'superAdmin' || result.role === 'admin'){
+     return { user:result  };
+  }
+
+
+  // const rs = await Job.find({userId: id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+  // console.log('rs', rs);
+  return { user:result, jobs: requestedUser  };
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
