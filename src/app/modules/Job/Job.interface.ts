@@ -65,6 +65,8 @@ export type TJob = {
   adminApproved: boolean;
   courierPrice: number;
   totalDistance: string;
+  pickupImg?: string;
+  deliveryImg?: string;
   totalPrice: number;
   timeSlotCost: number;
   pickupImg: string;

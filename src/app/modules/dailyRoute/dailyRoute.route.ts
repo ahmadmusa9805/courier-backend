@@ -21,21 +21,22 @@ router.get(
 
 router.patch(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier),
   uploadFileS3(true).fields([
     { name: 'img', maxCount: 5 },
     { name: 'document', maxCount: 5 },
   ]),
-  (req: Request, res: Response, next: NextFunction) => {
-    if (req.body.data) {
-      try {
-        req.body = JSON.parse(req.body.data);
-      } catch (error) {
-        next(error);
+    (req: Request, res: Response, next: NextFunction) => {
+      if (req.body.data) {
+        try {
+          req.body = JSON.parse(req.body.data);
+        } catch (error) {
+          next(error);
+        }
       }
-    }
-    next();
-  },
-  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier),
+      next();
+    },
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
   validateRequest(updateDailyRouteValidationSchema),
   DailyRouteControllers.updateDailyRoute,
 );

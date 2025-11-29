@@ -91,10 +91,20 @@ const getSingleDailyRouteFromDB = async (id: string) => {
   return result;
 };
 
-const updateDailyRouteIntoDB = async (id: string, payload: any, user: any, files:any) => {
+const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   files?: any) => {
+
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   const dailyRouteData = await DailyRoute.findById(id);
+
+  if (files) {
+    const document = files['document']?.map((f:any) => f.location) || [];
+    if(document.length > 0){
+      payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
+    }
+      console.log("payload.routeContainer[0].document",payload.routeContainer[0].document);
+  }
+
 
   if (!usr) {
     throw new Error('User not found');
@@ -114,10 +124,28 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any, files
     }
   }
 
+// if(payload.status && payload.document){
+//     const updatedData = await DailyRoute.findByIdAndUpdate(
+//     { _id: id },
+//      payload,
+//     { new: true, runValidators: true },
+//   );
+
+//   if (!updatedData) {
+//     throw new Error('DailyRoute not found after update');
+//   }else{
+
+   
+  
+//     return updatedData;
+//   }
+
+
+// }  
+  
 const { data,  routeContainer} = payload;
 if (data && data.jobId) {
-  const { timeSlot,  address,  deliveryMode, jobId, status} = data;
-  console.log('routeContainer', routeContainer);
+const { timeSlot,  address, deliveryMode, jobId, status} = data;
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
       {
@@ -135,13 +163,20 @@ if (data && data.jobId) {
    const jobData = await Job.findById(jobId);
   if(deliveryMode === 'delivery' && jobData){
    if(status){
-     jobData.status = 'completed';
+      jobData.status = 'completed';
       jobData.deliveryImg = routeContainer[0].document || '';
    } else{
+          console.log("deliveryMode",deliveryMode);
+    if(status==='completed'){
+      jobData.status = 'completed'; 
+      jobData!.deliveryImg = routeContainer[0].document || jobData!.deliveryImg || ""; 
+      await jobData.save();
+    }else{
     jobData.to = address;
     jobData.deliveryDateInfo.timeSlot = timeSlot;
    } 
     await jobData.save();
+    }
   }
   if(deliveryMode === 'pickup' && jobData){
         console.log('pickup img updated2');
@@ -154,7 +189,17 @@ if (data && data.jobId) {
         jobData.from = address;
         jobData.pickupDateInfo.timeSlot = timeSlot;
    }
+    console.log("status",status);
+    if(status==='completed'){
+      jobData.status = 'in-progress'; 
+      jobData!.pickupImg = routeContainer[0].document || jobData!.deliveryImg || ""; 
+      await jobData.save();
+    }else{
+    jobData.from = address;
+    jobData.pickupDateInfo.timeSlot = timeSlot;
+    // jobData!.pickupImg = routeContainer[0].document || jobData!.pickupImg || "";
     await jobData.save();
+    }
   }
   return updatedData;
 }
