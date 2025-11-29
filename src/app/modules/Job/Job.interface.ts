@@ -68,6 +68,9 @@ export type TJob = {
   pickupImg?: string;
   deliveryImg?: string;
   totalPrice: number;
+  timeSlotCost: number;
+  pickupImg: string;
+  deliveryImg: string;
   isDeleted: boolean;
 };
 
