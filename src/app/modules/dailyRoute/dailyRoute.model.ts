@@ -19,6 +19,9 @@ const routeItemSchema = new Schema<IRouteItem>({
     type: String,
 
   },
+    document: {
+    type: String,
+  },
   dateTimeSlot: {
     date: {
       type: Date,
@@ -39,6 +42,8 @@ const routeItemSchema = new Schema<IRouteItem>({
     enum: ['job', 'addroute'],
 
   },
+  status: { type: String, enum: [ 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'accepted' },
+
 });
 
 

@@ -6,11 +6,13 @@ export interface IRouteItem {
   jobId?:Types.ObjectId;
   addRouteId?: Types.ObjectId;
   address: string;
+  document: string;
   dateTimeSlot: {
     date: Date;
     timeSlot: string;
   };
   deliveryMode: 'pickup' | 'delivery';
+  status: 'accepted' | 'completed' | 'cancelled' | 'in-progress';
   dataSource: 'job' | 'addroute';
 }
 
