@@ -7,6 +7,7 @@ export interface IRouteItem {
   addRouteId?: Types.ObjectId;
   address: string;
   document: string;
+  comment: string;
   dateTimeSlot: {
     date: Date;
     timeSlot: string;

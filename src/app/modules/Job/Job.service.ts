@@ -102,6 +102,9 @@ const createJobIntoDB = async (payload: any) => {
 };
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
+
+  console.log('query in service:', query);
+
   const JobQuery = new QueryBuilder(Job.find(), query)
     .search(JOB_SEARCHABLE_FIELDS)
     .filter()
@@ -109,8 +112,12 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
+  console.log('query in service:2222 ', query);
   const result = await JobQuery.modelQuery;
   const meta = await JobQuery.countTotal();
+  
+  console.log('query in service:333333 ', result);
+  console.log('query in service:333333 ', meta);
   return {
     result,
     meta,

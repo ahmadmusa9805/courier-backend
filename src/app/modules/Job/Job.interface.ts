@@ -25,12 +25,12 @@ export type TJob = {
   }]
   pickupDateInfo: {
     date: Date;
-    timeSlot: string;
+    timeSlot?: string;
   };
 
   deliveryDateInfo: {
     date: Date;
-    timeSlot: string;
+    timeSlot?: string;
   };
 
   extraService: {
@@ -65,8 +65,6 @@ export type TJob = {
   adminApproved: boolean;
   courierPrice: number;
   totalDistance: string;
-  pickupImg?: string;
-  deliveryImg?: string;
   totalPrice: number;
   timeSlotCost: number;
   pickupImg: string;

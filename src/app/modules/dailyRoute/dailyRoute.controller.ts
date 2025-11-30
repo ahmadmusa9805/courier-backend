@@ -41,12 +41,13 @@ const getAllDailyRoutes = catchAsync(async (req, res) => {
 });
 
 const updateDailyRoute = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const dailyRoute = req.body;
 
-  const files = req.files as {
+      const files = req.files as {
   [fieldname: string]: Express.MulterS3.File[];
 };
+
+  const { id } = req.params;
+  const dailyRoute = req.body;
 
   const result = await DailyRouteServices.updateDailyRouteIntoDB(id, dailyRoute, req.user, files);
 

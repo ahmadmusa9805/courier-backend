@@ -39,11 +39,11 @@ const JobSchema = new Schema<TJob, JobModel>({
   ],
   pickupDateInfo: {
     date: { type: Date, required: true },
-    timeSlot: { type: String, required: true },
+    timeSlot: { type: String,  },
   },
   deliveryDateInfo: {
     date: { type: Date, required: true },
-    timeSlot: { type: String, required: true },
+    timeSlot: { type: String,  },
   },
   extraService: {
     service: {
