@@ -92,7 +92,7 @@ const getSingleDailyRouteFromDB = async (id: string) => {
 };
 
 const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   files?: any) => {
-
+console.log("payload.arrayPosition",typeof payload.arrayPosition);
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   const dailyRouteData = await DailyRoute.findById(id);
@@ -100,7 +100,8 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   fil
   if (files) {
     const document = files['document']?.map((f:any) => f.location) || [];
     if(document.length > 0){
-      payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
+      console.log("document[0]",document[0]);
+      payload.routeContainer[payload.arrayPosition].document = document[0]; // Assuming file.location contains the S3 URL
     }
       console.log("payload.routeContainer[0].document",payload.routeContainer[0].document);
   }
@@ -117,12 +118,12 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   fil
     throw new Error('You are not authorized to update this dailyRoute');
   }
 
-  if (files) {
-    const document = files['document']?.map((f:any) => f.location) || [];
-    if(document.length > 0){
-      payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
-    }
-  }
+  // if (files) {
+  //   const document = files['document']?.map((f:any) => f.location) || [];
+  //   if(document.length > 0){
+  //     payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
+  //   }
+  // }
 
 // if(payload.status && payload.document){
 //     const updatedData = await DailyRoute.findByIdAndUpdate(
