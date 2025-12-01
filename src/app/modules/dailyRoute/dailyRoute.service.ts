@@ -121,6 +121,7 @@ const { data,  routeContainer} = payload;
 if (data && data.jobId) {
 
 const { timeSlot,  address, deliveryMode, jobId, status} = data;
+
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
       {
@@ -166,7 +167,7 @@ const { timeSlot,  address, deliveryMode, jobId, status} = data;
 
   return updatedData;
 }
-
+console.log("routeContainer in the last",routeContainer);
 const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
     {
