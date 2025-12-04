@@ -92,7 +92,7 @@ const getSingleDailyRouteFromDB = async (id: string) => {
 };
 
 const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   files?: any) => {
-  console.log("payload",payload);
+
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   const dailyRouteData = await DailyRoute.findById(id);
@@ -100,9 +100,8 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   fil
   if (files) {
     const document = files['document']?.map((f:any) => f.location) || [];
     if(document.length > 0){
-      payload.routeContainer[0].document = document[0]; // Assuming file.location contains the S3 URL
+      payload.routeContainer[payload.arrayPosition].document = document[0]; // Assuming file.location contains the S3 URL
     }
-      console.log("payload.routeContainer[0].document",payload.routeContainer[0].document);
   }
 
 
@@ -115,36 +114,14 @@ const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   fil
 
   if((usr as any)._id.toString() !==  dailyRouteData?.courierId?.toString()){
     throw new Error('You are not authorized to update this dailyRoute');
-  }
-
-// if(payload.status && payload.document){
-//     const updatedData = await DailyRoute.findByIdAndUpdate(
-//     { _id: id },
-//      payload,
-//     { new: true, runValidators: true },
-//   );
-
-//   if (!updatedData) {
-//     throw new Error('DailyRoute not found after update');
-//   }else{
-
-   
-  
-//     return updatedData;
-//   }
-
-
-// }  
+  } 
   
 const { data,  routeContainer} = payload;
 
-  console.log("data",data);
-
-
 if (data && data.jobId) {
-    console.log("data.jobId",data.jobId);
-  const { timeSlot,  address, deliveryMode, jobId, status} = data;
-      console.log("data.jobId2",data.jobId);
+
+const { timeSlot,  address, deliveryMode, jobId, status} = data;
+
   const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
       {
@@ -160,39 +137,40 @@ if (data && data.jobId) {
   }
 
    const jobData = await Job.findById(jobId);
-  console.log("jobData",jobData);
+
   if(deliveryMode === 'delivery' && jobData){
-          console.log("deliveryMode",deliveryMode);
-    if(status==='completed'){
-      jobData.status = 'completed'; 
-      jobData!.deliveryImg = routeContainer[0].document || jobData!.deliveryImg || ""; 
-      await jobData.save();
-    }else{
+    
+   if(status){
+    console.log("routeContainer[payload.arrayPosition].document",routeContainer[payload.arrayPosition].document);
+      jobData.status = 'completed';
+      jobData.deliveryImg = routeContainer[payload.arrayPosition].document || '';
+   } else{
     jobData.to = address;
     jobData.deliveryDateInfo.timeSlot = timeSlot;
-    await jobData.save();
-    }
   }
+
+    await jobData.save();
+  }
+
+
   if(deliveryMode === 'pickup' && jobData){
-    console.log("status",status);
     if(status==='completed'){
-      console.log("in-progress",status);
       jobData.status = 'in-progress'; 
-      jobData!.pickupImg = routeContainer[0].document || jobData!.deliveryImg || ""; 
+      jobData!.pickupImg = routeContainer[payload.arrayPosition].document || '';
       await jobData.save();
     }else{
     jobData.from = address;
     jobData.pickupDateInfo.timeSlot = timeSlot;
-    // jobData!.pickupImg = routeContainer[0].document || jobData!.pickupImg || "";
     await jobData.save();
     }
   }
+
   return updatedData;
 }
-
-  const updatedData = await DailyRoute.findByIdAndUpdate(
+console.log("routeContainer in the last",routeContainer);
+const updatedData = await DailyRoute.findByIdAndUpdate(
     { _id: id },
-      {
+    {
       $set: {
         routeContainer: routeContainer,  // Updating routeContainer directly
       }

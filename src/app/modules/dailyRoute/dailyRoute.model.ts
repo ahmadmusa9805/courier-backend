@@ -22,6 +22,9 @@ const routeItemSchema = new Schema<IRouteItem>({
     document: {
     type: String,
   },
+    comment: {
+    type: String,
+  },
   dateTimeSlot: {
     date: {
       type: Date,

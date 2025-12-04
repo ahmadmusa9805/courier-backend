@@ -261,21 +261,56 @@ class QueryBuilder<T> {
  this.query = query;
  }
 
- search(searchableFields: string[]) {
- const searchTerm = this?.query?.searchTerm;
- if (searchTerm) {
- // NOTE: This method still uses $regex for partial/case-insensitive search
- this.modelQuery = this.modelQuery.find({
- $or: searchableFields.map(
- (field) =>
- ({
- [field]: { $regex: searchTerm, $options: 'i' },
- }) as FilterQuery<T>,
- ),
-});
+//  search(searchableFields: string[]) {
+//  const searchTerm = this?.query?.searchTerm;
+//  if (searchTerm) {
+//  // NOTE: This method still uses $regex for partial/case-insensitive search
+//  this.modelQuery = this.modelQuery.find({
+//  $or: searchableFields.map(
+//  (field) =>
+//  ({
+//  [field]: { $regex: searchTerm, $options: 'i' },
+//  }) as FilterQuery<T>,
+//  ),
+// });
+// }
+//  return this;
+//  }
+search(searchableFields: string[]) {
+    const searchTerm = this?.query?.searchTerm;
+    if (searchTerm) {
+        // Construct the $or condition for multiple fields
+        const regexQuery = {
+            $or: searchableFields.map((field) => {
+                // Check if the field is a Date field
+                const fieldParts = field.split('.');
+                const isDateField = fieldParts.includes('date'); // Check if 'date' is part of the field name
+
+                if (isDateField) {
+                    // Skip applying regex to Date fields
+                    return null; // We will filter Date fields differently if needed
+                }
+
+                // For non-Date fields (including nested fields), apply regex
+                return {
+                    [field]: {
+                        $regex: searchTerm, // Partial match (case-insensitive)
+                        $options: 'i', // Case-insensitive search
+                    },
+                };
+            }).filter(Boolean), // Remove nulls for Date fields
+        };
+
+        // Apply the regex query to the model query, only for non-Date fields
+        if (regexQuery.$or.length > 0) {
+            this.modelQuery = this.modelQuery.find(regexQuery as FilterQuery<T>);
+        }
+    }
+    return this;
 }
- return this;
- }
+
+
+
 
 filter() {
  const queryObj = { ...this.query }; // copy of the query

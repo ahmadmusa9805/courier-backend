@@ -21,6 +21,7 @@ router.get(
 
 router.patch(
   '/:id',
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier),
   uploadFileS3(true).fields([
     { name: 'img', maxCount: 5 },
     { name: 'document', maxCount: 5 },
@@ -47,7 +48,7 @@ router.delete(
 
 router.get(
   '/',
-  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier ),
+  auth(USER_ROLE.superAdmin, USER_ROLE.company, USER_ROLE.user, USER_ROLE.admin, USER_ROLE.courier),
   DailyRouteControllers.getAllDailyRoutes,
 );
 
