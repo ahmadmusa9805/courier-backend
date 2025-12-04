@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 export const createJobValidationSchema = z.object({
   body: z.object({
-    from: z.string().min(1),
-    to: z.string().min(1),
+    from: z.string().min(1).optional(),
+    to: z.string().min(1).optional(),
     transportationType: z.object({
       name: z.string().min(1),
-      options: z.string().min(1),
-    }),
+      options: z.string().optional(),
+    }).optional(),
     items: z.array(
       z.object({
         name: z.string().min(1),
@@ -28,7 +28,7 @@ export const createJobValidationSchema = z.object({
         width: z.string().min(1),
         height: z.string().min(1),
       }),
-    ),
+    ).optional(),
     pickupDateInfo: z.object({
       date: z.string(),
       timeSlot: z.string().min(1),

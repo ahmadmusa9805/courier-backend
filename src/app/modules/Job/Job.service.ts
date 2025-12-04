@@ -347,12 +347,18 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
   if (usr.role === 'courier' && payload.status === 'accepted') {
     updateQuery.courierId = (usr as any)._id;
 
+   const jobData = await Job.findOne({ _id: id }).select('userId');
+   console.log('jobData before accept:', jobData?.userId);
+  //  if(courierId && (courierId as any).courierId){
+  //   throw new Error('This job has already been accepted by another courier');
+  //  }
+
     let room = await ChatRoom.findOne({
-      participants: { $all: [(usr as any)._id, id] },
+      participants: { $all: [(usr as any)._id, jobData?.userId] },
     });
 
     if (!room) {
-      room = await ChatRoom.create({ participants: [(usr as any)._id, id] });
+      room = await ChatRoom.create({ participants: [(usr as any)._id, jobData?.userId] });
     }
 
     if (!room) {

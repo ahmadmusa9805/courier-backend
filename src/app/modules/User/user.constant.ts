@@ -13,7 +13,11 @@ export const usersSearchableFields = [
   'name.lastName',
   'phone',
   'contactNo',
-  'name'
+  'name',
+  'name.firstName',
+  'name.lastName',
+  'role',
+  'userType'
 ];
 
 

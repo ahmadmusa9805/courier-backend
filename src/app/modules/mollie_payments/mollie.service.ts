@@ -1,9 +1,9 @@
-import { CloudWatchLogs } from "aws-sdk";
+// import { CloudWatchLogs } from "aws-sdk";
 import AppError from "../../errors/AppError";
 
-import fs from 'fs'
-import { PaymentInfo } from "./types/payment.types";
-import { JobModel } from "../Job/Job.interface";
+// import fs from 'fs'
+// import { PaymentInfo } from "./types/payment.types";
+// import { JobModel } from "../Job/Job.interface";
 import { Job } from "../Job/Job.model";
 const { createMollieClient } = require('@mollie/api-client');
 const mollieClient = createMollieClient({ apiKey:process.env.MOLLIE_BASIC_TEST_API_KEY});

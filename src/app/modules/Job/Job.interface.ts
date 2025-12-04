@@ -36,6 +36,7 @@ export type TJob = {
   extraService: {
      service: {
       options: string
+      price: number,
      };
 
      floor: {
@@ -62,6 +63,7 @@ export type TJob = {
 
   };
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
+  paymentStatus: 'pending' | 'accepted' | 'paid' | 'in-progress' | 'cancelled';
   adminApproved: boolean;
   courierPrice: number;
   totalDistance: string;
