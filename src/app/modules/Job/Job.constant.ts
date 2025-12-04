@@ -4,5 +4,8 @@ export const JOB_SEARCHABLE_FIELDS = [
     'pickupAddress.country',  
     'deliveryAddress.country',
     'pickupAddress.region',  
-    'deliveryAddress.region'
+    'deliveryAddress.region',
+    'from',
+    'to',
+    'jobId'
 ];

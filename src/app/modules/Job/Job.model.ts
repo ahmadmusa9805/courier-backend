@@ -18,7 +18,7 @@ const JobSchema = new Schema<TJob, JobModel>({
   to: { type: String, required: true },
   transportationType: {
     name: { type: String, required: true },
-    options: { type: String, required: true },
+    options: { type: String },
   },
   items: [
     {
@@ -29,7 +29,7 @@ const JobSchema = new Schema<TJob, JobModel>({
       materialContent: {
         type: String,
         // enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
-        required: true,
+        // required: true,
       },
       price: { type: Number, required: true },
       length: { type: String, required: true },
@@ -73,13 +73,12 @@ const JobSchema = new Schema<TJob, JobModel>({
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },
   status: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
+  paymentStatus: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
   totalDistance: { type: String, required: true },
   pickupImg:{ type: String},
   deliveryImg:{ type: String},
   totalPrice: { type: Number, required: true },
   timeSlotCost: { type: Number, default : 0 },
-  deliveryImg: { type: String },
-  pickupImg: { type: String },
   isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 
