@@ -22,7 +22,7 @@ const userSchema = new Schema<TUser, UserModel>(
   role: { type: String, enum: ['superAdmin', 'admin', 'courier', 'user', 'company'], required: true },
   status: { type: String, enum: ['active', 'blocked'], default: 'active' },
   emailStatus: { type: String, enum: ['verified', 'unverified'], default: 'verified' },
-  jobPosted: { type: Boolean },
+  jobPosted: { type: Number, default: 0 },
   userType: { type: String, enum: ['user', 'company'], default: 'user' },
   companyName: { type: String },
   companyLocation: { type: String },

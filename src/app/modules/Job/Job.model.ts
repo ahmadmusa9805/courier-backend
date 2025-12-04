@@ -73,7 +73,7 @@ const JobSchema = new Schema<TJob, JobModel>({
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },
   status: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
-  paymentStatus: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
   totalDistance: { type: String, required: true },
   pickupImg:{ type: String},
   deliveryImg:{ type: String},

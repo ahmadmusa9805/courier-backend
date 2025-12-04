@@ -18,7 +18,7 @@ export interface TUser {
   role: 'superAdmin' | 'admin'   | 'courier' | 'user' | 'company';
   status: 'active' | 'blocked';
   emailStatus: 'verified' | 'unverified';
-  jobPosted?: boolean;
+  jobPosted?: number;
   userType?: 'user' | 'company';
   companyName?: string;
   companyLocation?: string;
