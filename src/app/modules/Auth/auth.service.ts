@@ -13,7 +13,10 @@ import { OtpServices } from '../Otp/otp.service';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
+  console.log('payload', payload.email);
+  console.log('payload?.password', payload?.password);
   const user = await User.isUserExistsByCustomEmail(payload.email);
+  console.log('user', user);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
   }
@@ -37,8 +40,15 @@ const loginUser = async (payload: TLoginUser) => {
 
   //checking if the password is correct
 
-  if (!(await User.isPasswordMatched(payload?.password, user?.password))) 
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+
+ console.log(payload?.password, 'payload?.password');
+ console.log(user?.password, 'user?.password');
+
+ if(payload?.password !== user?.password){
+throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+ }
+  // if (!(await User.isPasswordMatched(payload?.password, user?.password))) 
+  //   throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
 
 
   //create token and sent to the  client

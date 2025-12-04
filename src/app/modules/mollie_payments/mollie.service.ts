@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { CloudWatchLogs } from "aws-sdk";
 import AppError from "../../errors/AppError";
 

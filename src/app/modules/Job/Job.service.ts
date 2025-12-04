@@ -48,8 +48,12 @@ const createJobIntoDB = async (payload: any) => {
   };
 
   const existingUser = await User.isUserExistsByCustomEmail(contact.email);
+    console.log('existingUser password', existingUser?.password);
+
+
   if (!existingUser) {
     // Create User
+    console.log('Creating new user password', userdata.password);
     const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);
 
@@ -64,6 +68,9 @@ const createJobIntoDB = async (payload: any) => {
   if (existingUser) {
     payload.userId = (existingUser as any)._id;
   }
+
+
+
 
   // console.log('existingUser', existingUser);
   const newJobId = await generateJobId();
@@ -92,6 +99,18 @@ const createJobIntoDB = async (payload: any) => {
   }
   // Populate userId field to get the full user data
   const jobWithUser = await Job.findById(createdJob._id).populate('userId');
+
+  if(jobWithUser?.userId._id){
+     
+    const user = await User.findById(jobWithUser?.userId._id);
+    if(user && user?.jobPosted !== undefined){
+      user.jobPosted = user?.jobPosted+1
+    }
+
+    await user?.save();
+
+  }
+
 
   // Return the job along with the populated user data
   return jobWithUser;

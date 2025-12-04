@@ -50,6 +50,64 @@ app.use(express.json({ verify: (req: any, res, buf) => { req.rawBody = buf.toStr
 
 // app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+
+// app.post("/webhook",async(req , res)=>{
+//   console.log(req) 
+//   try{
+// const body = req.body
+// console.log('Weebhook Body',body)
+//   if(!body.id){
+//     throw new AppError(400, "Id is not provided .")
+//   }
+
+//   const payments  = await findTransections({transection_id:body.id})
+//   // payments.status = 'paid'
+//   const job = await Job.findById(payments?.metadata?._id)
+
+//   if(!job){
+//     throw new AppError(400, "Job not found")
+//   }
+//   job.status = 'completed'
+
+//   await job?.save()
+
+//   // await 
+  
+//   // console.log(payments)
+//   }catch(error){
+//     console.log('Webhook Error',error)
+//   }
+  
+  
+// })
+
+app.post("/webhook",async(req , res)=>{
+  try{
+const body = req.body
+console.log('Weebhook Body',body)
+  if(!body.id){
+    throw new AppError(400, "Id is not provided .")
+  }
+
+  const payments  = await findTransections({transection_id:body.id})
+  const job = await Job.findById(payments?.metadata?.jobId)
+console.log(job);
+  if(!job){
+    throw new AppError(400, "Job not found")
+  }
+  job.paymentStatus = 'paid'
+console.log("job updated successfully");
+  await job?.save()
+
+  // await 
+  
+  // console.log(payments)
+  }catch(error){
+    console.log('Webhook Error',error)
+}
+
+})
+
 // Routes
 app.use('/api/v1', router);
 
@@ -59,35 +117,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use(globalErrorHandler);
 app.use(notFound);
-app.post("/webhook",async(req , res)=>{
-  console.log(req) 
-  try{
-const body = req.body
-console.log('Weebhook Body',body)
-  if(!body.id){
-    throw new AppError(400, "Id is not provided .")
-  }
 
-  const payments  = await findTransections({transection_id:body.id})
-  // payments.status = 'paid'
-  const job = await Job.findById(payments?.metadata?._id)
-
-  if(!job){
-    throw new AppError(400, "Job not found")
-  }
-  job.status = 'completed'
-
-  await job?.save()
-
-  // await 
-  
-  // console.log(payments)
-  }catch(error){
-    console.log('Webhook Error',error)
-  }
-  
-  
-})
 
 
 process.on('SIGTERM', () => {

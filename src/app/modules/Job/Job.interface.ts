@@ -63,7 +63,7 @@ export type TJob = {
 
   };
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
-  paymentStatus: 'pending' | 'accepted' | 'paid' | 'in-progress' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'cancelled';
   adminApproved: boolean;
   courierPrice: number;
   totalDistance: string;
