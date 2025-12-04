@@ -79,6 +79,9 @@ const createJobIntoDB = async (payload: any) => {
   // console.log('newJobId', newJobId);
   //  console.log('Payload in createJobIntoDB:', payload);
   // Create Job
+
+  payload.courierPrice = payload.totalPrice ? payload.totalPrice : 0;
+
   const createdJob = await Job.create(payload);
   // console.log("createdJob.....", createdJob);
 
