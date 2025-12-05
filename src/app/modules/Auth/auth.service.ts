@@ -44,11 +44,11 @@ const loginUser = async (payload: TLoginUser) => {
  console.log(payload?.password, 'payload?.password');
  console.log(user?.password, 'user?.password');
 
- if(payload?.password !== user?.password){
-throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
- }
-  // if (!(await User.isPasswordMatched(payload?.password, user?.password))) 
-  //   throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+//  if(payload?.password !== user?.password){
+// throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+//  }
+  if (!(await User.isPasswordMatched(payload?.password, user?.password))) 
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
 
 
   //create token and sent to the  client
