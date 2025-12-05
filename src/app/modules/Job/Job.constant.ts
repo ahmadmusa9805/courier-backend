@@ -1,1 +1,11 @@
-export const JOB_SEARCHABLE_FIELDS = ['name', 'description', 'atcCodes'];
+export const JOB_SEARCHABLE_FIELDS = [
+    'pickupDateInfo.date',
+    'deliveryDateInfo.date',  
+    'pickupAddress.country',  
+    'deliveryAddress.country',
+    'pickupAddress.region',  
+    'deliveryAddress.region',
+    'from',
+    'to',
+    'jobId'
+];

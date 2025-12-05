@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-export const createSupportValidationSchema = z.object({
+export const createChatRoomValidationSchema = z.object({
   body: z.object({
-    Support: z.object({
+    ChatRoom: z.object({
       name: z.string().min(1),
       description: z.string().optional(),
       atcCodes: z.string().min(1),
@@ -11,9 +11,9 @@ export const createSupportValidationSchema = z.object({
   }),
 });
 
-export const updateSupportValidationSchema = z.object({
+export const updateChatRoomValidationSchema = z.object({
   body: z.object({
-    Support: z.object({
+    ChatRoom: z.object({
       name: z.string().optional(),
       description: z.string().optional(),
       atcCodes: z.string().optional(),

@@ -13,7 +13,7 @@ router.post(
   '/create-user',
   // auth(USER_ROLE.superAdmin),
   // uploadFileS3(true).single('file'),
-       uploadFileS3(true).fields([
+  uploadFileS3(true).fields([
   { name: 'img', maxCount: 5 },
   { name: 'document', maxCount: 5 },
 ]),
@@ -55,8 +55,14 @@ router.get(
 // );
 
 router.get(
+  '/dashboard',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  UserControllers.getDashboardData,
+);
+
+router.get(
   '/:id',
-  auth(USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.company, USER_ROLE.courier, USER_ROLE.user),
   UserControllers.getSingleUser,
 );
 
@@ -72,6 +78,7 @@ router.get(
   auth(USER_ROLE.superAdmin),
   UserControllers.getAllUsers,
 );
+
 
 router.delete(
   '/:id',

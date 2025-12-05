@@ -14,6 +14,12 @@ const createRatingIntoDB = async (
   user: any
 ) => {
 
+  // const { userEmail } = user;
+  // const usr = await User.isUserExistsByCustomEmail(userEmail);
+  // if (!usr) {
+  //   throw new Error('User not found');
+  // }
+
 const job = await Job.findOne({ _id: payload.jobId });
 
 if (!job?.courierId) {
@@ -25,8 +31,12 @@ if (!job?.courierId) {
   // Fetch the user based on email
   const usr = await User.findOne({ email: user.userEmail });
 
+  if (!usr) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
    // Set the userId to the currently logged-in user's ID
-   payload.userId = usr?._id;
+   payload.userId = usr._id;
 
 
   const { professionalism, communication, friendliness } = payload;
@@ -65,11 +75,16 @@ if (!job?.courierId) {
   courierData.averageRatings = parseFloat(overallAverageRating.toFixed(2));
 
   // Perform the update operation for the user (not the rating)
-  const updatedCourier = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     job?.courierId,
     { averageRatings: courierData.averageRatings },
     { new: true, runValidators: true }
   );
+  // const updatedCourier = await User.findByIdAndUpdate(
+  //   job?.courierId,
+  //   { averageRatings: courierData.averageRatings },
+  //   { new: true, runValidators: true }
+  // );
 
 
   return result;
@@ -78,6 +93,30 @@ if (!job?.courierId) {
 const getAllRatingsFromDB = async (query: Record<string, unknown>) => {
   const RatingQuery = new QueryBuilder(
     Rating.find(),
+    query,
+  )
+    .search(RATING_SEARCHABLE_FIELDS)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await RatingQuery.modelQuery;
+  const meta = await RatingQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
+};
+
+const getAllRatingsOnlySingleCourierFromDB = async (query: Record<string, unknown>, user:any) => {
+  const usr = await User.findOne({ email: user.userEmail });
+  if (!usr) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User not found');
+  }
+
+  const RatingQuery = new QueryBuilder(
+    Rating.find({ courierId: usr?._id }),
     query,
   )
     .search(RATING_SEARCHABLE_FIELDS)
@@ -149,8 +188,6 @@ const getAllAverageElementsRatingsFromDB = async (query: Record<string, unknown>
   };
 };
 
-
-
 const getSingleRatingFromDB = async (id: string) => {
   const result = await Rating.findById(id);
 
@@ -198,6 +235,7 @@ const updateRatingIntoDB = async (id: string, payload: any) => {
 
   return updatedData;
 };
+
 const deleteRatingFromDB = async (id: string) => {
   const deletedService = await Rating.findByIdAndUpdate(
     id,
@@ -218,5 +256,6 @@ export const RatingServices = {
   getSingleRatingFromDB,
   updateRatingIntoDB,
   deleteRatingFromDB,
-  getAllAverageElementsRatingsFromDB
+  getAllAverageElementsRatingsFromDB,
+  getAllRatingsOnlySingleCourierFromDB
 };

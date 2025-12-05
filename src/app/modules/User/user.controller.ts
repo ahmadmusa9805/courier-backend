@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
+// import { Body } from 'node-fetch';
 // import sendImageToCloudinary from '../../utils/cloudinary';
 
 const createUser = catchAsync(async (req, res) => {
@@ -11,6 +12,7 @@ const createUser = catchAsync(async (req, res) => {
   [fieldname: string]: Express.MulterS3.File[];
 };
   const userData= req.body;
+  console.log(userData)
   const result = await UserServices.createUserIntoDB(userData, files);
 
   sendResponse(res, {
@@ -34,7 +36,7 @@ const getMe = catchAsync(async (req, res) => {
 });
 const getSingleUser = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await UserServices.getSingleUserIntoDB(id);
+  const result = await UserServices.getSingleUserIntoDB(id, req.user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -64,6 +66,16 @@ const getAllUsers = catchAsync(async (req, res) => {
     message: 'Users are retrieved succesfully',
     meta: result?.meta,
     data: result?.result,
+  });
+});
+const getDashboardData = catchAsync(async (req, res) => {
+  const result = await UserServices.getDashboardDataFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dashboard are retrieved succesfully',
+    data: result,
   });
 });
 
@@ -124,5 +136,6 @@ export const UserControllers = {
   createUser,
   getMe,
   changeStatus,
-  getAllUsers
+  getAllUsers,
+  getDashboardData
 };

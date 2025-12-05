@@ -3,7 +3,6 @@ import { Model } from 'mongoose';
 import { USER_ROLE } from './user.constant';
 
 export interface TUser {
-  _id: any;
   name: {
     firstName: string;
     lastName: string
@@ -12,14 +11,14 @@ export interface TUser {
   phone: string;
   password: string;
   address?: string;
-  otpVerified: boolean;
+  otpVerified?: boolean;
   passwordChangedAt?: Date;
   averageRatings?: number;
   profileImg?: string;
   role: 'superAdmin' | 'admin'   | 'courier' | 'user' | 'company';
   status: 'active' | 'blocked';
   emailStatus: 'verified' | 'unverified';
-  jobPosted?: boolean;
+  jobPosted?: number;
   userType?: 'user' | 'company';
   companyName?: string;
   companyLocation?: string;
@@ -28,8 +27,10 @@ export interface TUser {
   howKnow?: 'google' | 'socialMedia' | 'website';
   courierExperience?: string;
   profileVerified?: 'verified' | 'unverified';
+  kvkNumber?: string;
   document?: string;
   legalForm?: string;
+  isBlocked: boolean;
   isDeleted: boolean;
 }
 

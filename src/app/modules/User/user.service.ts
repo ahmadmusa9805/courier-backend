@@ -10,21 +10,31 @@ import { usersSearchableFields } from './user.constant';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
+import { Rating } from '../Rating/Rating.model';
+import { Job } from '../Job/Job.model';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
+  // Example: get overview files
 
-// Example: get overview files
-const document = files['document']?.map((f:any) => f.location) || [];
-const img = files['img']?.map((f:any) => f.location) || [];
+  let document 
+  let img
+  if(files){
+
+     document = files['document']?.map((f:any) => f.location) || [];
+     img = files['img']?.map((f:any) => f.location) || [];
+  }
 
 
-    if(document.length > 0){
+if(document){ 
+  if(document.length > 0){
       payload.document = document[0]; // Assuming file.location contains the S3 URL
     }
     if(img.length > 0){
       payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
     }
 
+}
+  
 
   // if (file) {
   //   console.log('musa testing img',img);
@@ -46,10 +56,39 @@ const getMe = async (userEmail: string) => {
   return result;
 };
 
-const getSingleUserIntoDB = async (id: string) => {
+const getSingleUserIntoDB = async (id: string, user:any) => {
+  console.log('user', user);
+  let requestedUser;
   const result = await User.findOne({ _id: id, isDeleted: false });
+    if(!result){
+      throw new AppError(httpStatus.UNAUTHORIZED, 'User Not Found');
+    }
 
-  return result;
+  if(result.role === 'company' || result.role === 'user'){
+    // if(user.id !== id){
+    //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized to access this user data');
+    // }
+
+    requestedUser = await Job.find({userId: result._id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+
+  }
+
+  if(result.role === 'courier'){
+    // if(user.id !== id){
+    //   throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized to access this user data');
+    // }
+
+      requestedUser = await Job.find({courierId: result._id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+  }
+
+  if(result.role === 'superAdmin' || result.role === 'admin'){
+     return { user:result  };
+  }
+
+
+  // const rs = await Job.find({userId: id}).select('-transportationType -jobId -userId -status -totalPrice -timeSlotCost -isDeleted -totalDistance -courierPrice -adminApproved -pickupDateInfo -deliveryDateInfo -deliveryImg -extraService -pickupAddress -items -deliveryAddress -pickupImg -updatedAt -__v');
+  // console.log('rs', rs);
+  return { user:result, jobs: requestedUser  };
 };
 
 const getAllUsersFromDB = async (query: Record<string, unknown>) => {
@@ -70,6 +109,33 @@ const getAllUsersFromDB = async (query: Record<string, unknown>) => {
   return {
     meta,
     result,
+  };
+
+};
+const getDashboardDataFromDB = async () => {
+
+   const allUsers = await User.countDocuments({});
+   const allActiveUsers = await User.countDocuments({isBlocked: false});
+   const allBlockedUsers = await User.countDocuments({isBlocked: true});
+   const allIndividualUsers = await User.countDocuments({role: 'user'});
+   const allCompanyUsers = await User.countDocuments({role: 'company'});
+   const allCourierUsers = await User.countDocuments({role: 'courier'});
+   const allCourierActiveUsers = await User.countDocuments({role: 'courier',  isBlocked: false});
+   const allCourierBlockedUsers = await User.countDocuments({role: 'courier', isBlocked: true});
+   const allRatinga = await Rating.countDocuments({});
+
+
+
+  return {
+    allUsers,
+    allBlockedUsers,
+    allActiveUsers,
+    allIndividualUsers,
+    allCompanyUsers,
+    allCourierUsers,
+    allCourierActiveUsers,
+    allCourierBlockedUsers,
+    allRatinga,
   };
 
 };
@@ -206,8 +272,8 @@ const updateUserIntoDB = async (
   // if (file) {
   //   payload.profileImg = file.location as string;
   // }
-
-  const document = files['document']?.map((f:any) => f.location) || [];
+  if (files) {
+    const document = files['document']?.map((f:any) => f.location) || [];
 const img = files['img']?.map((f:any) => f.location) || [];
 
 
@@ -217,11 +283,13 @@ const img = files['img']?.map((f:any) => f.location) || [];
     if(img.length > 0){
       payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
     }
+  }
 
   const result = await User.findByIdAndUpdate(id, payload, {
     new: true,
     runValidators: true,
   }).select('-password');
+
 
   return result;
 };
@@ -289,4 +357,5 @@ export const UserServices = {
   changeStatus,
   getAllUsersFromDB,
   updateUserIntoDB,
+  getDashboardDataFromDB
 };

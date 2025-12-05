@@ -2,6 +2,8 @@ import { Schema, model } from 'mongoose';
 import { TJob, JobModel } from './Job.interface';
 
 const JobSchema = new Schema<TJob, JobModel>({
+
+  jobId: { type: String, required: true },
     userId: {
     type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
     ref: 'User', // This links to the User model (if applicable)
@@ -9,14 +11,14 @@ const JobSchema = new Schema<TJob, JobModel>({
   },
   courierId: {
     type: Schema.Types.ObjectId, // Use Types.ObjectId for ObjectId
-    ref: 'Courier', // This links to the Courier model (if applicable)
+    ref: 'User', // This links to the Courier model (if applicable)
     // required: true, // Optional, depending on your use case
   },
   from: { type: String, required: true },
   to: { type: String, required: true },
   transportationType: {
     name: { type: String, required: true },
-    options: { type: String, required: true },
+    options: { type: String },
   },
   items: [
     {
@@ -26,8 +28,8 @@ const JobSchema = new Schema<TJob, JobModel>({
       dimensions: { type: String, required: true },
       materialContent: {
         type: String,
-        enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
-        required: true,
+        // enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
+        // required: true,
       },
       price: { type: Number, required: true },
       length: { type: String, required: true },
@@ -37,22 +39,19 @@ const JobSchema = new Schema<TJob, JobModel>({
   ],
   pickupDateInfo: {
     date: { type: Date, required: true },
-    timeSlot: { type: String, required: true },
+    timeSlot: { type: String,  },
   },
   deliveryDateInfo: {
     date: { type: Date, required: true },
-    timeSlot: { type: String, required: true },
+    timeSlot: { type: String,  },
   },
   extraService: {
     service: {
-      carWithLift: { type: Number, required: true },
-      noNeed: { type: Number, required: true },
-      extraHelp: { type: Number, required: true },
+      options: { type: String, required: true },
+      price: { type: Number, default: 0 },
     },
     floor: {
-      groundFloor: { type: Boolean, default: false },
-      elevator: { type: Boolean, default: false},
-      level: { type: Number, default: 0 },
+      options: { type: String,  required: true},
       price: { type: Number, default: 0 },
     },
   },
@@ -62,6 +61,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     zipCode: { type: String, required: true },
     country: { type: String, required: true },
     description: { type: String, required: true },
+
   },
   deliveryAddress: {
     streetAddress: { type: String, required: true },
@@ -73,8 +73,12 @@ const JobSchema = new Schema<TJob, JobModel>({
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },
   status: { type: String, enum: ['pending', 'accepted', 'completed', 'in-progress', 'cancelled'], default: 'pending' },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
   totalDistance: { type: String, required: true },
+  pickupImg:{ type: String},
+  deliveryImg:{ type: String},
   totalPrice: { type: Number, required: true },
+  timeSlotCost: { type: Number, default : 0 },
   isDeleted: { type: Boolean, default: false },
 }, { timestamps: true });
 

@@ -14,9 +14,15 @@ import { TestimonialRoutes } from '../modules/Testimonial/Testimonial.route';
 import { RatingRoutes } from '../modules/Rating/Rating.route';
 import { AnalyticRoutes } from '../modules/Analytic/Analytic.route';
 import { FaqRoutes } from '../modules/Faq/Faq.route';
-import { Upload } from '../modules/Upload/Upload.model';
+// import { Upload } from '../modules/Upload/Upload.model';
 import { UploadRoutes } from '../modules/Upload/Upload.route';
 import { JobRoutes } from '../modules/Job/Job.route';
+import { paymetRoute } from '../modules/mollie_payments/mollie.route';
+import { ChatRoomRoutes } from '../modules/ChatRoom/ChatRoom.route';
+import { ChatRoutes } from '../modules/Chat/Chat.route';
+import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
+import { AddRouteRoutes } from '../modules/addRoute/addRoute.route';
+import { DailyRouteRoutes } from '../modules/dailyRoute/dailyRoute.route';
 
 const router = Router();
 
@@ -88,8 +94,31 @@ const moduleRoutes = [
   {
     path: '/jobs',
     route: JobRoutes,
+  },
+   {
+    path: '/payments',
+    route: paymetRoute,
+   },
+  {
+    path: '/chat-rooms',
+    route: ChatRoomRoutes,
+  },
+  {
+    path: '/chats',
+    route: ChatRoutes,
+  },
+  {
+    path: '/contact-socials',
+    route: ContactSocialRoutes,
+  },
+  {
+    path: '/add-routes',
+    route: AddRouteRoutes,
+  },
+  {
+    path: '/daily-routes',
+    route: DailyRouteRoutes,
   }
-
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
