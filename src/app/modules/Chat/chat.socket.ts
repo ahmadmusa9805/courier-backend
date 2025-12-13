@@ -7,8 +7,10 @@ import { Server, Socket } from "socket.io";
 const onlineUsers = new Map();
 
 export const initializeChatSocket = (io: Server) => {
+  console.log("Socket Intitilized");
   io.on("connection", (socket: Socket) => {
-  const userId = socket.handshake.query.userId;
+    const userId = socket.handshake.query.userId;
+    console.log("Connection",userId);
   if (userId) {
     onlineUsers.set(userId, socket.id);
     console.log(`${userId} connected`);
@@ -20,6 +22,7 @@ export const initializeChatSocket = (io: Server) => {
     const message = await ChatServices.createChatIntoDB(data);
 
     const receiverSocketId = onlineUsers.get(data.receiver);
+    console.log("ONline users",onlineUsers);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('newMessage', message);
     }
