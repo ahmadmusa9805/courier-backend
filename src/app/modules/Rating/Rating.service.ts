@@ -237,9 +237,9 @@ const updateRatingIntoDB = async (id: string, payload: any) => {
 };
 
 const deleteRatingFromDB = async (id: string) => {
-  const deletedService = await Rating.findByIdAndUpdate(
+  const deletedService = await Rating.findByIdAndDelete(
     id,
-    { isDeleted: true },
+    // { isDeleted: true },
     { new: true },
   );
 

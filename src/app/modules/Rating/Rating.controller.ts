@@ -5,6 +5,7 @@ import { RatingServices } from './Rating.service';
 
 const createRating = catchAsync(async (req, res) => {
   const RatingData = req.body;
+
   const result = await RatingServices.createRatingIntoDB(RatingData, req.user);
 
   sendResponse(res, {
