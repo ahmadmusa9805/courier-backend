@@ -18,11 +18,14 @@ if(!jobId){
   const jobInfo = await Job.findOne({_id:jobId}).populate("userId")
 
   
+
+  const amountValue = Number(jobInfo?.totalPrice).toFixed(2);
 try{
     const payment = await mollieClient.payments.create({
   amount: {
     currency: currency,
-    value: String(jobInfo?.totalPrice)
+    value: amountValue
+    // value: String(jobInfo?.totalPrice)
   },
   description: `JobNo : #${jobId} Job will be picked from ${jobInfo?.from} and sent to ${jobInfo?.to}`,
   redirectUrl: url,
@@ -34,7 +37,7 @@ try{
 // console.log(payment._links)
 return payment
 }catch(error:any){
-  console.log(error)
+  console.log("ahmad musa",error)
   throw new AppError(error.statusCode , error.message)
 }
 }
