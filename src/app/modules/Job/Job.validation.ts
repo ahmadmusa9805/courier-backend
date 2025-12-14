@@ -70,7 +70,7 @@ export const createJobValidationSchema = z.object({
         lastName: z.string().min(1),
       }),
       userType: z.enum(['user', 'company']),
-    }),
+    }).optional(),
     status: z.enum(['pending', 'accepted', 'completed' , 'in-progress','cancelled']).optional(),
     paymentStatus: z.enum(['pending', 'paid', 'cancelled']).optional(),
     totalDistance: z.string().min(1),

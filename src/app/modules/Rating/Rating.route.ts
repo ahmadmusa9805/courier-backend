@@ -4,6 +4,8 @@ import { RatingControllers } from './Rating.controller';
 // import { createRatingValidationSchema, updateRatingValidationSchema } from './Rating.validation';
 import auth from '../../middlewares/auth';
 import { USER_ROLE } from '../User/user.constant';
+// import validateRequest from '../../middlewares/validateRequest';
+// import { createRatingValidationSchema } from './Rating.validation';
 
 const router = express.Router();
 
