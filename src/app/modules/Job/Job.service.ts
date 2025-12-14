@@ -38,6 +38,7 @@ const generateJobId = async (): Promise<string> => {
 const createJobIntoDB = async (payload: any) => {
   // try {
   const { contact } = payload;
+  console.log("contact",contact)
   const userdata = {
     name: contact.name,
     email: contact.email,
@@ -46,14 +47,15 @@ const createJobIntoDB = async (payload: any) => {
     role: contact.userType,
     userType: contact.userType,
   };
-
+  console.log("userdata",userdata)
   const existingUser = await User.isUserExistsByCustomEmail(contact.email);
     console.log('existingUser password', existingUser?.password);
 
-
+  console.log("existingUser outside",existingUser)
   if (!existingUser) {
     // Create User
     console.log('Creating new user password', userdata.password);
+    console.log('not existingUser', existingUser);
     const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);
 
@@ -66,6 +68,7 @@ const createJobIntoDB = async (payload: any) => {
   }
 
   if (existingUser) {
+    console.log('existingUser', existingUser);
     payload.userId = (existingUser as any)._id;
   }
 

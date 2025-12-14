@@ -104,8 +104,12 @@ const getAllMyChatRoomsFromDB = async (
         // console.log('room', room)
       // Get the "other" participant (not the current user)
       const otherUserId = room.participants.find(
-        (id: string) => id !== userId
+        (id: string) => id.toString() !== userId.toString()
       );
+      console.log("My user Id",userId, "Other User Id",otherUserId);
+      if(userId===otherUserId){
+        console.log("Both user Id are same");
+      }
       if (!otherUserId) {
         // If somehow user is chatting with themselves or invalid data
         return {
