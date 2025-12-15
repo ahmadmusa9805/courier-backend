@@ -35,7 +35,6 @@ if(document){
 
 }
   
-
   // if (file) {
   //   console.log('musa testing img',img);
   //   payload.profileImg = file.location as string;
