@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
+import bcrypt from 'bcrypt';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import QueryBuilder from '../../builder/QueryBuilder';
@@ -12,6 +12,7 @@ import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { Rating } from '../Rating/Rating.model';
 import { Job } from '../Job/Job.model';
+import config from '../../config';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
   // Example: get overview files
@@ -266,7 +267,14 @@ const updateUserIntoDB = async (
   files?: any,
 ) => {
 
-
+  if(payload.password){
+    //  payload.password = await bcrypt.hash(payload.password, 10) 
+       //hash new password
+    payload.password = await bcrypt.hash(
+         payload.password,
+         Number(config.bcrypt_salt_rounds),
+       );
+  }
   // Handle file upload if present
   // if (file) {
   //   payload.profileImg = file.location as string;
