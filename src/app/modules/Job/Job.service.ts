@@ -36,39 +36,38 @@ const generateJobId = async (): Promise<string> => {
 };
 
 const createJobIntoDB = async (payload: any) => {
-  // try {
   const { contact } = payload;
-  console.log("contact",contact)
+
   const userdata = {
     name: contact.name,
     email: contact.email,
     phone: contact.phone,
-    password: contact.password || '12345',
+    password: contact.password || '123456',
     role: contact.userType,
     userType: contact.userType,
   };
-  console.log("userdata",userdata)
-  const existingUser = await User.isUserExistsByCustomEmail(contact.email);
-    console.log('existingUser password', existingUser?.password);
 
-  console.log("existingUser outside",existingUser)
+
+  const existingUser = await User.isUserExistsByCustomEmail(contact.email);
+  
+
   if (!existingUser) {
+    console.log('not existingUser', existingUser);
     // Create User
     console.log('Creating new user password', userdata.password);
-    console.log('not existingUser', existingUser);
     const createdUser = await User.create(userdata);
     // console.log("createdUser.....", createdUser);
 
     if (!createdUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User');
     }
+        console.log('createdUser', createdUser);
     //  console.log('createdUser', createdUser);
     // Add createdUser's _id to the payload for Job creation
     payload.userId = createdUser._id;
   }
 
   if (existingUser) {
-    console.log('existingUser', existingUser);
     payload.userId = (existingUser as any)._id;
   }
 
@@ -109,11 +108,18 @@ const createJobIntoDB = async (payload: any) => {
   if(jobWithUser?.userId._id){
      
     const user = await User.findById(jobWithUser?.userId._id);
-    if(user && user?.jobPosted !== undefined){
-      user.jobPosted = user?.jobPosted+1
-    }
+    // if(user && user?.jobPosted !== undefined){
+    //   user.jobPosted = user?.jobPosted+1
+    // }
 
-    await user?.save();
+
+    const updateQuery = { $inc: { jobPosted: 1 } };
+       await User.findByIdAndUpdate({ _id: user?._id }, updateQuery, {
+    new: true,
+    runValidators: true,
+  });
+
+    // await user?.save();
 
   }
 
@@ -128,8 +134,6 @@ const createJobIntoDB = async (payload: any) => {
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
 
-  console.log('query in service:', query);
-
   const JobQuery = new QueryBuilder(Job.find(), query)
     .search(JOB_SEARCHABLE_FIELDS)
     .filter()
@@ -137,12 +141,9 @@ const getAllJobsFromDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  console.log('query in service:2222 ', query);
   const result = await JobQuery.modelQuery;
   const meta = await JobQuery.countTotal();
-  
-  console.log('query in service:333333 ', result);
-  console.log('query in service:333333 ', meta);
+
   return {
     result,
     meta,
@@ -373,7 +374,6 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
     updateQuery.courierId = (usr as any)._id;
 
    const jobData = await Job.findOne({ _id: id }).select('userId');
-   console.log('jobData before accept:', jobData?.userId);
   //  if(courierId && (courierId as any).courierId){
   //   throw new Error('This job has already been accepted by another courier');
   //  }
