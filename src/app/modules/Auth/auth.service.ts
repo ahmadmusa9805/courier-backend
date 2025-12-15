@@ -80,6 +80,9 @@ const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
 ) => {
+
+  console.log('payload musa', payload);
+
   // checking if the user is exist
   const user = await User.isUserExistsByCustomEmail(userData.userEmail);
 
