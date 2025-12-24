@@ -23,6 +23,7 @@ import { ChatRoutes } from '../modules/Chat/Chat.route';
 import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.route';
 import { AddRouteRoutes } from '../modules/addRoute/addRoute.route';
 import { DailyRouteRoutes } from '../modules/dailyRoute/dailyRoute.route';
+import { DistancePriceRoutes } from '../modules/DistancePrice/DistancePrice.route';
 
 const router = Router();
 
@@ -118,6 +119,10 @@ const moduleRoutes = [
   {
     path: '/daily-routes',
     route: DailyRouteRoutes,
+  },
+  {
+    path: '/distance-prices',
+    route: DistancePriceRoutes,
   }
 ];
 
