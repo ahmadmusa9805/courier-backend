@@ -10,6 +10,7 @@ import { flattenObject } from './job.utils';
 import { ChatRoom } from '../ChatRoom/ChatRoom.model';
 import { DailyRoute } from '../dailyRoute/dailyRoute.model';
 import { Notification } from '../Notification/Notification.model';
+import { SendEmail } from '../../utils/sendEmail';
 // Arrow function to generate the next jobId
 const generateJobId = async (): Promise<string> => {
   // Find the latest job in the collection
@@ -97,6 +98,57 @@ const createJobIntoDB = async (payload: any) => {
       readBy: [],
       // subscriberId: payload.userId,
     });
+
+      const user = await User.findById(createdJob.userId);
+      let data;
+      // console.log('user', user);
+      if(user && user?.userType === 'user'){
+        console.log('type user');
+
+         data = {
+          userName: `${user.name.firstName} ${user.name.lastName}`,
+          userAddress: user.address || '',
+          country: 'NL',
+          // invoiceDate: new Date(),
+          invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
+          invoiceNumber: createdJob.jobId,
+          deliveryDate: createdJob.deliveryDateInfo?.date ? new Intl.DateTimeFormat('nl-NL').format(new Date(createdJob.deliveryDateInfo.date)) : '',
+          // deliveryDate: createdJob.deliveryDateInfo?.date || '',
+          id: createdJob.jobId,
+          description: createdJob.to || '',
+          priceInc: createdJob.totalPrice,
+          priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
+          btw: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice / 1.21) : 0, // Assuming 21% VAT
+          // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
+        }
+ 
+
+    await SendEmail.sendInvoiceEmail(user.email, data);
+
+      }
+      if(user && user?.userType === 'company'){
+
+            data = {
+          userName: `${user.name.firstName} ${user.name.lastName}`,
+          userAddress: user.address || '',
+          country: 'NL',
+          kvkNumber: user.kvkNumber,
+          btwNumber: user.btwNumber,
+          // invoiceDate: new Date(),
+          invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
+          invoiceNumber: createdJob.jobId,
+          deliveryDate: createdJob.deliveryDateInfo?.date ? new Intl.DateTimeFormat('nl-NL').format(new Date(createdJob.deliveryDateInfo.date)) : '',
+          id: createdJob.jobId,
+          description: createdJob.to || '',
+          priceInc: createdJob.totalPrice,
+          priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
+          btw: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice / 1.21) : 0, // Assuming 21% VAT
+          // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
+        }
+        await SendEmail.sendInvoiceEmail(user.email, data);
+      }
+
+
   }
  
   if (!createdJob) {
@@ -120,6 +172,9 @@ const createJobIntoDB = async (payload: any) => {
   });
 
     // await user?.save();
+
+  
+
 
   }
 

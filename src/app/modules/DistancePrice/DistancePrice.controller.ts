@@ -41,7 +41,7 @@ const getAllDistancePrices = catchAsync(async (req, res) => {
 
 const updateDistancePrice = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const { DistancePrice } = req.body;
+  const DistancePrice = req.body;
   const result = await DistancePriceServices.updateDistancePriceIntoDB(id, DistancePrice);
 
   sendResponse(res, {
