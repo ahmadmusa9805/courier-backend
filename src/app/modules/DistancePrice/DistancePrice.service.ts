@@ -8,8 +8,13 @@ import { TDistancePrice } from './DistancePrice.interface';
 import { DistancePrice } from './DistancePrice.model';
 
 const createDistancePriceIntoDB = async (
+  
   payload: TDistancePrice,
 ) => {
+
+  // console.log('creating DistancePrice with ID:', id);
+  console.log('Payload for creating:', payload);
+
   const distancePriceData = await DistancePrice.find({ });
   
   if(distancePriceData.length > 0){
@@ -59,6 +64,11 @@ const getSingleDistancePriceFromDB = async (id: string) => {
 };
 
 const updateDistancePriceIntoDB = async (id: string, payload: any) => {
+
+
+  console.log('Updating DistancePrice with ID:', id);
+  console.log('Payload for update:', payload);
+
   const isDeletedService = await mongoose.connection
     .collection('distanceprices')
     .findOne(

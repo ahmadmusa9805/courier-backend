@@ -20,6 +20,7 @@ const generateAndSendOTP = async (email: any ) => {
 
     // Simulate sending OTP (e.g., SMS or email)
     await SendEmail.sendOTPEmail(email, otp);
+
     console.log(`2..Sending OTP ${otp} to user email ${email}`);
 
     return otp;
