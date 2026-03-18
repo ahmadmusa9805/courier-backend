@@ -112,7 +112,7 @@ console.log("job updated successfully");
 app.use('/api/v1', router);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Welcome To Project-Management API !');
+  res.send('Welcome To koerierplatform  API !');
 });
 
 app.use(globalErrorHandler);

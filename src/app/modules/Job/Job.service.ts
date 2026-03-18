@@ -172,10 +172,6 @@ const createJobIntoDB = async (payload: any) => {
   });
 
     // await user?.save();
-
-  
-
-
   }
 
 
