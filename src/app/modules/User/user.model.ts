@@ -33,6 +33,7 @@ const userSchema = new Schema<TUser, UserModel>(
   profileVerified: { type: String, enum: ['verified', 'unverified'], default: 'verified' },
   document: { type: String },
   kvkNumber: { type: String },
+  btwNumber: { type: String },
   legalForm: { type: String },
   isBlocked: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },

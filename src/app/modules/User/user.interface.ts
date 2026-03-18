@@ -28,6 +28,7 @@ export interface TUser {
   courierExperience?: string;
   profileVerified?: 'verified' | 'unverified';
   kvkNumber?: string;
+  btwNumber?: string;
   document?: string;
   legalForm?: string;
   isBlocked: boolean;

@@ -13,10 +13,10 @@ import { OtpServices } from '../Otp/otp.service';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
-  console.log('payload', payload.email);
-  console.log('payload?.password', payload?.password);
+  // console.log('payload', payload.email);
+  // console.log('payload?.password', payload?.password);
   const user = await User.isUserExistsByCustomEmail(payload.email);
-  console.log('user', user);
+  // console.log('user', user);
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
   }
@@ -41,8 +41,8 @@ const loginUser = async (payload: TLoginUser) => {
   //checking if the password is correct
 
 
- console.log(payload?.password, 'payload?.password');
- console.log(user?.password, 'user?.password');
+//  console.log(payload?.password, 'payload?.password');
+//  console.log(user?.password, 'user?.password');
 
 //  if(payload?.password !== user?.password){
 // throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
@@ -81,7 +81,7 @@ const changePassword = async (
   payload: { oldPassword: string; newPassword: string },
 ) => {
 
-  console.log('payload musa', payload);
+  // console.log('payload musa', payload);
 
   // checking if the user is exist
   const user = await User.isUserExistsByCustomEmail(userData.userEmail);
