@@ -18,6 +18,8 @@ export type TJob = {
     quantity: number;
     dimensions: string;
     // materialContent: 'glass | wood | metal | food | plants | animals | others';
+    materialContent: string;
+    materialContentPrice: number;
     price: number;
     length: string;
     width: string;
@@ -51,6 +53,7 @@ export type TJob = {
     zipCode: string;
     country: string;
     description: string;
+    phone: string;
 
   };
 
@@ -60,7 +63,7 @@ export type TJob = {
     zipCode: string;
     country: string;
     description: string;
-
+    phone: string;
   };
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'cancelled';
