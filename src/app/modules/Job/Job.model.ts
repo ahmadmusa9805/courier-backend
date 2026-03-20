@@ -31,6 +31,7 @@ const JobSchema = new Schema<TJob, JobModel>({
         // enum: ['glass', 'wood', 'metal', 'food', 'plants', 'animals', 'others'],
         // required: true,
       },
+      materialContentPrice: { type: Number, default: 0 },
       price: { type: Number, required: true },
       length: { type: String, required: true },
       width: { type: String, required: true },
@@ -61,6 +62,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     zipCode: { type: String, required: true },
     country: { type: String, required: true },
     description: { type: String, required: true },
+    phone: { type: String },
 
   },
   deliveryAddress: {
@@ -69,6 +71,7 @@ const JobSchema = new Schema<TJob, JobModel>({
     zipCode: { type: String, required: true },
     country: { type: String, required: true },
     description: { type: String, required: true },
+    phone: { type: String },
   },
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },

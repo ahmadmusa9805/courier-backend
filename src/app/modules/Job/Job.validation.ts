@@ -14,6 +14,8 @@ export const createJobValidationSchema = z.object({
         img: z.string().min(1),
         quantity: z.number(),
         dimensions: z.string().min(1),
+        materialContent: z.string().optional(),
+        materialContentPrice: z.number().optional(),
         // materialContent: z.enum([
         //   'glass',
         //   'wood',
@@ -53,6 +55,7 @@ export const createJobValidationSchema = z.object({
       zipCode: z.string().min(1),
       country: z.string().min(1),
       description: z.string().min(1),
+      phone: z.string().optional(),
     }),
     deliveryAddress: z.object({
       streetAddress: z.string().min(1),
@@ -60,6 +63,7 @@ export const createJobValidationSchema = z.object({
       zipCode: z.string().min(1),
       country: z.string().min(1),
       description: z.string().min(1),
+      phone: z.string().optional(),
     }),
     contact: z.object({
       phone: z.string().min(1),
@@ -103,6 +107,8 @@ export const updateJobValidationSchema = z.object({
         //   'animals',
         //   'others',
         // ]).optional(),
+        materialContent: z.string().optional(),
+        materialContentPrice: z.number().optional(),
         price: z.number().optional(),
         length: z.string().min(1).optional(),
         width: z.string().min(1).optional(),
@@ -133,6 +139,7 @@ export const updateJobValidationSchema = z.object({
       zipCode: z.string().min(1).optional(),
       country: z.string().min(1).optional(),
       description: z.string().min(1).optional(),
+       phone: z.string().optional(),
     }).optional(),
     deliveryAddress: z.object({
       streetAddress: z.string().min(1).optional(),
@@ -140,6 +147,7 @@ export const updateJobValidationSchema = z.object({
       zipCode: z.string().min(1).optional(),
       country: z.string().min(1).optional(),
       description: z.string().min(1).optional(),
+       phone: z.string().optional(),
     }).optional(),
     status: z.enum(['pending', 'accepted', 'completed']).optional(),
     totalDistance: z.string().min(1).optional(),

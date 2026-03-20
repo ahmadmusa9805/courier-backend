@@ -86,7 +86,10 @@ const createJobIntoDB = async (payload: any) => {
   payload.courierPrice = payload.totalPrice ? payload.totalPrice : 0;
 
   const createdJob = await Job.create(payload);
-  // console.log("createdJob.....", createdJob);
+  console.log("createdJob.....", createdJob);
+
+
+
 
     if (!createdJob) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
