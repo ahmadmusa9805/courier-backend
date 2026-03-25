@@ -35,7 +35,7 @@ const getAllItemsFromDB = async (query: Record<string, unknown>) => {
     .search(ITEM_SEARCHABLE_FIELDS)
     .filter()
     .sort()
-    .paginate()
+    // .paginate()
     .fields();
 
   const result = await ItemQuery.modelQuery;

@@ -18,7 +18,7 @@ const ItemSchema = new Schema<TItem, ItemModel>({
     enum: ['glass', 'wood', 'metal', 'food', 'plants', 'plastic','ceramic'], // Directly specifying possible values for the status
   }, // You can use an enum for status if needed
   description: { type: String, required: true },
-  img: { type: String, required: true }, // Image URL or path
+  img: { type: String}, // Image URL or path
   isBlocked: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },
 });
