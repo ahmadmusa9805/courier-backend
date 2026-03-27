@@ -63,6 +63,10 @@ const JobSchema = new Schema<TJob, JobModel>({
     country: { type: String, required: true },
     description: { type: String, required: true },
     phone: { type: String },
+      name: {
+    firstName: { type: String },
+    lastName: { type: String },
+  },
 
   },
   deliveryAddress: {
@@ -72,6 +76,10 @@ const JobSchema = new Schema<TJob, JobModel>({
     country: { type: String, required: true },
     description: { type: String, required: true },
     phone: { type: String },
+      name: {
+    firstName: { type: String},
+    lastName: { type: String },
+  },
   },
   adminApproved: {  type: Boolean, default: false },
   courierPrice: { type: Number, default: 0 },

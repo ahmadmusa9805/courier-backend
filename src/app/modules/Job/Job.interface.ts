@@ -54,7 +54,10 @@ export type TJob = {
     country: string;
     description: string;
     phone: string;
-
+    name: {
+    firstName: string;
+    lastName: string
+  };
   };
 
   deliveryAddress: {
@@ -64,6 +67,10 @@ export type TJob = {
     country: string;
     description: string;
     phone: string;
+    name: {
+    firstName: string;
+    lastName: string
+  };
   };
   status: 'pending' | 'accepted' | 'completed' | 'in-progress' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'cancelled';

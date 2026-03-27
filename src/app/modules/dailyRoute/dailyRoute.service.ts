@@ -93,6 +93,10 @@ const getSingleDailyRouteFromDB = async (id: string) => {
 
 const updateDailyRouteIntoDB = async (id: string, payload: any, user: any,   files?: any) => {
 
+  console.log('daily route payload mmmmmmmmmmmmmmmmm:', payload);
+  
+  // payload.data.timeSlot = "01:00 - 02:00"
+
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   const dailyRouteData = await DailyRoute.findById(id);
