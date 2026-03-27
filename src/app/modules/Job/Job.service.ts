@@ -85,6 +85,10 @@ const createJobIntoDB = async (payload: any) => {
 
   payload.courierPrice = payload.totalPrice ? payload.totalPrice : 0;
 
+  console.log("payload.....", payload);
+
+ 
+
   const createdJob = await Job.create(payload);
   console.log("createdJob.....", createdJob);
 
@@ -358,6 +362,9 @@ const getSingleJobFromDB = async (id: string) => {
 };
 
 const updateJobIntoDB = async (id: string, payload: any, user: any) => {
+
+  console.log('updateJobIntoDB musaaaaaa:', payload);
+
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
