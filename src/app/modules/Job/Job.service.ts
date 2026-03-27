@@ -362,6 +362,9 @@ const getSingleJobFromDB = async (id: string) => {
 };
 
 const updateJobIntoDB = async (id: string, payload: any, user: any) => {
+
+  console.log('updateJobIntoDB musaaaaaa:', payload);
+
   const { userEmail } = user;
   const usr = await User.isUserExistsByCustomEmail(userEmail);
   if (!usr) {
