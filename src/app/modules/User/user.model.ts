@@ -30,7 +30,7 @@ const userSchema = new Schema<TUser, UserModel>(
   communicationMode: { type: String, enum: ['whatsapp', 'textMessage'] },
   howKnow: { type: String, enum: ['google', 'socialMedia', 'website'] },
   courierExperience: { type: String },
-  profileVerified: { type: String, enum: ['verified', 'unverified'], default: 'verified' },
+  profileVerified: { type: String, enum: ['verified', 'unverified', 'rejected'], default: 'unverified' },
   document: { type: String },
   kvkNumber: { type: String },
   btwNumber: { type: String },

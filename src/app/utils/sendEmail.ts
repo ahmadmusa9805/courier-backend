@@ -36,7 +36,7 @@ export class SendEmail {
       throw new Error('Failed to send OTP email.');
     }
   }
-  static async sendInvoiceEmail(email: string, payload: any): Promise<void> {    
+static async sendInvoiceEmail(email: string, payload: any): Promise<void> {    
 
 const html = `
 <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto;">
@@ -124,7 +124,7 @@ const html = `
 </div>
 `;
 
-    const mailOptions = {
+const mailOptions = {
       // from: process.env.EMAIL_USER, // Sender email address
       from: config.admin_email_user, // Sender email address
       to: email, // Recipient email
@@ -139,7 +139,7 @@ const html = `
       console.error('Error sending email:', error);
       throw new Error('Failed to send invoice email.');
     }
-  }
+}
 
  static async sendEmailToAdmin(payload: any): Promise<void> {
     const { name, email, message } = payload;
@@ -165,5 +165,62 @@ const html = `
       throw new Error('Failed to come email.');
     }
   }
+ static async sendEmailToAdminForCourierRegister(payload: any): Promise<void> {
+    const { name, message, document } = payload;
+
+    const getFileExtension = (url: string) => {
+  return url.split('.').pop()?.split('?')[0];
+};
+
+const fileExtension = getFileExtension(document);
+
+  const mailOptions = {
+    from: config.admin_email_user,
+    to: 'amaahmadmusa@gmail.com',
+    subject: `New Message For Confirmation of Courier Register from ${name}`,
+    text: `${message}
+    `,
+      attachments: document
+    ? [
+        {
+          // filename: 'document.jpg', // you can make dynamic if needed
+          // filename: 'license', // you can make dynamic if needed
+          filename: `license.${fileExtension}`, // ✅ FIX
+          path: document, // S3 URL works here ✅
+        },
+      ]
+    : [],
+  };
+
+    console.log("testing", mailOptions)
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log(`Email is sending to confirm for register from ${payload.email}`);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new Error('Failed to come email.');
+    }
+  }
+
+static async sendEmailToCourierForVerifyConfirmation(payload: any): Promise<void> {    
+
+
+const mailOptions = {
+      // from: process.env.EMAIL_USER, // Sender email address
+      from: config.admin_email_user, // Sender email address
+      to: payload.email, // Recipient email
+      subject: `Confirmation of Account for Courier verified ${payload.name}`,
+      text: 'Your account has been activated. You can now log in and claim jobs.',
+    };
+
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log(`mail sent to ${payload.email}`);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new Error('Failed to send invoice email.');
+    }
+}
 }
 
