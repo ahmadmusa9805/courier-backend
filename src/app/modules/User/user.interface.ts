@@ -17,7 +17,7 @@ export interface TUser {
   profileImg?: string;
   role: 'superAdmin' | 'admin'   | 'courier' | 'user' | 'company';
   status: 'active' | 'blocked';
-  emailStatus: 'verified' | 'unverified';
+  emailStatus: 'verified' | 'unverified' | 'rejected';
   jobPosted?: number;
   userType?: 'user' | 'company';
   companyName?: string;
@@ -26,7 +26,7 @@ export interface TUser {
   communicationMode?: 'whatsapp' | 'textMessage';
   howKnow?: 'google' | 'socialMedia' | 'website';
   courierExperience?: string;
-  profileVerified?: 'verified' | 'unverified';
+  profileVerified?: 'verified' | 'unverified' | 'rejected';
   kvkNumber?: string;
   btwNumber?: string;
   document?: string;

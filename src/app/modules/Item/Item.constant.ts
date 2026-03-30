@@ -1,1 +1,5 @@
-export const ITEM_SEARCHABLE_FIELDS = ['name', 'description', 'atcCodes'];
+export const ITEM_SEARCHABLE_FIELDS = ['name',
+    'containMaterials',
+    'status',
+    'description',
+    'img'];
