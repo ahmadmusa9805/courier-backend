@@ -45,6 +45,9 @@ const getSingleTimeSlotFromDB = async (id: string) => {
 };
 
 const updateTimeSlotIntoDB = async (id: string, payload: any) => {
+
+  console.log('payload===musaaaaaaaa', payload);
+
   const isDeletedService = await mongoose.connection
     .collection('timeslots')
     .findOne(

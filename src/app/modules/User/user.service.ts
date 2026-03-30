@@ -13,22 +13,23 @@ import mongoose from 'mongoose';
 import { Rating } from '../Rating/Rating.model';
 import { Job } from '../Job/Job.model';
 import config from '../../config';
+import { SendEmail } from '../../utils/sendEmail';
 
 export const createUserIntoDB = async (payload: TUser,  files?:any) => {
   // Example: get overview files
 
   let document 
   let img
-  if(files){
 
+  if(files){
      document = files['document']?.map((f:any) => f.location) || [];
      img = files['img']?.map((f:any) => f.location) || [];
   }
 
-
 if(document){ 
   if(document.length > 0){
       payload.document = document[0]; // Assuming file.location contains the S3 URL
+      // payload.document = document[0]; // Assuming file.location contains the S3 URL
     }
     if(img.length > 0){
       payload.profileImg = img[0]; // Assuming file.location contains the S3 URL
@@ -36,6 +37,7 @@ if(document){
 
 }
   
+
   // if (file) {
   //   console.log('musa testing img',img);
   //   payload.profileImg = file.location as string;
@@ -43,6 +45,19 @@ if(document){
 
   const newUser = await User.create(payload);
   if (!newUser) throw new Error('Failed to create user');
+  if(newUser.role === 'courier') {
+    if(newUser.document){
+      await SendEmail.sendEmailToAdminForCourierRegister({
+        name: newUser.name.firstName + ' ' + newUser.name.lastName,
+        email: newUser.email,
+        message: `A new courier has registered with:
+         name: ${newUser.name.firstName + ' ' + newUser.name.lastName} 
+         email: ${newUser.email}. 
+      The license document has been attached for your reference. Please review their application and take necessary actions.`,
+       document: newUser.document
+      })
+    }
+  }
 
   return newUser;
 };
@@ -266,6 +281,21 @@ const updateUserIntoDB = async (
   payload: Partial<TUser>,
   files?: any,
 ) => {
+let verify = false
+
+console.log('payload for now',payload);
+
+ if(payload.profileVerified == 'verified'){
+    const result = await User.findOne({ email: payload.email });   
+    if(result?.profileVerified == 'unverified'){
+       verify = true
+    }  
+ }
+
+
+
+
+  console.log('verify',verify);
 
   if(payload.password){
     //  payload.password = await bcrypt.hash(payload.password, 10) 
@@ -296,7 +326,16 @@ const img = files['img']?.map((f:any) => f.location) || [];
     new: true,
     runValidators: true,
   }).select('-password');
+  console.log('result',result);
 
+    if(verify == true && result?.role === 'courier' && result?.profileVerified === 'verified') {
+     console.log('musa testing result',result?.email);
+
+      await SendEmail.sendEmailToCourierForVerifyConfirmation({
+        name: result?.name.firstName + ' ' + result?.name.lastName,
+        email: result?.email, // Replace with the user's email address
+      }); 
+    }
 
   return result;
 };

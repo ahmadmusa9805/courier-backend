@@ -28,6 +28,9 @@ const createItemIntoDB = async (
 };
 
 const getAllItemsFromDB = async (query: Record<string, unknown>) => {
+
+  console.log('Query received in service:', query); // Debugging line to check query content
+
   const ItemQuery = new QueryBuilder(
     Item.find(),
     query,
