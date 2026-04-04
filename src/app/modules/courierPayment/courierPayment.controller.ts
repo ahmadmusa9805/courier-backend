@@ -15,6 +15,31 @@ const createCourierPayment = catchAsync(async (req, res) => {
   });
 });
 
+const getSingleCourierPaymentweekly = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await CourierPaymentServices.getSingleCourierPaymentweeklyFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'CourierPayment is retrieved successfully',
+    data: result,
+  });
+});
+const getSingleCourierPaymentsAllJobs = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await CourierPaymentServices.getSingleCourierPaymentsAllJobsFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'CourierPayment is retrieved successfully',
+    data: result,
+  });
+});
+
+
+
 const getSingleCourierPayment = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await CourierPaymentServices.getSingleCourierPaymentFromDB(id);
@@ -29,6 +54,17 @@ const getSingleCourierPayment = catchAsync(async (req, res) => {
 
 const getAllCourierPayments = catchAsync(async (req, res) => {
   const result = await CourierPaymentServices.getAllCourierPaymentsFromDB(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'CourierPayments are retrieved successfully',
+    meta: result.meta,
+    data: result.result,
+  });
+});
+const getAllCourierPaymentsAllJobs = catchAsync(async (req, res) => {
+  const result = await CourierPaymentServices.getAllCourierPaymentsAllJobsFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -78,7 +114,10 @@ const deleteCourierPayment = catchAsync(async (req, res) => {
 export const CourierPaymentControllers = {
   createCourierPayment,
   getSingleCourierPayment,
+  getSingleCourierPaymentweekly,
+  getSingleCourierPaymentsAllJobs,
   getAllCourierPayments,
+  getAllCourierPaymentsAllJobs,
   updateCourierPayment,
   deleteCourierPayment,
   getAllCourierPaymentsWeekly

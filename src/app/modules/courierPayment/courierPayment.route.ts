@@ -11,10 +11,29 @@ router.post(
   CourierPaymentControllers.createCourierPayment,
 );
 
+
 router.get(
   '/weekly',
   CourierPaymentControllers.getAllCourierPaymentsWeekly,
 );
+
+router.get(
+  '/all-jobs',
+  CourierPaymentControllers.getAllCourierPaymentsAllJobs,
+);
+router.get(
+  '/all-jobs/:id',
+  CourierPaymentControllers.getSingleCourierPaymentsAllJobs,
+);
+
+router.get(
+  '/weekly/:id',
+  CourierPaymentControllers.getSingleCourierPaymentweekly,
+);
+
+
+
+
 
 router.get(
   '/:id',
@@ -31,6 +50,7 @@ router.delete(
   '/:id',
   CourierPaymentControllers.deleteCourierPayment,
 );
+
 
 router.get(
   '/',

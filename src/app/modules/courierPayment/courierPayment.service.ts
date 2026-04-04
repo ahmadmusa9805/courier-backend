@@ -7,8 +7,15 @@ import mongoose from 'mongoose';
 import { TCourierPayment } from './courierPayment.interface';
 import { CourierPayment } from './courierPayment.model';
 import { Job } from '../Job/Job.model';
-import { getFridayRange } from './courierPayment.utils';
+import { getFridayRange, singleCourierAllJobsPayments, singleCourierPaymentWeekly } from './courierPayment.utils';
 import { User } from '../User/user.model';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const TZ = "Europe/Amsterdam";
+
 
 const createCourierPaymentIntoDB = async (
   payload: TCourierPayment,
@@ -23,10 +30,79 @@ const createCourierPaymentIntoDB = async (
 };
 
 
-const getSingleCourierPaymentFromDB = async (id: string) => {
+
+const getSingleCourierPaymentweeklyFromDB = async (id: string) => {
 
 
 const { start, end } = getFridayRange();
+
+const jobs = await Job.find({
+  courierId: id,
+  status: "completed",
+  "deliveryDateInfo.date": {
+    $gte: start,
+    $lte: end,
+  },
+})
+.select("courierPrice jobId courierId deliveryDateInfo")
+.populate("courierId", "name email phone")
+.lean();
+
+
+
+
+const updatedJobs = jobs.map((job) => {
+  const priceIncl = job.courierPrice;
+
+  const btw = Number((priceIncl * 21 / 121).toFixed(2)); // ✅ correct VAT part
+  const btwExcld = Number((priceIncl - btw).toFixed(2));
+
+  return {
+    ...job,
+    btw,
+    btwExcld,
+  };
+});
+
+  // ✅ Step 2: calculate totals
+  const totalIncl = updatedJobs.reduce((sum, job) => sum + job.courierPrice, 0);
+
+  const totalBtw = Number((totalIncl * 21 / 121).toFixed(2));
+  const totalExcl = Number((totalIncl - totalBtw).toFixed(2));
+
+
+// ✅ Invoice Period (formatted)
+  const invoicePeriod = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
+
+
+
+    // ✅ Step 3: return everything
+  return {
+    jobs: updatedJobs,
+    invoicePeriod,
+    jobCount: updatedJobs.length,
+    summary: {
+      btw: totalBtw,
+      totalExcl,
+      totalIncl,
+    },
+  };
+};
+
+const getSingleCourierPaymentsAllJobsFromDB = async (id: string) => {
+
+
+  const courierdata = await User.findById(id).select('createdAt').lean();
+
+if(!courierdata) {
+  throw new AppError(httpStatus.NOT_FOUND, 'Courier not found');
+}
+
+
+  // ✅ start = courier createdAt, end = now (Amsterdam)
+  const start = dayjs(courierdata?.createdAt).tz(TZ).startOf("day").toDate();
+  const end = dayjs().tz(TZ).endOf("day").toDate();
+
 
 const jobs = await Job.find({
   courierId: id,
@@ -104,7 +180,7 @@ const getAllCourierPaymentsWeeklyFromDB = async (query: Record<string, unknown>)
   // ✅ Step 2: get invoice per courier
   const paymentsData = await Promise.all(
     couriers.map(async (courier) => {
-      const data = await getSingleCourierPaymentFromDB(
+      const data = await singleCourierPaymentWeekly(
         courier._id.toString()
       );
 
@@ -123,12 +199,11 @@ const getAllCourierPaymentsWeeklyFromDB = async (query: Record<string, unknown>)
   };
 }
 
-
-const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
+const getAllCourierPaymentsAllJobsFromDB = async (query: Record<string, unknown>) => {
   // ✅ Step 1: paginate couriers
   const courierQuery = new QueryBuilder(
     User.find({ role: "courier" }).select(
-      "name companyName kvkNumber btwNumber email"
+      "name companyName kvkNumber btwNumber email createdAt"
     ).lean(),
     query
   )
@@ -147,8 +222,9 @@ const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
   // ✅ Step 2: get invoice per courier
   const paymentsData = await Promise.all(
     couriers.map(async (courier) => {
-      const data = await getSingleCourierPaymentFromDB(
-        courier._id.toString()
+      const data = await singleCourierAllJobsPayments(
+        courier._id.toString(),
+        courier.createdAt
       );
 
       return {
@@ -171,141 +247,109 @@ const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
 
 
 
-
-// const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
-
-//   const couriers = await User.find({ role: "courier" }).select("name email phone").lean();
-
-//  const paymentsData = await couriers.map(async (courier) => {
-
-// const { start, end } = getFridayRange();
-
-// const jobs = await Job.find({
-//   courierId: courier._id,
-//   status: "completed",
-//   "pickupDateInfo.date": {
-//     $gte: start,
-//     $lte: end,
-//   },
-// })
-// .select("courierPrice jobId courierId pickupDateInfo")
-// .populate("courierId", "name email phone")
-// .lean();
-
-// const updatedJobs = jobs.map((job) => {
-//   const priceIncl = job.courierPrice;
-
-//   const btw = Number((priceIncl * 21 / 121).toFixed(2)); // ✅ correct VAT part
-//   const btwExcld = Number((priceIncl - btw).toFixed(2));
-
-//   return {
-//     ...job,
-//     btw,
-//     btwExcld,
-//   };
-// });
-
-//   // ✅ Step 2: calculate totals
-//   const totalIncl = updatedJobs.reduce((sum, job) => sum + job.courierPrice, 0);
-
-//   const totalBtw = Number((totalIncl * 21 / 121).toFixed(2));
-//   const totalExcl = Number((totalIncl - totalBtw).toFixed(2));
-
-//     // ✅ Step 3: return everything
-//   return {
-//     courier,
-//     jobs: updatedJobs,
-//     invoicePeriod: `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`,
-//     jobCount: updatedJobs.length,
-//     summary: {
-//       btw: totalBtw,
-//       totalExcl,
-//       totalIncl,
-//     },
-//   };
-// });
+const getSingleCourierPaymentFromDB = async (id: string) => {
 
 
-// console.log("paymentsData", paymentsData)
+const { start, end } = getFridayRange();
 
-// const payments = await Promise.all(paymentsData);
-// console.log("payments", payments)
-//  const result = payments.map((payment) => {
-
-
-
-//   const data = {
-//     ...payment,
-//     jobs: payment.jobs.map((job) => {
-//       return {
-//         ...job,
-//         deliveryDateInfo: job.deliveryDateInfo.date,
-//       };
-//     }),
-//   };    
-
-
-//   return data;
-
-//  });
-
-//   console.log("couriers", couriers)
-
-//   // const CourierPaymentQuery = new QueryBuilder(
-//   //   CourierPayment.find(),
-//   //   query,
-//   // )
-//   //   .search(COURIERPAYMENT_SEARCHABLE_FIELDS)
-//   //   .filter()
-//   //   .sort()
-//   //   .paginate()
-//   //   .fields();
-
-//   // const result = await CourierPaymentQuery.modelQuery;
-//   // const meta = await CourierPaymentQuery.countTotal();
-//   // return {
-//   //   result,
-//   //   meta,
-//   // };
-// };
+const jobs = await Job.find({
+  courierId: id,
+  status: "completed",
+  "deliveryDateInfo.date": {
+    $gte: start,
+    $lte: end,
+  },
+})
+.select("courierPrice jobId courierId deliveryDateInfo")
+.populate("courierId", "name email phone")
+.lean();
 
 
 
 
-// const getSingleCourierPaymentFromDB = async (id: string) => {
+const updatedJobs = jobs.map((job) => {
+  const priceIncl = job.courierPrice;
 
-// const jobs = await Job.find({courierId: id, status: "completed"}).select(" courierPrice jobId").populate('courierId', 'name email phone').lean();
+  const btw = Number((priceIncl * 21 / 121).toFixed(2)); // ✅ correct VAT part
+  const btwExcld = Number((priceIncl - btw).toFixed(2));
 
-// const updatedJobs = jobs.map((job) => {
-//   const priceIncl = job.courierPrice;
+  return {
+    ...job,
+    btw,
+    btwExcld,
+  };
+});
 
-//   const btw = Number((priceIncl * 21 / 121).toFixed(2)); // ✅ correct VAT part
-//   const btwExcld = Number((priceIncl - btw).toFixed(2));
+  // ✅ Step 2: calculate totals
+  const totalIncl = updatedJobs.reduce((sum, job) => sum + job.courierPrice, 0);
 
-//   return {
-//     ...job,
-//     btw,
-//     btwExcld,
-//   };
-// });
+  const totalBtw = Number((totalIncl * 21 / 121).toFixed(2));
+  const totalExcl = Number((totalIncl - totalBtw).toFixed(2));
 
-//   // ✅ Step 2: calculate totals
-//   const totalIncl = updatedJobs.reduce((sum, job) => sum + job.courierPrice, 0);
 
-//   const totalBtw = Number((totalIncl * 21 / 121).toFixed(2));
-//   const totalExcl = Number((totalIncl - totalBtw).toFixed(2));
+// ✅ Invoice Period (formatted)
+  const invoicePeriod = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
 
-//     // ✅ Step 3: return everything
-//   return {
-//     jobs: updatedJobs,
-//     summary: {
-//       btw: totalBtw,
-//       totalExcl,
-//       totalIncl,
-//     },
-//   };
 
-// };
+
+    // ✅ Step 3: return everything
+  return {
+    jobs: updatedJobs,
+    invoicePeriod,
+    jobCount: updatedJobs.length,
+    summary: {
+      btw: totalBtw,
+      totalExcl,
+      totalIncl,
+    },
+  };
+};
+
+const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
+  // ✅ Step 1: paginate couriers
+  const courierQuery = new QueryBuilder(
+    User.find({ role: "courier" }).select(
+      "name companyName kvkNumber btwNumber email createdAt"
+    ).lean(),
+    query
+  )
+    .search(COURIERPAYMENT_SEARCHABLE_FIELDS)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+
+  const couriers = await courierQuery.modelQuery.lean();
+  const meta = await courierQuery.countTotal();
+
+
+
+  // ✅ Step 2: get invoice per courier
+  const paymentsData = await Promise.all(
+    couriers.map(async (courier) => {
+      const data = await getSingleCourierPaymentAllFromDB(
+        courier._id.toString(),
+        courier.createdAt
+      );
+
+      return {
+        courier,
+        ...data,
+      };
+    })
+  );
+
+
+  // ✅ Step 3: return
+  return {
+    result: paymentsData,
+    meta,
+  };
+
+
+}
+
 
 const updateCourierPaymentIntoDB = async (id: string, payload: any) => {
   const isDeletedService = await mongoose.connection
@@ -356,5 +400,8 @@ export const CourierPaymentServices = {
   getSingleCourierPaymentFromDB,
   updateCourierPaymentIntoDB,
   deleteCourierPaymentFromDB,
-  getAllCourierPaymentsWeeklyFromDB
+  getAllCourierPaymentsWeeklyFromDB,
+  getAllCourierPaymentsAllJobsFromDB,
+  getSingleCourierPaymentweeklyFromDB,
+  getSingleCourierPaymentsAllJobsFromDB
 };
