@@ -92,7 +92,7 @@ const updatedJobs = jobs.map((job) => {
 const getSingleCourierPaymentsAllJobsFromDB = async (id: string) => {
 
 
-  const courierdata = await User.findById(id).select('createdAt').lean();
+  const courierdata = await User.findById(id).select('createdAt').lean() as any;  
 
 if(!courierdata) {
   throw new AppError(httpStatus.NOT_FOUND, 'Courier not found');
@@ -101,6 +101,7 @@ if(!courierdata) {
 
   // ✅ start = courier createdAt, end = now (Amsterdam)
   const start = dayjs(courierdata?.createdAt).tz(TZ).startOf("day").toDate();
+  // const start = dayjs(courierdata?.createdAt).tz(TZ).startOf("day").toDate();
   const end = dayjs().tz(TZ).endOf("day").toDate();
 
 
@@ -214,14 +215,14 @@ const getAllCourierPaymentsAllJobsFromDB = async (query: Record<string, unknown>
     .fields();
 
 
-  const couriers = await courierQuery.modelQuery.lean();
+  const couriers = await courierQuery.modelQuery.lean() as any;
   const meta = await courierQuery.countTotal();
 
 
 
   // ✅ Step 2: get invoice per courier
   const paymentsData = await Promise.all(
-    couriers.map(async (courier) => {
+    couriers.map(async (courier: any) => {
       const data = await singleCourierAllJobsPayments(
         courier._id.toString(),
         courier.createdAt
@@ -326,24 +327,24 @@ const getAllCourierPaymentsFromDB = async (query: Record<string, unknown>) => {
 
 
   // ✅ Step 2: get invoice per courier
-  const paymentsData = await Promise.all(
-    couriers.map(async (courier) => {
-      const data = await getSingleCourierPaymentAllFromDB(
-        courier._id.toString(),
-        courier.createdAt
-      );
+  // const paymentsData = await Promise.all(
+  //   couriers.map(async (courier) => {
+  //     // const data = await getSingleCourierPaymentAllFromDB(
+  //       courier._id.toString(),
+  //       courier.createdAt
+  //     );
 
-      return {
-        courier,
-        ...data,
-      };
-    })
-  );
+  //     return {
+  //       courier,
+  //       ...data,
+  //     };
+  //   })
+  // );
 
 
   // ✅ Step 3: return
   return {
-    result: paymentsData,
+    result: couriers,
     meta,
   };
 
