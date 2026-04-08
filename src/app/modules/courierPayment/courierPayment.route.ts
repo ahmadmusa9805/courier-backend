@@ -21,6 +21,12 @@ router.get(
   '/all-jobs',
   CourierPaymentControllers.getAllCourierPaymentsAllJobs,
 );
+
+
+
+
+
+
 router.get(
   '/all-jobs/:id',
   CourierPaymentControllers.getSingleCourierPaymentsAllJobs,
