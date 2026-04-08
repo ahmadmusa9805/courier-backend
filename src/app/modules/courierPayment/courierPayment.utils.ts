@@ -40,11 +40,9 @@ const jobs = await Job.find({
     $lte: end,
   },
 })
-.select("courierPrice jobId courierId deliveryDateInfo")
-.populate("courierId", "name email phone")
+.select("courierPrice jobId courierId deliveryDateInfo deliveryAddress to")
+// .populate("courierId", "name email phone")
 .lean();
-
-
 
 
 const updatedJobs = jobs.map((job) => {
@@ -100,8 +98,8 @@ const singleCourierAllJobsPayments = async (id: string, courierCreatedAt: any) =
       $lte: end,
     },
   })
-    .select("courierPrice jobId courierId deliveryDateInfo")
-    .populate("courierId", "name email phone")
+    .select("courierPrice jobId courierId deliveryDateInfo deliveryAddress to")
+    // .populate("courierId", "name email phone")
     .lean();
 
 
@@ -135,75 +133,6 @@ return {
       totalIncl,
     },
   };
-
-
-
-// // const { start, end } = getFridayRange();
-// const courier = await User.findById(id).lean();
-//   const courierCreatedAt = courier?.createdAt;
-//   if (!courierCreatedAt) {
-//     // Handle case where courier or createdAt is missing
-//     throw new AppError(404, 'Courier not found or invalid creation date');
-//   }
-
-//   const tz = 'America/New_York'; // Replace with dynamic timezone if needed
-//   const start = dayjs(courierCreatedAt).tz(tz).startOf('day').toDate();
-//   const end = dayjs().tz(tz).endOf('day').toDate();
-  
-//   // const start = dayjs(courierCreatedAt).tz(tz).startOf("day").toDate();
-//   // const end = dayjs().tz(tz).endOf("day").toDate();
-
-// const jobs = await Job.find({
-//   courierId: id,
-//   status: "completed",
-//   "deliveryDateInfo.date": {
-//     $gte: start,
-//     $lte: end,
-//   },
-// })
-// .select("courierPrice jobId courierId deliveryDateInfo")
-// .populate("courierId", "name email phone")
-// .lean();
-
-
-
-
-// const updatedJobs = jobs.map((job) => {
-//   const priceIncl = job.courierPrice;
-
-//   const btw = Number((priceIncl * 21 / 121).toFixed(2)); // ✅ correct VAT part
-//   const btwExcld = Number((priceIncl - btw).toFixed(2));
-
-//   return {
-//     ...job,
-//     btw,
-//     btwExcld,
-//   };
-// });
-
-//   // ✅ Step 2: calculate totals
-//   const totalIncl = updatedJobs.reduce((sum, job) => sum + job.courierPrice, 0);
-
-//   const totalBtw = Number((totalIncl * 21 / 121).toFixed(2));
-//   const totalExcl = Number((totalIncl - totalBtw).toFixed(2));
-
-
-// // ✅ Invoice Period (formatted)
-//   const invoicePeriod = `${start.toLocaleDateString("en-GB")} - ${end.toLocaleDateString("en-GB")}`;
-
-
-
-//     // ✅ Step 3: return everything
-//   return {
-//     jobs: updatedJobs,
-//     invoicePeriod,
-//     jobCount: updatedJobs.length,
-//     summary: {
-//       btw: totalBtw,
-//       totalExcl,
-//       totalIncl,
-//     },
-//   };
 };
 
 

@@ -44,7 +44,7 @@ const jobs = await Job.find({
     $lte: end,
   },
 })
-.select("courierPrice jobId courierId deliveryDateInfo")
+.select("courierPrice jobId courierId deliveryDateInfo ")
 .populate("courierId", "name email phone")
 .lean();
 
@@ -161,7 +161,7 @@ const getAllCourierPaymentsWeeklyFromDB = async (query: Record<string, unknown>)
   // ✅ Step 1: paginate couriers
   const courierQuery = new QueryBuilder(
     User.find({ role: "courier" }).select(
-      "name companyName kvkNumber btwNumber email"
+      "name companyName kvkNumber btwNumber email companyLocation address"
     ).lean(),
     query
   )
