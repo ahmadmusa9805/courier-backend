@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import config from '../config';
 // import path from 'path';
 import dotenv from 'dotenv';
+import { generatePDF } from './generatePDF';
 
 dotenv.config();
 
@@ -37,6 +38,8 @@ export class SendEmail {
     }
   }
 static async sendInvoiceEmail(email: string, payload: any): Promise<void> {    
+
+
 
 const html = `
 <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto;">
@@ -124,12 +127,46 @@ const html = `
 </div>
 `;
 
+  // ✅ Generate PDF
+  const pdfBuffer = await generatePDF(html);
+
+// ✅ Clean email message (from earlier)
+  const text = `
+Dear Customer,
+
+Thank you for your order. Your order has been successfully completed.
+
+Please find your invoice attached to this email for your reference.
+
+If you have any questions, feel free to contact us.
+
+Thank you for choosing us.
+
+Best regards,
+Admin / Support Team
+`;
+
+console.log("html", html)
+
 const mailOptions = {
       // from: process.env.EMAIL_USER, // Sender email address
       from: config.admin_email_user, // Sender email address
       to: email, // Recipient email
-      subject: `Factuur ${payload.invoiceNumber} - Bevestiging`,
-      html,
+      // subject: `Factuur ${payload.invoiceNumber} - Bevestiging`,
+      subject: `Invoice ${payload.invoiceNumber} - Confirmation`,
+      text,
+      // html,
+    html: `<p>${text.replace(/\n/g, "<br/>")}</p>`,
+    
+   // ✅ Attach PDF here
+    attachments: [
+      {
+        filename: `Invoice-${payload.invoiceNumber}.pdf`,
+        content: pdfBuffer,
+        contentType: "application/pdf",
+      },
+    ],
+
     };
 
     try {
@@ -176,7 +213,7 @@ const fileExtension = getFileExtension(document);
 
   const mailOptions = {
     from: config.admin_email_user,
-    to: 'amaahmadmusa@gmail.com',
+    to: config.admin_email_user || 'amaahmadmusa@gmail.com',
     subject: `New Message For Confirmation of Courier Register from ${name}`,
     text: `${message}
     `,
@@ -192,7 +229,6 @@ const fileExtension = getFileExtension(document);
     : [],
   };
 
-    console.log("testing", mailOptions)
 
     try {
       await this.transporter.sendMail(mailOptions);

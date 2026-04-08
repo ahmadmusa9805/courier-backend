@@ -48,9 +48,7 @@ const createJobIntoDB = async (payload: any) => {
     userType: contact.userType,
   };
 
-
   const existingUser = await User.isUserExistsByCustomEmail(contact.email);
-  
 
   if (!existingUser) {
     console.log('not existingUser', existingUser);
@@ -62,7 +60,7 @@ const createJobIntoDB = async (payload: any) => {
     if (!createdUser) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User');
     }
-        console.log('createdUser', createdUser);
+    console.log('createdUser', createdUser);
     //  console.log('createdUser', createdUser);
     // Add createdUser's _id to the payload for Job creation
     payload.userId = createdUser._id;
@@ -71,9 +69,6 @@ const createJobIntoDB = async (payload: any) => {
   if (existingUser) {
     payload.userId = (existingUser as any)._id;
   }
-
-
-
 
   // console.log('existingUser', existingUser);
   const newJobId = await generateJobId();
@@ -85,20 +80,15 @@ const createJobIntoDB = async (payload: any) => {
 
   payload.courierPrice = payload.totalPrice ? payload.totalPrice : 0;
 
-  console.log("payload.....", payload);
-
- 
+  console.log('payload.....', payload);
 
   const createdJob = await Job.create(payload);
-  console.log("createdJob.....", createdJob);
+  console.log('createdJob.....', createdJob);
 
-
-
-
-    if (!createdJob) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
-    }else{
-     await Notification.create({
+  if (!createdJob) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
+  } else {
+    await Notification.create({
       type: 'jobCreated',
       userId: createdJob.userId,
       message: `A new job with ID ${createdJob.jobId} has been created.`,
@@ -106,81 +96,98 @@ const createJobIntoDB = async (payload: any) => {
       // subscriberId: payload.userId,
     });
 
-      const user = await User.findById(createdJob.userId);
-      let data;
-      // console.log('user', user);
-      if(user && user?.userType === 'user'){
-        console.log('type user');
+    const user = await User.findById(createdJob.userId);
+    let data;
+    // console.log('user', user);
+    if (user && user?.userType === 'user') {
+      console.log('type user');
 
-         data = {
-          userName: `${user.name.firstName} ${user.name.lastName}`,
-          userAddress: user.address || '',
-          country: 'NL',
-          // invoiceDate: new Date(),
-          invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
-          invoiceNumber: createdJob.jobId,
-          deliveryDate: createdJob.deliveryDateInfo?.date ? new Intl.DateTimeFormat('nl-NL').format(new Date(createdJob.deliveryDateInfo.date)) : '',
-          // deliveryDate: createdJob.deliveryDateInfo?.date || '',
-          id: createdJob.jobId,
-          description: createdJob.to || '',
-          priceInc: createdJob.totalPrice,
-          priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
-          btw: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice / 1.21) : 0, // Assuming 21% VAT
-          // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
-        }
- 
+      data = {
+        userName: `${user.name.firstName} ${user.name.lastName}`,
+        userAddress: user.address || '',
+        country: 'NL',
+        // invoiceDate: new Date(),
+        invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
+        invoiceNumber: createdJob.jobId,
+        deliveryDate: createdJob.deliveryDateInfo?.date
+          ? new Intl.DateTimeFormat('nl-NL').format(
+              new Date(createdJob.deliveryDateInfo.date),
+            )
+          : '',
+        // deliveryDate: createdJob.deliveryDateInfo?.date || '',
+        id: createdJob.jobId,
+        description: createdJob.to || '',
+        priceInc: createdJob.totalPrice,
+        priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
+        btw: createdJob.totalPrice
+          ? createdJob.totalPrice - createdJob.totalPrice / 1.21
+          : 0, // Assuming 21% VAT
+        // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
+      };
 
-    await SendEmail.sendInvoiceEmail(user.email, data);
+      await SendEmail.sendInvoiceEmail(user.email, data);
+    }
 
-      }
-      if(user && user?.userType === 'company'){
-
-            data = {
-          userName: `${user.name.firstName} ${user.name.lastName}`,
-          userAddress: user.address || '',
-          country: 'NL',
-          kvkNumber: user.kvkNumber,
-          btwNumber: user.btwNumber,
-          // invoiceDate: new Date(),
-          invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
-          invoiceNumber: createdJob.jobId,
-          deliveryDate: createdJob.deliveryDateInfo?.date ? new Intl.DateTimeFormat('nl-NL').format(new Date(createdJob.deliveryDateInfo.date)) : '',
-          id: createdJob.jobId,
-          description: createdJob.to || '',
-          priceInc: createdJob.totalPrice,
-          priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
-          btw: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice / 1.21) : 0, // Assuming 21% VAT
-          // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
-        }
-        await SendEmail.sendInvoiceEmail(user.email, data);
-      }
-
-
+    if (user && user?.userType === 'company') {
+      data = {
+        userName: `${user.name.firstName} ${user.name.lastName}`,
+        userAddress: user.address || '',
+        country: 'NL',
+        kvkNumber: user.kvkNumber,
+        btwNumber: user.btwNumber,
+        // invoiceDate: new Date(),
+        invoiceDate: new Intl.DateTimeFormat('nl-NL').format(new Date()),
+        invoiceNumber: createdJob.jobId,
+        deliveryDate: createdJob.deliveryDateInfo?.date
+          ? new Intl.DateTimeFormat('nl-NL').format(
+              new Date(createdJob.deliveryDateInfo.date),
+            )
+          : '',
+        id: createdJob.jobId,
+        description: createdJob.to || '',
+        priceInc: createdJob.totalPrice,
+        priceExc: createdJob.totalPrice ? createdJob.totalPrice / 1.21 : 0, // Price excluding VAT
+        btw: createdJob.totalPrice
+          ? createdJob.totalPrice - createdJob.totalPrice / 1.21
+          : 0, // Assuming 21% VAT
+        // priceExc: createdJob.totalPrice ? createdJob.totalPrice - (createdJob.totalPrice * 0.21) : 0, // Price excluding VAT
+      };
+      await SendEmail.sendInvoiceEmail(user.email, data);
+    }
   }
- 
+
+
+
+
+
+
+
+
+
+
+
+
+  
   if (!createdJob) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Job');
   }
   // Populate userId field to get the full user data
   const jobWithUser = await Job.findById(createdJob._id).populate('userId');
 
-  if(jobWithUser?.userId._id){
-     
+  if (jobWithUser?.userId._id) {
     const user = await User.findById(jobWithUser?.userId._id);
     // if(user && user?.jobPosted !== undefined){
     //   user.jobPosted = user?.jobPosted+1
     // }
 
-
     const updateQuery = { $inc: { jobPosted: 1 } };
-       await User.findByIdAndUpdate({ _id: user?._id }, updateQuery, {
-    new: true,
-    runValidators: true,
-  });
+    await User.findByIdAndUpdate({ _id: user?._id }, updateQuery, {
+      new: true,
+      runValidators: true,
+    });
 
     // await user?.save();
   }
-
 
   // Return the job along with the populated user data
   return jobWithUser;
@@ -191,7 +198,6 @@ const createJobIntoDB = async (payload: any) => {
 };
 
 const getAllJobsFromDB = async (query: Record<string, unknown>) => {
-
   const JobQuery = new QueryBuilder(Job.find(), query)
     .search(JOB_SEARCHABLE_FIELDS)
     .filter()
@@ -362,7 +368,6 @@ const getSingleJobFromDB = async (id: string) => {
 };
 
 const updateJobIntoDB = async (id: string, payload: any, user: any) => {
-
   console.log('updateJobIntoDB musaaaaaa:', payload);
 
   const { userEmail } = user;
@@ -384,27 +389,40 @@ const updateJobIntoDB = async (id: string, payload: any, user: any) => {
     throw new Error('Cannot update a deleted Job');
   }
 
-if (usr.role === 'user' || usr.role === 'company' ) {
-    if(existingJob.adminApproved === true) {
-      throw new Error('You are not authorized to update this Job after admin approval');
+  if (usr.role === 'user' || usr.role === 'company') {
+    if (existingJob.adminApproved === true) {
+      throw new Error(
+        'You are not authorized to update this Job after admin approval',
+      );
     }
-    if(existingJob.status === 'accepted' || existingJob.status === 'in-progress' || existingJob.status === 'completed') {
-      throw new Error('You are not authorized to update this Job after Courier approval');
+    if (
+      existingJob.status === 'accepted' ||
+      existingJob.status === 'in-progress' ||
+      existingJob.status === 'completed'
+    ) {
+      throw new Error(
+        'You are not authorized to update this Job after Courier approval',
+      );
     }
   }
-if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
-    if(existingJob.status === 'accepted' || existingJob.status === 'in-progress' || existingJob.status === 'completed') {
-      throw new Error('You are not authorized to update this Job after Courier acceptance');
+  if (usr.role === 'superAdmin' || usr.role === 'admin') {
+    if (
+      existingJob.status === 'accepted' ||
+      existingJob.status === 'in-progress' ||
+      existingJob.status === 'completed'
+    ) {
+      throw new Error(
+        'You are not authorized to update this Job after Courier acceptance',
+      );
     }
   }
-
 
   const updateQuery: any = { $set: {} };
   // Handle "add" and "remove" for items separately to avoid conflicts
   if (items) {
-     console.log('items testing:', items);
-    //  console.log('items.add', items.add); 
-    //  console.log('items.add.length > 0', items.add.length > 0); 
+    console.log('items testing:', items);
+    //  console.log('items.add', items.add);
+    //  console.log('items.add.length > 0', items.add.length > 0);
     if (items.add && items.add.length > 0) {
       // First update: Add new items
       await Job.updateOne(
@@ -434,17 +452,19 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
   if (usr.role === 'courier' && payload.status === 'accepted') {
     updateQuery.courierId = (usr as any)._id;
 
-   const jobData = await Job.findOne({ _id: id }).select('userId');
-  //  if(courierId && (courierId as any).courierId){
-  //   throw new Error('This job has already been accepted by another courier');
-  //  }
+    const jobData = await Job.findOne({ _id: id }).select('userId');
+    //  if(courierId && (courierId as any).courierId){
+    //   throw new Error('This job has already been accepted by another courier');
+    //  }
 
     let room = await ChatRoom.findOne({
       participants: { $all: [(usr as any)._id, jobData?.userId] },
     });
 
     if (!room) {
-      room = await ChatRoom.create({ participants: [(usr as any)._id, jobData?.userId] });
+      room = await ChatRoom.create({
+        participants: [(usr as any)._id, jobData?.userId],
+      });
     }
 
     if (!room) {
@@ -460,148 +480,147 @@ if (usr.role === 'superAdmin' || usr.role === 'admin' ) {
   if (!updatedJob) {
     throw new Error('Job not found after update');
   }
-  if( payload.status === 'completed' && updatedJob.status === 'completed' ){
-   await Notification.create({
-    type: 'JobCompleted',
-    courierId: updatedJob.courierId,
-    userId: updatedJob.userId,
-    message: `The job with ID ${updatedJob.jobId} has been completed.`,
-    readBy: [],
-  });
-  }
-  if( payload.status === 'accepted' && updatedJob.status === 'accepted' ){
-   await Notification.create({
-    type: 'jobAccepted',
-    courierId: updatedJob.courierId,
-    userId: updatedJob.userId,
-    message: `The job with ID ${updatedJob.jobId} has been jobAccepted.`,
-    readBy: [],
-  });
-  }
-  if( payload.adminApproved === true && updatedJob.adminApproved === true ){
-   await Notification.create({
-    type: 'adminApproved',
-    courierId: updatedJob.courierId,
-    userId: updatedJob.userId,
-    message: `The job with ID ${updatedJob.jobId} has been adminApproved.`,
-    readBy: [],
-  });
-  }
-
-
-if(usr.role === 'courier' ) {
-  const pickupData: any = {};
-  const deliveryData: any = {};
-
-  if (updatedJob.from) {
-    pickupData['from'] = updatedJob.from;
-  }
-
-  if (updatedJob.pickupDateInfo) {
-    pickupData['pickupDateInfo'] = updatedJob.pickupDateInfo;
-  }
-
-  if (updatedJob.to) {
-    deliveryData['to'] = updatedJob.to;
-  }
-
-  if (updatedJob.deliveryDateInfo) {
-    deliveryData['deliveryDateInfo'] = updatedJob.deliveryDateInfo;
-  }
-  const dailyRouteDataPickup: any = {};
-  const dailyRouteDataDelivery: any = {};
-  const routeContainerPickup: any[] = [];
-  const routeContainerDelivery: any[] = [];
-  const item: any = {};
-
-  if (pickupData.from) {
-    // if (Object.keys(pickupData).length > 0 ) {
-    item['jobId'] = updatedJob._id;
-    item['address'] = pickupData.from || '';
-    item['dateTimeSlot'] = pickupData.pickupDateInfo
-      ? {
-          date: new Date(pickupData.pickupDateInfo.date), // Ensure this is a Date object
-          timeSlot: pickupData.pickupDateInfo.timeSlot || '',
-        }
-      : { date: new Date(), timeSlot: '' };
-
-    item['deliveryMode'] = 'pickup';
-    item['dataSource'] = 'job';
-    routeContainerPickup.push(item);
-    dailyRouteDataPickup.routeContainer = routeContainerPickup;
-
-    dailyRouteDataPickup.date = pickupData.pickupDateInfo?.date
-      ? new Date(pickupData.pickupDateInfo.date)
-      : new Date();
-    dailyRouteDataPickup.userId = updatedJob.userId;
-    dailyRouteDataPickup.courierId = updatedJob.courierId;
-
-    const existingDailyRouteData = await DailyRoute.findOne({
-      date: dailyRouteDataPickup.date,
-      courierId: dailyRouteDataPickup.courierId,
+  if (payload.status === 'completed' && updatedJob.status === 'completed') {
+    await Notification.create({
+      type: 'JobCompleted',
+      courierId: updatedJob.courierId,
+      userId: updatedJob.userId,
+      message: `The job with ID ${updatedJob.jobId} has been completed.`,
+      readBy: [],
     });
+  }
+  if (payload.status === 'accepted' && updatedJob.status === 'accepted') {
+    await Notification.create({
+      type: 'jobAccepted',
+      courierId: updatedJob.courierId,
+      userId: updatedJob.userId,
+      message: `The job with ID ${updatedJob.jobId} has been jobAccepted.`,
+      readBy: [],
+    });
+  }
+  if (payload.adminApproved === true && updatedJob.adminApproved === true) {
+    await Notification.create({
+      type: 'adminApproved',
+      courierId: updatedJob.courierId,
+      userId: updatedJob.userId,
+      message: `The job with ID ${updatedJob.jobId} has been adminApproved.`,
+      readBy: [],
+    });
+  }
 
-    if (existingDailyRouteData) {
-      // Update existing DailyRoute by adding new route items
-      existingDailyRouteData.routeContainer.push(...routeContainerPickup);
-      await existingDailyRouteData.save();
-    } else {
-      const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataPickup);
-      if (!dailyRouteDataCreated) {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          'Failed to create DailyRoute',
+  if (usr.role === 'courier') {
+    const pickupData: any = {};
+    const deliveryData: any = {};
+
+    if (updatedJob.from) {
+      pickupData['from'] = updatedJob.from;
+    }
+
+    if (updatedJob.pickupDateInfo) {
+      pickupData['pickupDateInfo'] = updatedJob.pickupDateInfo;
+    }
+
+    if (updatedJob.to) {
+      deliveryData['to'] = updatedJob.to;
+    }
+
+    if (updatedJob.deliveryDateInfo) {
+      deliveryData['deliveryDateInfo'] = updatedJob.deliveryDateInfo;
+    }
+    const dailyRouteDataPickup: any = {};
+    const dailyRouteDataDelivery: any = {};
+    const routeContainerPickup: any[] = [];
+    const routeContainerDelivery: any[] = [];
+    const item: any = {};
+
+    if (pickupData.from) {
+      // if (Object.keys(pickupData).length > 0 ) {
+      item['jobId'] = updatedJob._id;
+      item['address'] = pickupData.from || '';
+      item['dateTimeSlot'] = pickupData.pickupDateInfo
+        ? {
+            date: new Date(pickupData.pickupDateInfo.date), // Ensure this is a Date object
+            timeSlot: pickupData.pickupDateInfo.timeSlot || '',
+          }
+        : { date: new Date(), timeSlot: '' };
+
+      item['deliveryMode'] = 'pickup';
+      item['dataSource'] = 'job';
+      routeContainerPickup.push(item);
+      dailyRouteDataPickup.routeContainer = routeContainerPickup;
+
+      dailyRouteDataPickup.date = pickupData.pickupDateInfo?.date
+        ? new Date(pickupData.pickupDateInfo.date)
+        : new Date();
+      dailyRouteDataPickup.userId = updatedJob.userId;
+      dailyRouteDataPickup.courierId = updatedJob.courierId;
+
+      const existingDailyRouteData = await DailyRoute.findOne({
+        date: dailyRouteDataPickup.date,
+        courierId: dailyRouteDataPickup.courierId,
+      });
+
+      if (existingDailyRouteData) {
+        // Update existing DailyRoute by adding new route items
+        existingDailyRouteData.routeContainer.push(...routeContainerPickup);
+        await existingDailyRouteData.save();
+      } else {
+        const dailyRouteDataCreated =
+          await DailyRoute.create(dailyRouteDataPickup);
+        if (!dailyRouteDataCreated) {
+          throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Failed to create DailyRoute',
+          );
+        }
+      }
+    }
+
+    if (updatedJob.to) {
+      // if (Object.keys(deliveryData).length > 0 ) {
+      item['jobId'] = updatedJob._id;
+      item['address'] = deliveryData.to || '';
+      item['dateTimeSlot'] = deliveryData.deliveryDateInfo
+        ? {
+            date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
+            timeSlot: deliveryData.deliveryDateInfo.timeSlot || '',
+          }
+        : { date: new Date(), timeSlot: '' };
+
+      item['deliveryMode'] = 'delivery';
+      item['dataSource'] = 'job';
+      routeContainerDelivery.push(item);
+      dailyRouteDataDelivery.routeContainer = routeContainerDelivery;
+      dailyRouteDataDelivery.date = deliveryData.deliveryDateInfo?.date
+        ? new Date(deliveryData.deliveryDateInfo.date)
+        : new Date();
+      dailyRouteDataDelivery.userId = updatedJob.userId;
+      dailyRouteDataDelivery.courierId = updatedJob.courierId;
+
+      const existingDailyRoute = await DailyRoute.findOne({
+        date: dailyRouteDataDelivery.date,
+        courierId: dailyRouteDataDelivery.courierId,
+      });
+
+      if (existingDailyRoute) {
+        existingDailyRoute.routeContainer.push(...routeContainerDelivery);
+        await existingDailyRoute.save();
+      } else {
+        const dailyRouteDataCreated = await DailyRoute.create(
+          dailyRouteDataDelivery,
         );
+        if (!dailyRouteDataCreated) {
+          throw new AppError(
+            httpStatus.BAD_REQUEST,
+            'Failed to create DailyRoute',
+          );
+        }
       }
     }
   }
-
-  if (updatedJob.to) {
-    // if (Object.keys(deliveryData).length > 0 ) {
-    item['jobId'] = updatedJob._id;
-    item['address'] = deliveryData.to || '';
-    item['dateTimeSlot'] = deliveryData.deliveryDateInfo
-      ? {
-          date: new Date(deliveryData.deliveryDateInfo.date), // Ensure this is a Date object
-          timeSlot: deliveryData.deliveryDateInfo.timeSlot || '',
-        }
-      : { date: new Date(), timeSlot: '' };
-
-    item['deliveryMode'] = 'delivery';
-    item['dataSource'] = 'job';
-    routeContainerDelivery.push(item);
-    dailyRouteDataDelivery.routeContainer = routeContainerDelivery;
-    dailyRouteDataDelivery.date = deliveryData.deliveryDateInfo?.date
-      ? new Date(deliveryData.deliveryDateInfo.date)
-      : new Date();
-    dailyRouteDataDelivery.userId = updatedJob.userId;
-    dailyRouteDataDelivery.courierId = updatedJob.courierId;
-
-    const existingDailyRoute = await DailyRoute.findOne({
-      date: dailyRouteDataDelivery.date,
-      courierId: dailyRouteDataDelivery.courierId,
-    });
-
-    if (existingDailyRoute) {
-
-      existingDailyRoute.routeContainer.push(...routeContainerDelivery);
-      await existingDailyRoute.save();
-    } else {
-      const dailyRouteDataCreated = await DailyRoute.create(dailyRouteDataDelivery);
-      if (!dailyRouteDataCreated) {
-        throw new AppError(
-          httpStatus.BAD_REQUEST,
-          'Failed to create DailyRoute',
-        );
-      }
-    }
-  }
-}
 
   return updatedJob;
-
-}
-
+};
 
 const deleteJobFromDB = async (id: string) => {
   const deletedService = await Job.findByIdAndDelete(

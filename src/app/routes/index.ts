@@ -24,6 +24,7 @@ import { ContactSocialRoutes } from '../modules/ContactSocial/ContactSocial.rout
 import { AddRouteRoutes } from '../modules/addRoute/addRoute.route';
 import { DailyRouteRoutes } from '../modules/dailyRoute/dailyRoute.route';
 import { DistancePriceRoutes } from '../modules/DistancePrice/DistancePrice.route';
+import { CourierPaymentRoutes } from '../modules/courierPayment/courierPayment.route';
 
 const router = Router();
 
@@ -123,6 +124,10 @@ const moduleRoutes = [
   {
     path: '/distance-prices',
     route: DistancePriceRoutes,
+  },
+  {
+    path: '/courier-payments',
+    route: CourierPaymentRoutes,
   }
 ];
 
